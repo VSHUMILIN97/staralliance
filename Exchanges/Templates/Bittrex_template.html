@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bittrex</title>
+</head>
+<body>
+{% for item in temp %}
+    <h1>{{ item.PairName }}</h1>
+    <h1>{{ item.High }}</h1>
+    <h1>{{ item.published_date }}</h1>
+{% endfor %}
+</body>
+</html>
