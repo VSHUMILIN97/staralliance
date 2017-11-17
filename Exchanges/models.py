@@ -1,6 +1,10 @@
 from django.db import models
 from django.utils import timezone
 
+import requests
+import json
+import time
+
 
 # Create your models here.
 
@@ -8,37 +12,20 @@ class Bittrex(models.Model):
     published_date = models.DateTimeField(default=timezone.now)
     PairName = models.CharField(max_length=50)
     High = models.FloatField()
-
-    # LOW = models.Low()
-    # VOLUME = models.Volume()
-    # LAST = models.Last()
-    # BASEVOLUME = models.BaseVolume()
-    # TIMESTAMP = models.TimeStamp()
-    # BID = models.Bid()
-    # ASK = models.Ask()
-    # OPENBUYORDERS = models.OpenBuyOrders()
-    # OPENSELLORDERS = models.OpenSellOrders()
-    # PREVDAY = models.PrevDay()
-    # CURRENCY = models.Currency()
-    # CURRENCYLONG = models.CurrencyLong()
-
-
-
-    # author = models.ForeignKey('auth.User')
-    # title = models.CharField(max_length=200)
-    # text = models.TextField()
-    # created_date = models.DateTimeField(
-    #    default=timezone.now)
-    # published_date = models.DateTimeField(
-    #    blank=True, null=True)
-
-
+    Low = models.FloatField()
+    Volume = models.FloatField()
+    Last = models.FloatField()
+    BaseVolume = models.FloatField()
+    TimeStamp = models.DateTimeField()
+    Bid = models.FloatField()
+    Ask = models.FloatField()
+    OpenBuyOrders = models.CharField(max_length=40)
+    OpenSellOrders = models.CharField(max_length=40)
+    PrevDay = models.FloatField()
 
     def setVals(self):
-        self.save()
 
-    def getUrl(self):
-        return "https://bittrex.com/api/v1.1/public/getmarketsummaries"
+        self.save()
 
     #
     """
@@ -63,3 +50,5 @@ class Bittrex(models.Model):
         self.save()
 
     """
+
+
