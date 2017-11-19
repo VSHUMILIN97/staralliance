@@ -53,3 +53,16 @@ def api_get_getmarketsummaries():
                              PrevDay = prevday)
             bitObj.save()
 
+
+def get_OHLC():
+    query = Bittrex.objects.all()
+    dict = {'high': p.High for p in query}
+    dict1 = {'low': p.Low for p in query}
+    dict2 = {'last': p.Last for p in query}
+    dict3 = {'low': p.OpenSellOrders for p in query}
+    global_dict = {}
+    global_dict.update(dict)
+    global_dict.update(dict1)
+    global_dict.update(dict2)
+    global_dict.update(dict3)
+    return global_dict
