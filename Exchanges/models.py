@@ -10,11 +10,11 @@ import time
 
 class Bittrex(models.Model):
     published_date = models.DateTimeField(default=timezone.now)
-    PairName = models.CharField(max_length=50)
+    PairName = models.CharField(max_length=60)
     High = models.FloatField()
     Low = models.FloatField()
-    Volume = models.FloatField()
     Last = models.FloatField()
+    Volume = models.FloatField()
     BaseVolume = models.FloatField()
     TimeStamp = models.DateTimeField()
     Bid = models.FloatField()

@@ -15,8 +15,9 @@ def Bittrex_view(request):
 
     #api_get_getmarketsummaries()
     book = Bittrex.objects.all().filter(PairName='BTC-1ST')
-    return render(request, "Bittrex_template.html",  {'temp': book})
+    return render(request, "Bittrex_template.html",  {'temp': book})  #
 
 class ChartsView(View):
     def get(self, request, *args, **kwargs):
-        return render(request, 'charts.html')
+        book = Bittrex.objects.all().filter(PairName='BTC-1ST')
+        return render(request, 'charts.html', {'temp': book})
