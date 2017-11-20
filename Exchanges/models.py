@@ -34,3 +34,19 @@ class BittrexTick(models.Model):
     def saveModel(self):
         self.save()
 
+
+class BittrexVolume(models.Model):
+    PairName = models.CharField(max_length=20)
+    IdOrder = models.BigIntegerField()
+    TimeStamp = models.CharField(max_length=60, default=timezone.now)
+    Quantity = models.FloatField()
+    Price = models.FloatField()
+    Total = models.FloatField()
+    FillType = models.CharField(max_length=25)
+    OrderType = models.CharField(max_length=15)
+
+    def autoSave(self):
+        self.save()
+
+
+

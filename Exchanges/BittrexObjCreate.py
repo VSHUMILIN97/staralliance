@@ -5,6 +5,7 @@ import json
 import time
 from Exchanges.views import BittrexOHLC
 from Exchanges.views import BittrexTick
+from Exchanges.views import BittrexVolume
 
 def api_get_getmarketsummaries():
     print('Before Bittrix call attempt to server - ' + str(time.time()))
@@ -30,7 +31,7 @@ def api_get_getmarketsummaries():
 def api_get_getticker(Pairs):
     if Pairs == '':
         Pairs == 'BTC-1ST'  #Доделал под текущую вьюху
-    apiRequest = requests.get("https://bittrex.com/api/v1.1/public/" + "getticker?market="+Pairs)
+    apiRequest = requests.get("https://bittrex.com/api/v1.1/public/" + "getticker?market=" + Pairs)
     json_data = json.loads(apiRequest.text)
     if json_data['success']:
         root = json_data['result']
@@ -38,3 +39,15 @@ def api_get_getticker(Pairs):
         bitObjTick = BittrexTick(PairName=Pairs, Tick=((ask + bid) / 2))
         bitObjTick.save()
 
+
+def api_get_getmarkethistory(Pairs):
+    apiRequest = requests.get("https://bittrex.com/api/v1.1/public/" + "getmarkethistory?market=" + Pairs)
+    json_data = json.loads(apiRequest.text)
+    if json_data['success']:
+        result = json_data['result']
+        for item in result:
+            iD, timestamp, quantity, price, total, filltype, ordertype = \
+            int(item['Id']), str(item['TimeStamp']), float(item['Quantity']), float(item['Price']), float(item['Total']), str(item['FillType']), str(item['OrderType'])
+
+            bitObjVol = BittrexVolume(PairName=Pairs, IdOrder=iD, TimeStamp=timestamp, Quantity=quantity, Price=price, Total=total, FillType=filltype, OrderType=ordertype)
+            bitObjVol.save()

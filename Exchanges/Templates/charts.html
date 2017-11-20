@@ -58,62 +58,38 @@ google.charts.setOnLoadCallback(drawChart)
 		  }
 
 function drawDiffChart() {
-    var oldData = google.visualization.arrayToDataTable([
-      ['Name', 'Popularity'],
-      ['Cesar', 5000],
-      ['Rachel', 4200],
-      ['Patrick', 2900],
-      ['Eric', 2000],
-      ['Cesar', 3000],
-      ['Rachel', 2000],
-      ['Patrick', 8200],
-      ['Eric', 2500],
-      ['Cesar', 3000],
-      ['Rachel', 2000],
-      ['Patrick', 8200],
-      ['Eric', 2500],
-      ['Cesar', 5000],
-      ['Rachel', 4200],
-      ['Patrick', 2900],
-      ['Eric', 2000]
-    ]);
+    var sellData = new google.visualization.DataTable();
+    sellData.addColumn('string','TimeStamp');
+    sellData.addColumn('number', 'Sell');
 
-    var newData = google.visualization.arrayToDataTable([
-      ['Name', 'Popularity'],
-      ['Cesar', 3000],
-      ['Rachel', 2000],
-      ['Patrick', 8200],
-      ['Eric', 2500],
-      ['Cesar', 5000],
-      ['Rachel', 4200],
-      ['Patrick', 2900],
-      ['Eric', 2000],
-      ['Cesar', 5000],
-      ['Rachel', 4200],
-      ['Patrick', 2900],
-      ['Eric', 2000],
-      ['Cesar', 3000],
-      ['Rachel', 2000],
-      ['Patrick', 8200],
-      ['Eric', 2500]
-    ]);
+    {% for item in sellBook %}
+    sellData.addRows([['{{ item.TimeStamp }}', {{ item.Quantity }}]]);
+    {% endfor %}
+
+    var buyData = google.visualization.DataTable();
+    buyData.addColumn('string', 'TimeStamp');
+    buyData.addColumn('number', 'Buy');
+
+    {% for item in buyBook %}
+    buyData.addRows([['{{ item.TimeStamp }}', {{ item.Quantity }}]]);
+    {% endfor %}
 
     var colChartDiff = new google.visualization.ColumnChart(document.getElementById('diff_crt'));
 
 	var options = {
-	title: 'Будущий график объемов покупок-продаж',
+	title: 'Будущий график объемов покупок-продаж для {{ market }}',
 	width:1000,
     height:400,
     legend: { position: 'none'},
     bar: { groupWidth: '61.8%' },
     diff: {
-        oldData: { opacity: 1, color: '#e60000', tooltip: { prefix:'Покупка' } },
-        newData: { opacity: 1, widthFactor: 0.7, tooltip: { prefix:'Продажа' } }
+        sellData: { opacity: 1, color: '#e60000', tooltip: { prefix:'Продажа' } },
+        buyData: { opacity: 1, widthFactor: 0.7, tooltip: { prefix:'Покупка' } }
     } ,
     colors: ['#2eb82e']
     };
 
-    var diffData = colChartDiff.computeDiff(oldData, newData);
+    var diffData = colChartDiff.computeDiff(sellData, buyData);
     colChartDiff.draw(diffData, options);
     }
 
@@ -136,7 +112,7 @@ function drawDiffChart() {
        formatter.format(data, 2);
 
         var options = {
-          title: 'Middle',
+          title: '{{ market }}',
           curveType: 'none',
           legend: { position: 'bottom' }
         };
