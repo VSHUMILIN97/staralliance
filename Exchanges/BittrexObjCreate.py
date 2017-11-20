@@ -27,26 +27,14 @@ def api_get_getmarketsummaries():
             bitObjOHLC.save()
 
 
-
-def api_get_getticker():
-    apiRequest = requests.get("https://bittrex.com/api/v1.1/public/" + "getticker?market=BTC-1ST")
+def api_get_getticker(Pairs):
+    if Pairs == '':
+        Pairs == 'BTC-1ST'  #Доделал под текущую вьюху
+    apiRequest = requests.get("https://bittrex.com/api/v1.1/public/" + "getticker?market="+Pairs)
     json_data = json.loads(apiRequest.text)
     if json_data['success']:
         root = json_data['result']
         bid, ask, last = float(root['Bid']), float(root['Ask']), str(root['Last'])
-
-        bitObjTick = BittrexTick(PairName='BTC-1ST', Tick=((ask + bid) / 2))
+        bitObjTick = BittrexTick(PairName=Pairs, Tick=((ask + bid) / 2))
         bitObjTick.save()
 
-"""def get_OHLC():
-    query = BittrexOHLC.objects.all()
-    dict = {'high': p.High for p in query}
-    dict1 = {'low': p.Low for p in query}
-    dict2 = {'last': p.Last for p in query}
-    dict3 = {'OpenSellOrders': p.OpenSellOrders for p in query}
-    global_dict = {}
-    global_dict.update(dict)
-    global_dict.update(dict1)
-    global_dict.update(dict2)
-    global_dict.update(dict3)
-    return global_dict"""

@@ -16,35 +16,46 @@ google.charts.setOnLoadCallback(drawCandlestick);
 google.charts.setOnLoadCallback(drawDiffChart);
 google.charts.setOnLoadCallback(drawChart)
 
-function drawCandlestick() {
-var data = new google.visualization.DataTable();
-data.addColumn('string', 'Timestamp');
-data.addColumn('number', 'High');
-data.addColumn('number', 'Open');
-data.addColumn('number', 'Last');
-data.addColumn('number', 'Low');
+	  function drawCandlestick() {
+	  var data = new google.visualization.DataTable();
+      data.addColumn('string', 'Timestamp');
+      data.addColumn('number', 'High');
+      data.addColumn('number', 'Open');
+      data.addColumn('number', 'Last');
+      data.addColumn('number', 'Low');
+      data.addColumn({type: 'string', role: 'tooltip'});
 
-{% for item in temp %}
-data.addRows([['{{ item.TimeStamp }}', {{ item.High }}, {{ item.Last }}, {{ item.PrevDay }}, {{ item.Low }} ]]);//
-{% endfor %}
+      var formatter = new google.visualization.NumberFormat({
+        fractionDigits: 8
+       });
 
-var options = {
-title: 'Будущий график японских свечек',
-width:1000,
-height:400,
-legend:'none',
-bar: { groupWidth: '22.8%' },
-colors: ['black'],
-candlestick: {
-fallingColor: { strokeWidth: 1, fill: '#e60000', stroke: 'black' }, // red
-risingColor: { strokeWidth: 1, fill: '#2eb82e', stroke: 'black' } // green
-},
-};
 
-var chart = new google.visualization.CandlestickChart(document.getElementById('cndlstk_crt'));
+      {% for item in temp %}
+      data.addRows([['{{ item.TimeStamp }}', {{ item.High }}, {{ item.PrevDay }}, {{ item.Last }}, {{ item.Low }},
+                     '{{ item.TimeStamp }} \n High: ' + formatter.formatValue({{ item.High }}) +
+                     ' \n Open: ' + formatter.formatValue({{ item.PrevDay }}) +
+                     ' \n Close: ' + formatter.formatValue({{ item.Last }}) +
+                     ' \n Low: ' + formatter.formatValue({{ item.Low }})]]);
+      {% endfor %}
 
-chart.draw(data, options);
-}
+    	var options = {
+    	title: 'График японских свечек для {{market}} (временно взято Open=item[-1].Last)',
+    	width:1000,
+        height:400,
+	    legend:'none',
+        bar: { groupWidth: '61.8%' },
+        colors: ['black'],
+        candlestick: {
+            fallingColor: { strokeWidth: 1, fill: '#e60000', stroke: 'black' }, // red
+            risingColor: { strokeWidth: 1, fill: '#2eb82e', stroke: 'black' }   // green
+        },
+        vAxis: {logScale:true},
+	    };
+
+    	var chart = new google.visualization.CandlestickChart(document.getElementById('cndlstk_crt'));
+
+	    chart.draw(data, options);
+		  }
 
 function drawDiffChart() {
     var oldData = google.visualization.arrayToDataTable([
@@ -107,15 +118,22 @@ function drawDiffChart() {
     }
 
 
-
     function drawChart() {
     var data = new google.visualization.DataTable();
     data.addColumn('string', 'Timestamp');
     data.addColumn('number', 'LineOfSight');
+    data.addColumn({type: 'string', role: 'tooltip'});
 
-        {% for item in temp1 %}
-        data.addRows([['{{ item.TimeStamp }}' , {{ item.Tick }}]]);//
-        {% endfor %}
+      var formatter = new google.visualization.NumberFormat({
+       fractionDigits: 8
+      });
+
+       {% for item in temp1 %}
+       data.addRows([['{{ item.TimeStamp }}' , {{ item.Tick }},
+       '{{ item.TimeStamp }} \n Tick: ' + formatter.formatValue({{ item.Tick }})]]);//
+       {% endfor %}
+
+       formatter.format(data, 2);
 
         var options = {
           title: 'Middle',
