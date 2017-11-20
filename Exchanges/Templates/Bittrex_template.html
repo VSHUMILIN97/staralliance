@@ -1,29 +1,121 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+     <link rel="stylesheet" href="/static/index/styles/layout.css" type="text/css">
     <title>Bittrex</title>
 </head>
-<body>
+<body >
+ <div class="wrapper row1">
+  <header id="header" class="clear">
+    <div id="hgroup">
+      <h1><a href="/">Crypto currencies' market analyzer</a></h1>
+      <h2>4 a.m. design tryouts</h2>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="/bittrex">See Data</a></li>
+        <li class="last"><a href="/charts">See Charts</a></li>
+      </ul>
+    </nav>
+  </header>
+</div>
+ <div class="wrapper row2">
+  <div id="container" class="clear">
+  <table>
 {% for item in temp %}
-    <h1>{{ item.TimeStamp }}</h1>
-    <h1>{{ item.Quantity }}</h1>
-    <h1>{{ item.PairName }}</h1>
-    <h1>{{ item.OrderType }}</h1>
+    <tr>
+    <td>{{ item.TimeStamp }}</td>
+    <td>{{ item.Quantity }}</td>
+    <td>{{ item.PairName }}</td>
+    <td>{{ item.OrderType }}</td>
+    </tr>
 {% endfor %}
+  </table>
+<table>
+ {% for item in temp %}
+     <tr>
+    <td>{{ item.PairName }}</td>
+    <td>{{ item.High }}</td>
+    <td>{{ item.Low }}</td>
+    <td>{{ item.Last }}</td>
+    <td>{{ item.Volume }}</td>
+    <td>{{ item.BaseVolume }}</td>
+    <td>{{ item.TimeStamp }}</td>
+    <td>{{ item.Bid }}</td>
+    <td>{{ item.Ask }}</td>
+    <td>{{ item.OpenBuyOrders }}</td>
+    <td>{{ item.OpenSellOrders }}</td>
+    <td>{{ item.PrevDay }}</td>
+     </tr>
+{% endfor %}
+</table>
+  </div>
+</div>
+<div class="wrapper row3">
+  <div id="footer" class="clear">
+    <!-- Section One -->
+    <section class="one_quarter">
+      <h2 class="title">Link Block</h2>
+      <nav>
+        <ul>
+          <li><a href="#">Lorem ipsum dolor sit</a></li>
+          <li><a href="#">Amet consectetur</a></li>
+          <li><a href="#">Praesent vel sem id</a></li>
+          <li><a href="#">Curabitur hendrerit est</a></li>
+          <li class="last"><a href="#">Sed a nulla urna</a></li>
+        </ul>
+      </nav>
+    </section>
+    <!-- Section Two -->
+    <section class="one_quarter">
+      <h2 class="title">Link Block</h2>
+      <nav>
+        <ul>
+          <li><a href="#">Lorem ipsum dolor sit</a></li>
+          <li><a href="#">Amet consectetur</a></li>
+          <li><a href="#">Praesent vel sem id</a></li>
+          <li><a href="#">Curabitur hendrerit est</a></li>
+          <li class="last"><a href="#">Sed a nulla urna</a></li>
+        </ul>
+      </nav>
+    </section>
+    <!-- Section Three -->
+    <section class="one_quarter">
+      <h2 class="title">Link Block</h2>
+      <nav>
+        <ul>
+          <li><a href="#">Lorem ipsum dolor sit</a></li>
+          <li><a href="#">Amet consectetur</a></li>
+          <li><a href="#">Praesent vel sem id</a></li>
+          <li><a href="#">Curabitur hendrerit est</a></li>
+          <li class="last"><a href="#">Sed a nulla urna</a></li>
+        </ul>
+      </nav>
+    </section>
+    <!-- Section Four -->
+    <section class="one_quarter lastbox">
+      <h2 class="title">Link Block</h2>
+      <nav>
+        <ul>
+          <li><a href="#">Lorem ipsum dolor sit</a></li>
+          <li><a href="#">Amet consectetur</a></li>
+          <li><a href="#">Praesent vel sem id</a></li>
+          <li><a href="#">Curabitur hendrerit est</a></li>
+          <li class="last"><a href="#">Sed a nulla urna</a></li>
+        </ul>
+      </nav>
+    </section>
+    <!-- / Section -->
+  </div>
+</div>
+<!-- Copyright -->
+<div class="wrapper row4">
+  <footer id="copyright" class="clear">
+    <p class="fl_left">Copyright &copy; 2012 - All Rights Reserved - <a href="#">Domain Name</a></p>
+    <p class="fl_right">Template by <a href="http://www.os-templates.com/" title="Free Website Templates">OS Templates</a></p>
+  </footer>
+</div>
 </body>
 </html>
-{% for item in temp %}
-    <h1>{{ item.PairName }}</h1>
-    <h1>{{ item.High }}</h1>
-    <h1>{{ item.Low }}</h1>
-    <h1>{{ item.Last }}</h1>
-    <h1>{{ item.Volume }}</h1>
-    <h1>{{ item.BaseVolume }}</h1>
-    <h1>{{ item.TimeStamp }}</h1>
-    <h1>{{ item.Bid }}</h1>
-    <h1>{{ item.Ask }}</h1>
-    <h1>{{ item.OpenBuyOrders }}</h1>
-    <h1>{{ item.OpenSellOrders }}</h1>
-    <h1>{{ item.PrevDay }}</h1>
-{% endfor %}

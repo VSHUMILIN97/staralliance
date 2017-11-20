@@ -2,8 +2,14 @@ from django.db import models
 from django.utils import timezone
 # Create your models here.
 
+# Для чистоты кода используем переменные с названиями bit_obj_tick вместо bitObjTick
+# В_питоне_модно_с_граундами_писать , а не с АпперКейсомТипВотТак
+# Python != Java :'(((
+
+
 
 class BittrexOHLC(models.Model):
+
     published_date = models.DateTimeField(default=timezone.now)
     PairName = models.CharField(max_length=60, null=True)
     High = models.FloatField(null=True)
@@ -23,7 +29,7 @@ class BittrexOHLC(models.Model):
 
         self.save()
 
-    #
+
 
 
 class BittrexTick(models.Model):

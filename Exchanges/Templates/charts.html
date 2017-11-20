@@ -98,7 +98,7 @@ function drawDiffChart() {
     function drawChart() {
     var data = new google.visualization.DataTable();
     data.addColumn('string', 'Timestamp');
-    data.addColumn('number', 'LineOfSight');
+    data.addColumn('number', '{{ market }}');
     data.addColumn({type: 'string', role: 'tooltip'});
 
       var formatter = new google.visualization.NumberFormat({
