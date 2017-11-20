@@ -1,54 +1,36 @@
 from django.db import models
 from django.utils import timezone
-
-import requests
-import json
-import time
-
-
 # Create your models here.
 
-class Bittrex(models.Model):
+
+class BittrexOHLC(models.Model):
     published_date = models.DateTimeField(default=timezone.now)
-    PairName = models.CharField(max_length=60)
-    High = models.FloatField()
-    Low = models.FloatField()
-    Last = models.FloatField()
-    Volume = models.FloatField()
-    BaseVolume = models.FloatField()
-    TimeStamp = models.DateTimeField()
-    Bid = models.FloatField()
-    Ask = models.FloatField()
-    OpenBuyOrders = models.CharField(max_length=40)
-    OpenSellOrders = models.CharField(max_length=40)
-    PrevDay = models.FloatField()
+    PairName = models.CharField(max_length=60, null=True)
+    High = models.FloatField(null=True)
+    Low = models.FloatField(null=True)
+    Last = models.FloatField(null=True)
+    Volume = models.FloatField(null=True)
+    BaseVolume = models.FloatField(null=True)
+    TimeStamp = models.DateTimeField(null=True, default=timezone.now)
+    Bid = models.FloatField(null=True)
+    Ask = models.FloatField(null=True)
+    OpenBuyOrders = models.CharField(max_length=40, null=True)
+    OpenSellOrders = models.CharField(max_length=40, null=True)
+    PrevDay = models.FloatField(null=True)
+    BidDivAsk = models.FloatField(null=True)
 
     def setVals(self):
 
         self.save()
 
     #
-    """
-    def loadFromExchange(self, json_data):
-
-        PAINAME = json_data
-        HIGH = json_data
-        LOW = json_data
-        VOLUME = json_data
-        LAST = json_data
-        BASEVOLUME = json_data
-        TIMESTAMP = json_data
-        BID = json_data
-        ASK = json_data
-        OPENBUYORDERS = json_data
-        OPENSELLORDER = json_data
-        PREVDAY = json_data
-        CURRENCY = json_data
-        CURRENCYLONG = json_data
 
 
+class BittrexTick(models.Model):
+    PairName = models.CharField(max_length=60, null=True)
+    TimeStamp = models.CharField(max_length=60, default=timezone.now)
+    Tick = models.FloatField()
+
+    def saveModel(self):
         self.save()
-
-    """
-
 

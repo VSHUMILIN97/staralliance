@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+<div class="row">
+<div id="cndlstk_crt" style="border: 1px"></div>
+<div id="diff_crt" style="border: 1px"></div>
+<div id="curve_chart" style="border: 1px"></div>
+</div>
+
+<script type="text/javascript">
+google.charts.load('current', {'packages':['corechart', 'bar']});
+
+google.charts.setOnLoadCallback(drawCandlestick);
+google.charts.setOnLoadCallback(drawDiffChart);
+google.charts.setOnLoadCallback(drawChart)
+
+function drawCandlestick() {
+var data = new google.visualization.DataTable();
+data.addColumn('string', 'Timestamp');
+data.addColumn('number', 'High');
+data.addColumn('number', 'Open');
+data.addColumn('number', 'Last');
+data.addColumn('number', 'Low');
+
+{% for item in temp %}
+data.addRows([['{{ item.TimeStamp }}', {{ item.High }}, {{ item.Last }}, {{ item.PrevDay }}, {{ item.Low }} ]]);//
+{% endfor %}
+
+var options = {
+title: 'Будущий график японских свечек',
+width:1000,
+height:400,
+legend:'none',
+bar: { groupWidth: '22.8%' },
+colors: ['black'],
+candlestick: {
+fallingColor: { strokeWidth: 1, fill: '#e60000', stroke: 'black' }, // red
+risingColor: { strokeWidth: 1, fill: '#2eb82e', stroke: 'black' } // green
+},
+};
+
+var chart = new google.visualization.CandlestickChart(document.getElementById('cndlstk_crt'));
+
+chart.draw(data, options);
+}
+
+function drawDiffChart() {
+    var oldData = google.visualization.arrayToDataTable([
+      ['Name', 'Popularity'],
+      ['Cesar', 5000],
+      ['Rachel', 4200],
+      ['Patrick', 2900],
+      ['Eric', 2000],
+      ['Cesar', 3000],
+      ['Rachel', 2000],
+      ['Patrick', 8200],
+      ['Eric', 2500],
+      ['Cesar', 3000],
+      ['Rachel', 2000],
+      ['Patrick', 8200],
+      ['Eric', 2500],
+      ['Cesar', 5000],
+      ['Rachel', 4200],
+      ['Patrick', 2900],
+      ['Eric', 2000]
+    ]);
+
+    var newData = google.visualization.arrayToDataTable([
+      ['Name', 'Popularity'],
+      ['Cesar', 3000],
+      ['Rachel', 2000],
+      ['Patrick', 8200],
+      ['Eric', 2500],
+      ['Cesar', 5000],
+      ['Rachel', 4200],
+      ['Patrick', 2900],
+      ['Eric', 2000],
+      ['Cesar', 5000],
+      ['Rachel', 4200],
+      ['Patrick', 2900],
+      ['Eric', 2000],
+      ['Cesar', 3000],
+      ['Rachel', 2000],
+      ['Patrick', 8200],
+      ['Eric', 2500]
+    ]);
+
+    var colChartDiff = new google.visualization.ColumnChart(document.getElementById('diff_crt'));
+
+	var options = {
+	title: 'Будущий график объемов покупок-продаж',
+	width:1000,
+    height:400,
+    legend: { position: 'none'},
+    bar: { groupWidth: '61.8%' },
+    diff: {
+        oldData: { opacity: 1, color: '#e60000', tooltip: { prefix:'Покупка' } },
+        newData: { opacity: 1, widthFactor: 0.7, tooltip: { prefix:'Продажа' } }
+    } ,
+    colors: ['#2eb82e']
+    };
+
+    var diffData = colChartDiff.computeDiff(oldData, newData);
+    colChartDiff.draw(diffData, options);
+    }
+
+
+
+    function drawChart() {
+    var data = new google.visualization.DataTable();
+    data.addColumn('string', 'Timestamp');
+    data.addColumn('number', 'LineOfSight');
+
+        {% for item in temp1 %}
+        data.addRows([['{{ item.TimeStamp }}' , {{ item.Tick }}]]);//
+        {% endfor %}
+
+        var options = {
+          title: 'Middle',
+          curveType: 'none',
+          legend: { position: 'bottom' }
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+        chart.draw(data, options);
+      }
+</script>
+{% endblock content %}

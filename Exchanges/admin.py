@@ -1,4 +1,4 @@
 from django.contrib import admin
-from Exchanges.models import Bittrex
+from Exchanges.models import BittrexOHLC
 # Register your models here.
-admin.site.register(Bittrex)
+admin.site.register(BittrexOHLC)
