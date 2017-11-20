@@ -14,7 +14,7 @@ google.charts.load('current', {'packages':['corechart', 'bar']});
 
 google.charts.setOnLoadCallback(drawCandlestick);
 google.charts.setOnLoadCallback(drawDiffChart);
-google.charts.setOnLoadCallback(drawChart)
+google.charts.setOnLoadCallback(drawChart);
 
 	  function drawCandlestick() {
 	  var data = new google.visualization.DataTable();
@@ -59,20 +59,21 @@ google.charts.setOnLoadCallback(drawChart)
 
 function drawDiffChart() {
     var sellData = new google.visualization.DataTable();
-    sellData.addColumn('string','TimeStamp');
-    sellData.addColumn('number', 'Sell');
+      sellData.addColumn('string', 'Timestamp');
+      sellData.addColumn('number', 'Sell');
 
-    {% for item in sellBook %}
-    sellData.addRows([['{{ item.TimeStamp }}', {{ item.Quantity }}]]);
-    {% endfor %}
+      {% for item in sellBook %}
+      sellData.addRows([['1', {{ item.Quantity }}]]);
+      {% endfor %}
 
-    var buyData = google.visualization.DataTable();
-    buyData.addColumn('string', 'TimeStamp');
-    buyData.addColumn('number', 'Buy');
+    var buyData = new google.visualization.DataTable();
+      buyData.addColumn('string', 'Timestamp');
+      buyData.addColumn('number', 'Buy');
 
-    {% for item in buyBook %}
-    buyData.addRows([['{{ item.TimeStamp }}', {{ item.Quantity }}]]);
-    {% endfor %}
+
+      {% for item in buyBook %}
+      buyData.addRows([['1', {{ item.Quantity }}]]);
+      {% endfor %}
 
     var colChartDiff = new google.visualization.ColumnChart(document.getElementById('diff_crt'));
 
@@ -80,16 +81,16 @@ function drawDiffChart() {
 	title: 'Будущий график объемов покупок-продаж для {{ market }}',
 	width:1000,
     height:400,
-    legend: { position: 'none'},
-    bar: { groupWidth: '61.8%' },
+    legend: { position: 'top'},
+    bar: { groupWidth: '41.8%' },
     diff: {
-        sellData: { opacity: 1, color: '#e60000', tooltip: { prefix:'Продажа' } },
-        buyData: { opacity: 1, widthFactor: 0.7, tooltip: { prefix:'Покупка' } }
+        oldData: { opacity: 1, color: '#31e607', tooltip: { prefix:'Продажа' } },
+        newData: { opacity: 1, widthFactor: 0.7, tooltip: { prefix:'Покупка' } }
     } ,
-    colors: ['#2eb82e']
+    colors: ['#b80009']
     };
 
-    var diffData = colChartDiff.computeDiff(sellData, buyData);
+    var diffData = colChartDiff.computeDiff(buyData, sellData);
     colChartDiff.draw(diffData, options);
     }
 

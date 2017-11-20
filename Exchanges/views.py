@@ -22,12 +22,12 @@ def Bittrex_view(request, market=""):
         market = market.upper()
         book = BittrexOHLC.objects.all().filter(PairName=market)
     else:
-        book = BittrexVolume.objects.all()
+        book = BittrexVolume.objects.all()[:5]
     return render(request, "Bittrex_template.html",  {'temp': book})  #
 
 class ChartsView(View):
     def get(self, request, market="", *args, **kwargs):
-        api_get_getticker(market)
+        #api_get_getticker(market)
         #api_get_getmarkethistory(market)
         if market != "":
             market = market.upper()
@@ -36,6 +36,6 @@ class ChartsView(View):
             market = 'BTC-1ST'
             book = BittrexOHLC.objects.all().filter(PairName=market)
         book1 = BittrexTick.objects.all().filter(PairName=market)
-        bookBuy = BittrexVolume.objects.all().filter(PairName=market, OrderType='BUY')
-        bookSell = BittrexVolume.objects.all().filter(PairName=market, OrderType='SELL')
+        bookBuy = BittrexVolume.objects.all().filter(PairName=market, OrderType='BUY')[:5]
+        bookSell = BittrexVolume.objects.all().filter(PairName=market, OrderType='SELL')[:5]
         return render(request, 'charts.html', {'temp': book, 'temp1': book1, 'market': market, 'buyBook': bookBuy, 'sellBook': bookSell})  #магия
