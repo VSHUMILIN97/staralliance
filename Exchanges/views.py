@@ -9,9 +9,9 @@ from django.views.generic import View
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.http import JsonResponse
-#from Exchanges.BittrexObjCreate import api_get_getmarkethistory
-#from Exchanges.BittrexObjCreate import api_get_getmarketsummaries
-#from Exchanges.BittrexObjCreate import api_get_getticker
+from Exchanges.BittrexObjCreate import api_get_getmarkethistory
+from Exchanges.BittrexObjCreate import api_get_getmarketsummaries
+from Exchanges.BittrexObjCreate import api_get_getticker
 from django.utils import timezone
 # Create your views here.
 
@@ -25,13 +25,13 @@ def index_view(request):
 
 def Bittrex_view(request, market=""):
 
-    # api_get_getmarketsummaries()
+    api_get_getmarketsummaries()
     # api_get_getticker()
     if market != "":
         market = market.upper()
         book = BittrexOHLC.objects.all().filter(PairName=market)
     else:
-        book = BittrexVolume.objects.all()[:5]
+        book = BittrexOHLC.objects.all()
     return render(request, "Bittrex_template.html",  {'temp': book})  #
 
 class ChartsView(View): # Класс для вывода графиков
@@ -49,7 +49,7 @@ class ChartsView(View): # Класс для вывода графиков
             book = BittrexOHLC.objects.all().filter(PairName=market)
 
         book1 = BittrexTick.objects.all().filter(PairName=market)
-        book_buy = BittrexVolume.objects.all().filter(PairName=market, OrderType='BUY')[:9]
-        book_sell = BittrexVolume.objects.all().filter(PairName=market, OrderType='SELL')[:9]
+        book_buy = BittrexVolume.objects.all().filter(PairName=market, OrderType='BUY')[:5]
+        book_sell = BittrexVolume.objects.all().filter(PairName=market, OrderType='SELL')[:5]
 
         return render(request, 'charts.html', {'temp': book, 'temp1': book1, 'market': market, 'buyBook': book_buy, 'sellBook': book_sell})  #магия

@@ -26,16 +26,6 @@
   <table>
 {% for item in temp %}
     <tr>
-    <td>{{ item.TimeStamp }}</td>
-    <td>{{ item.Quantity }}</td>
-    <td>{{ item.PairName }}</td>
-    <td>{{ item.OrderType }}</td>
-    </tr>
-{% endfor %}
-  </table>
-<table>
- {% for item in temp %}
-     <tr>
     <td>{{ item.PairName }}</td>
     <td>{{ item.High }}</td>
     <td>{{ item.Low }}</td>
@@ -48,9 +38,9 @@
     <td>{{ item.OpenBuyOrders }}</td>
     <td>{{ item.OpenSellOrders }}</td>
     <td>{{ item.PrevDay }}</td>
-     </tr>
+    </tr>
 {% endfor %}
-</table>
+  </table>
   </div>
 </div>
 <div class="wrapper row3">

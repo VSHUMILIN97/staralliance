@@ -99,7 +99,7 @@ input, textarea, select{font-size:12px; font-family:Georgia,"Times New Roman",Ti
 #container section{display:block; width:100%; margin:0 0 30px 0; padding:0;}
 #container .last{margin:0;}
 #container .more{text-align:right;}
-#container setction h3{font-size: 14px; font-style: normal}
+#container section h3{font-size: 14px; font-style: normal}
 /* ------Slider-----*/
 
 #container #slider{}

@@ -1,7 +1,9 @@
 import datetime
-
+import iso8601
+import pytz
 import requests
 import json
+from django.utils import timezone
 import time
 from Exchanges.views import BittrexOHLC
 from Exchanges.views import BittrexTick
@@ -14,7 +16,7 @@ from Exchanges.views import BittrexVolume
 
 
 def api_get_getmarketsummaries():
-
+    timezone.deactivate()
     print('Before Bittrix call attempt to server - ' + str(time.time()))
 
     api_request = requests.get("https://bittrex.com/api/v1.1/public/" + "getmarketsummaries")
@@ -24,6 +26,7 @@ def api_get_getmarketsummaries():
 
     # Если полученный JSON массив из apiRequest несет в себе данные , а не разочарование , то , парсим по переменным
     # и передаем все это в новый объект из models.py
+    # Для timestamp используем формат ISO8601, который DateTime модели без проблем распознает =)
 
     if json_data['success']:
         result = json_data['result']
@@ -32,10 +35,11 @@ def api_get_getmarketsummaries():
             marketname, high, low, volume, last, basevolume, timestamp, bid, ask, openbuyorders, opensellorders, prevday = \
              str( item['MarketName']), float('{:.10f}'.format( item['High'])), float('{:.10f}'.format(item['Low'])), \
              float('{:.10f}'.format(item['Volume'])), float('{:.10f}'.format( item['Last'])), float('{:.10f}'.format(item['BaseVolume'])), \
-             datetime.datetime.strptime(str(item['TimeStamp']), '%Y-%m-%dT%H:%M:%S.%f'), float('{:.10f}'.format( item['Bid'])),\
+             iso8601.parse_date(item['TimeStamp']), float('{:.10f}'.format( item['Bid'])),\
              float( '{:.10f}'.format(item['Ask'])), str(item['OpenBuyOrders']), str(item['OpenSellOrders']), float('{:.10f}'.format(item['PrevDay']))
 
             # Создаем объект типа BittrexOHLC ( models.py ) и в конструктор передаем результаты обращения к API
+
             bit_obj_ohlc = BittrexOHLC(PairName=marketname, High=high, Low=low, Last=last,
                                  Volume=volume, BaseVolume=basevolume,
                                  TimeStamp=timestamp, Bid=bid, Ask=ask, OpenBuyOrders=openbuyorders,
@@ -77,3 +81,25 @@ def api_get_getmarkethistory(Pairs):
 
             bit_obj_vol = BittrexVolume(PairName=Pairs, IdOrder=iD, TimeStamp=timestamp, Quantity=quantity, Price=price, Total=total, FillType=filltype, OrderType=ordertype)
             bit_obj_vol.save()
+
+
+###Рабочая версия парсилки с датами
+"""
+ if json_data['success']:
+        result = json_data['result']
+
+        for item in result:
+            marketname, high, low, volume, last, basevolume, timestamp, bid, ask, openbuyorders, opensellorders, prevday = \
+             str( item['MarketName']), float('{:.10f}'.format( item['High'])), float('{:.10f}'.format(item['Low'])), \
+             float('{:.10f}'.format(item['Volume'])), float('{:.10f}'.format( item['Last'])), float('{:.10f}'.format(item['BaseVolume'])), \
+             (str(item['TimeStamp']).replace('T', ',').replace(':', ',').replace('-', ',').replace('.', ',')).split(','), float('{:.10f}'.format( item['Bid'])),\
+             float( '{:.10f}'.format(item['Ask'])), str(item['OpenBuyOrders']), str(item['OpenSellOrders']), float('{:.10f}'.format(item['PrevDay']))
+
+            # Создаем объект типа BittrexOHLC ( models.py ) и в конструктор передаем результаты обращения к API
+            dtutc = datetime.datetime(int(timestamp[0]), int(timestamp[1]), int(timestamp[2]), int(timestamp[3]), int(timestamp[4]), int(timestamp[5]), tzinfo=pytz.UTC)
+            bit_obj_ohlc = BittrexOHLC(PairName=marketname, High=high, Low=low, Last=last,
+                                 Volume=volume, BaseVolume=basevolume,
+                                 TimeStamp=dtutc, Bid=bid, Ask=ask, OpenBuyOrders=openbuyorders,
+                                 OpenSellOrders=opensellorders, PrevDay=prevday)
+            bit_obj_ohlc.save()
+"""

@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+import datetime
 # Create your models here.
 
 # Для чистоты кода используем переменные с названиями bit_obj_tick вместо bitObjTick
@@ -17,7 +18,7 @@ class BittrexOHLC(models.Model):
     Last = models.FloatField(null=True)
     Volume = models.FloatField(null=True)
     BaseVolume = models.FloatField(null=True)
-    TimeStamp = models.DateTimeField(null=True, default=timezone.now)
+    TimeStamp = models.DateTimeField(null=True, default=datetime.datetime.now())
     Bid = models.FloatField(null=True)
     Ask = models.FloatField(null=True)
     OpenBuyOrders = models.CharField(max_length=40, null=True)
