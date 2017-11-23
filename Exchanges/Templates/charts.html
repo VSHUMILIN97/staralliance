@@ -30,7 +30,7 @@ google.charts.setOnLoadCallback(drawChart);
        });
 
 
-      {% for item in temp %}
+      {% for item in testAggr %}
       data.addRows([['{{ item.TimeStamp }}', {{ item.High }}, {{ item.PrevDay }}, {{ item.Last }}, {{ item.Low }},
                      '{{ item.TimeStamp }} \n High: ' + formatter.formatValue({{ item.High }}) +
                      ' \n Open: ' + formatter.formatValue({{ item.PrevDay }}) +

@@ -12,6 +12,7 @@ from django.http import JsonResponse
 from Exchanges.BittrexObjCreate import api_get_getmarkethistory
 from Exchanges.BittrexObjCreate import api_get_getmarketsummaries
 from Exchanges.BittrexObjCreate import api_get_getticker
+from Exchanges.TimeAggregator import TimeAggregator
 from django.utils import timezone
 # Create your views here.
 
@@ -36,8 +37,9 @@ def Bittrex_view(request, market=""):
 
 class ChartsView(View): # Класс для вывода графиков
     def get(self, request, market="", *args, **kwargs):
-        # api_get_getticker(market)
-        # api_get_getmarkethistory(market)
+        #api_get_getticker(market)
+        #api_get_getmarkethistory(market)
+        #api_get_getmarketsummaries()
 
         if market != "":
             # Переводим имя пары из URL в upper case
@@ -48,8 +50,9 @@ class ChartsView(View): # Класс для вывода графиков
             market = 'BTC-1ST'
             book = BittrexOHLC.objects.all().filter(PairName=market)
 
+        testagr = TimeAggregator()
         book1 = BittrexTick.objects.all().filter(PairName=market)
         book_buy = BittrexVolume.objects.all().filter(PairName=market, OrderType='BUY')[:5]
         book_sell = BittrexVolume.objects.all().filter(PairName=market, OrderType='SELL')[:5]
 
-        return render(request, 'charts.html', {'temp': book, 'temp1': book1, 'market': market, 'buyBook': book_buy, 'sellBook': book_sell})  #магия
+        return render(request, 'charts.html', {'temp': book, 'temp1': book1, 'market': market, 'buyBook': book_buy, 'sellBook': book_sell, 'testAggr': testagr.OHLCaggregation()})  #магия
