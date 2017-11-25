@@ -50,7 +50,7 @@ def api_get_getmarketsummaries():
 def api_get_getticker(Pairs):
 
     if Pairs == '':
-        Pairs == 'BTC-1ST'  # Доделал под текущую вьюху
+        Pairs = 'BTC-1ST'  # Доделал под текущую вьюху
 
     # Получаем данные с API битрикса по конкретной валютной паре (ex. localhost/bittrex/btc-eth
     api_request = requests.get("https://bittrex.com/api/v1.1/public/" + "getticker?market=" + Pairs)
@@ -70,6 +70,8 @@ def api_get_getticker(Pairs):
 
 def api_get_getmarkethistory(Pairs):
 
+    if Pairs == '':
+        Pairs = 'BTC-1ST'  # Доделал под текущую вьюху
     # Тут все по аналогии
     api_request = requests.get("https://bittrex.com/api/v1.1/public/" + "getmarkethistory?market=" + Pairs)
     json_data = json.loads(api_request.text)

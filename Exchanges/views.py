@@ -52,7 +52,8 @@ class ChartsView(View): # Класс для вывода графиков
 
         testagr = TimeAggregator()
         #создает объект каждый раз, собственно нужен фикс. Строчку ниже не раскоменчивать до устранения!
-        #testagr.OHLCaggregation(market)
+        testagr.OHLCaggregation(market)
+        print(BittrexOHLC.objects.datetimes('TimeStamp', 'second'))
         book1 = BittrexTick.objects.all().filter(PairName=market)
         book_buy = BittrexVolume.objects.all().filter(PairName=market, OrderType='BUY')[:5]
         book_sell = BittrexVolume.objects.all().filter(PairName=market, OrderType='SELL')[:5]
