@@ -16,15 +16,8 @@ class BittrexOHLC(models.Model):
     High = models.FloatField(null=True)
     Low = models.FloatField(null=True)
     Last = models.FloatField(null=True)
-    Volume = models.FloatField(null=True)
-    BaseVolume = models.FloatField(null=True)
     TimeStamp = models.DateTimeField(null=True, default=timezone.now)
-    Bid = models.FloatField(null=True)
-    Ask = models.FloatField(null=True)
-    OpenBuyOrders = models.CharField(max_length=40, null=True)
-    OpenSellOrders = models.CharField(max_length=40, null=True)
     PrevDay = models.FloatField(null=True)
-    BidDivAsk = models.FloatField(null=True)
     Aggregated = models.BooleanField(default=False)
 
     def setVals(self):

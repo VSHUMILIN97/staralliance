@@ -33,17 +33,16 @@ def api_get_getmarketsummaries():
 
         for item in result:
             marketname, high, low, volume, last, basevolume, timestamp, bid, ask, openbuyorders, opensellorders, prevday = \
-             str( item['MarketName']), float('{:.10f}'.format( item['High'])), float('{:.10f}'.format(item['Low'])), \
-             float('{:.10f}'.format(item['Volume'])), float('{:.10f}'.format( item['Last'])), float('{:.10f}'.format(item['BaseVolume'])), \
-             iso8601.parse_date(item['TimeStamp']), float('{:.10f}'.format( item['Bid'])),\
-             float( '{:.10f}'.format(item['Ask'])), str(item['OpenBuyOrders']), str(item['OpenSellOrders']), float('{:.10f}'.format(item['PrevDay']))
+             str(item['MarketName']), float('{:.10f}'.format(item['High'])), float('{:.10f}'.format(item['Low'])), \
+             float('{:.10f}'.format(item['Volume'])), float('{:.10f}'.format(item['Last'])), float('{:.10f}'.format(item['BaseVolume'])), \
+             iso8601.parse_date(item['TimeStamp']), float('{:.10f}'.format(item['Bid'])),\
+             float('{:.10f}'.format(item['Ask'])), str(item['OpenBuyOrders']),\
+             str(item['OpenSellOrders']), float('{:.10f}'.format(item['PrevDay']))
 
             # Создаем объект типа BittrexOHLC ( models.py ) и в конструктор передаем результаты обращения к API
 
-            bit_obj_ohlc = BittrexOHLC(PairName=marketname, High=high, Low=low, Last=last,
-                                 Volume=volume, BaseVolume=basevolume,
-                                 TimeStamp=timestamp, Bid=bid, Ask=ask, OpenBuyOrders=openbuyorders,
-                                 OpenSellOrders=opensellorders, PrevDay=prevday)
+            bit_obj_ohlc = BittrexOHLC(PairName=marketname, High=high, Low=low,
+                                       Last=last, TimeStamp=timestamp, PrevDay=prevday)
             bit_obj_ohlc.save()
 
 
