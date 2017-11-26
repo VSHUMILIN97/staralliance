@@ -13,7 +13,7 @@ from Exchanges.views import BittrexVolume
 # В_питоне_модно_с_граундами_писать , а не с АпперКейсомТипВотТак
 # Python != Java :'(((
 
-
+pairlist = ['BTC-1ST', 'BTC-LTC', 'BTC-ETH']
 
 def api_get_getmarketsummaries():
     timezone.deactivate()
@@ -46,43 +46,40 @@ def api_get_getmarketsummaries():
             bit_obj_ohlc.save()
 
 
-def api_get_getticker(Pairs):
+def api_get_getticker():
 
-    if Pairs == '':
-        Pairs = 'BTC-1ST'  # Доделал под текущую вьюху
-
+     # Доделал под текущую вьюху
     # Получаем данные с API битрикса по конкретной валютной паре (ex. localhost/bittrex/btc-eth
-    api_request = requests.get("https://bittrex.com/api/v1.1/public/" + "getticker?market=" + Pairs)
-    # Формируем JSON массив из данных с API
-    json_data = json.loads(api_request.text)
-    # Если все ок - парсим
-    if json_data['success']:
+    for i in range(0, len(pairlist)):
+        api_request = requests.get("https://bittrex.com/api/v1.1/public/" + "getticker?market=" + pairlist[i])
+        # Формируем JSON массив из данных с API
+        json_data = json.loads(api_request.text)
+        # Если все ок - парсим
+        if json_data['success']:
 
-        # Назначаем объект 'result' корневым, для простоты обращения
-        root = json_data['result']
-        bid, ask, last = float(root['Bid']), float(root['Ask']), str(root['Last'])
+            # Назначаем объект 'result' корневым, для простоты обращения
+            root = json_data['result']
+            bid, ask, last = float(root['Bid']), float(root['Ask']), str(root['Last'])
 
-        # Создаем объект по модели BittrexTick , в конструктор передаем распаршенные данные
-        bit_obj_tick = BittrexTick(PairName=Pairs, Tick=((ask + bid) / 2))
-        bit_obj_tick.save()
+            # Создаем объект по модели BittrexTick , в конструктор передаем распаршенные данные
+            bit_obj_tick = BittrexTick(PairName=pairlist[i], Tick=((ask + bid) / 2))
+            bit_obj_tick.save()
+            print('Ended getticker['+str(i)+'] in - ', str(time.time()))
 
 
-def api_get_getmarkethistory(Pairs):
+def api_get_getmarkethistory():
 
-    if Pairs == '':
-        Pairs = 'BTC-1ST'  # Доделал под текущую вьюху
-    # Тут все по аналогии
-    api_request = requests.get("https://bittrex.com/api/v1.1/public/" + "getmarkethistory?market=" + Pairs)
-    json_data = json.loads(api_request.text)
-    if json_data['success']:
-        result = json_data['result']
-        for item in result:
-            iD, timestamp, quantity, price, total, filltype, ordertype = \
-            int(item['Id']), str(item['TimeStamp']), float(item['Quantity']), float(item['Price']), float(item['Total']), str(item['FillType']), str(item['OrderType'])
+    for i in range(0, len(pairlist)):
+        api_request = requests.get("https://bittrex.com/api/v1.1/public/" + "getmarkethistory?market=" + pairlist[i])
+        json_data = json.loads(api_request.text)
+        if json_data['success']:
+            result = json_data['result']
+            for item in result:
+                iD, timestamp, quantity, price, total, filltype, ordertype = \
+                int(item['Id']), iso8601.parse_date(item['TimeStamp']), float(item['Quantity']), float(item['Price']), float(item['Total']), str(item['FillType']), str(item['OrderType'])
 
-            bit_obj_vol = BittrexVolume(PairName=Pairs, IdOrder=iD, TimeStamp=timestamp, Quantity=quantity, Price=price, Total=total, FillType=filltype, OrderType=ordertype)
-            bit_obj_vol.save()
-
+                bit_obj_vol = BittrexVolume(PairName=pairlist[i], IdOrder=iD, TimeStamp=timestamp, Quantity=quantity, Price=price, Total=total, FillType=filltype, OrderType=ordertype)
+                bit_obj_vol.save()
 
 ###Рабочая версия парсилки с датами
 """

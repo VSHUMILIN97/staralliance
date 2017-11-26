@@ -13,12 +13,12 @@ from django.db.models import F
 from django.db.models import Avg
 
 
-
+"""
 class TimeAggregator:
 
     def __init__(self):
 
-        """Предстоит тяжелая и нудная работа =) https://docs.djangoproject.com/en/1.11/topics/db/aggregation/"""
+        #Предстоит тяжелая и нудная работа =) https://docs.djangoproject.com/en/1.11/topics/db/aggregation/
 
     def OHLCaggregation(self, market):
         global tempLast, tempPrevday, tempAggregation
@@ -26,7 +26,7 @@ class TimeAggregator:
             market = 'BTC-1ST'
 
         #бал рот этого вашего времени, иззвините. Антихайп
-        """https://djbook.ru/rel1.8/topics/i18n/timezones.html"""
+        #https://djbook.ru/rel1.8/topics/i18n/timezones.html
         print(BittrexOHLC.objects.datetimes('TimeStamp', 'second')[1])
         faketime = (2017, 11, 25, 18, 10, 0, 1, 0, 0)
         fakestart = time.mktime(tuple(faketime))
@@ -43,9 +43,9 @@ class TimeAggregator:
                                            Aggregated=True)
                 bit_obj_ohlc.save()
             else:
-                """tempAggregation = models.BittrexOHLC.objects.filter(PairName=market, Aggregated=False,TimeStamp=BittrexOHLC.objects.datetimes('TimeStamp', 'second')[i+1]).aggregate(Max('High'), Min('Low'))
+                tempAggregation = models.BittrexOHLC.objects.filter(PairName=market, Aggregated=False,TimeStamp=BittrexOHLC.objects.datetimes('TimeStamp', 'second')[i+1]).aggregate(Max('High'), Min('Low'))
                 tempPrevday = models.BittrexOHLC.objects.filter(PairName=market, Aggregated=False, TimeStamp=BittrexOHLC.objects.datetimes('TimeStamp', 'second')[i+1]).values('PrevDay', 'TimeStamp')[0]
-                tempLast = models.BittrexOHLC.objects.filter(PairName=market, Aggregated=False, TimeStamp=BittrexOHLC.objects.datetimes('TimeStamp', 'second')[i+1]).values('Last').latest('Last')"""
+                tempLast = models.BittrexOHLC.objects.filter(PairName=market, Aggregated=False, TimeStamp=BittrexOHLC.objects.datetimes('TimeStamp', 'second')[i+1]).values('Last').latest('Last')
         #
         #Данный метод не дает возможности отслеживать таймлайн/ Нужен фикс
         #
@@ -59,3 +59,4 @@ class TimeAggregator:
 
     def Tickaggregation(self):
         return None
+"""

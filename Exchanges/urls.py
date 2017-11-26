@@ -4,7 +4,7 @@ from django.conf.urls.static import static
 from PiedPiper import settings
 urlpatterns = [
 
-    url(r'^$', views.index_view , name='index'),
+    url(r'^$', views.index_view, name='index'),
 
     url(r'^bittrex/$', views.Bittrex_view, name='Bittrex'),
     url(r'^bittrex/(?P<market>[A-Za-z]+-[A-Za-z]+)/$', views.Bittrex_view, name='bittrex/marketname'),
