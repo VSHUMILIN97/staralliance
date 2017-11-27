@@ -2,6 +2,9 @@ from django.conf.urls import url
 from Exchanges import views
 from django.conf.urls.static import static
 from PiedPiper import settings
+from .tick_exchparser import ThreadingT
+
+# Здесь есть баг для некоторых пар, нужно фиксить.
 urlpatterns = [
 
     url(r'^$', views.index_view, name='index'),
@@ -17,3 +20,9 @@ urlpatterns = [
     url(r'^charts/(?P<market>[A-Za-z]+-[A-Za-z]+\d)/$', views.ChartsView.as_view(), name='charts/emc2'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 # STATIC_URL нужен для импорта css , img, js файлов из папки static
+
+# URLS.PY загружается только один раз, как следствие запускать наш скрипт на обработку данных можно отсюда
+# Необходимо для постоянного сбора данных. Вынесено в отдельный поток во избежания страданий основного из-за While(True)
+#
+testingThreads = ThreadingT()
+testingThreads.start()

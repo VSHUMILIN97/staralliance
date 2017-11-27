@@ -1,6 +1,5 @@
 from django.db import models
 from django.utils import timezone
-import datetime
 # Create your models here.
 
 # Для чистоты кода используем переменные с названиями bit_obj_tick вместо bitObjTick
