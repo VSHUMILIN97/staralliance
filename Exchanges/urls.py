@@ -2,7 +2,8 @@ from django.conf.urls import url
 from Exchanges import views
 from django.conf.urls.static import static
 from PiedPiper import settings
-from .tick_exchparser import ThreadingT
+from .tick_exchparser import ThreadingT, aggregation_trigger
+from threading import Thread
 
 # Здесь есть баг для некоторых пар, нужно фиксить.
 urlpatterns = [
@@ -23,6 +24,12 @@ urlpatterns = [
 
 # URLS.PY загружается только один раз, как следствие запускать наш скрипт на обработку данных можно отсюда
 # Необходимо для постоянного сбора данных. Вынесено в отдельный поток во избежания страданий основного из-за While(True)
-# Make daemonic(!)
+# Make daemonic(!) ПРОДУМАТЬ БЕЗОПАСНОСТЬ!
 testingThreads = ThreadingT()
-testingThreads.start()
+t2 = Thread(target=aggregation_trigger)
+try:
+    testingThreads.start()
+    t2.start()
+except:
+    print('urls mistake')
+

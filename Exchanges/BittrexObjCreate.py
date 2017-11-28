@@ -18,7 +18,6 @@ pairlist = ['BTC-1ST', 'BTC-LTC', 'BTC-ETH']
 
 # Метод получается последние биржевые данные, парсит поля и выносит в модель необходимое.
 def api_get_getmarketsummaries():
-    timezone.deactivate()
     print('Before Bittrix call attempt to server - ' + str(time.time()))
 
     api_request = requests.get("https://bittrex.com/api/v1.1/public/" + "getmarketsummaries")
@@ -46,6 +45,7 @@ def api_get_getmarketsummaries():
             bit_obj_ohlc = BittrexOHLC(PairName=marketname, High=high, Low=low,
                                        Last=last, TimeStamp=timestamp, PrevDay=prevday)
             bit_obj_ohlc.save()
+        print("That's all, folks")
 
 
 # По некоторым соображениям, самый работающий график на данный момент.
