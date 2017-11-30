@@ -41,10 +41,6 @@ def api_get_getmarketsummaries():
              str(item['OpenSellOrders']), float('{:.10f}'.format(item['PrevDay']))
 
             # Создаем объект типа BittrexOHLC ( models.py ) и в конструктор передаем результаты обращения к API
-
-            bit_obj_ohlc = BittrexOHLC(PairName=marketname, High=high, Low=low,
-                                       Last=last, TimeStamp=timestamp, PrevDay=prevday)
-            bit_obj_ohlc.save()
         print("That's all, folks")
 
 
@@ -66,8 +62,6 @@ def api_get_getticker():
             bid, ask, last = float(root['Bid']), float(root['Ask']), str(root['Last'])
 
             # Создаем объект по модели BittrexTick , в конструктор передаем распаршенные данные
-            bit_obj_tick = BittrexTick(PairName=pairlist[i], Tick=((ask + bid) / 2))
-            bit_obj_tick.save()
             print('Ended getticker['+str(i)+'] in - ', str(time.time()))
 
 
@@ -85,5 +79,3 @@ def api_get_getmarkethistory():
                 int(item['Id']), iso8601.parse_date(item['TimeStamp']), float(item['Quantity']), float(item['Price']), float(item['Total']), str(item['FillType']), str(item['OrderType'])
 
                 # Создаем объект по модели BittrexTick , в конструктор передаем распаршенные данные
-                bit_obj_vol = BittrexVolume(PairName=pairlist[i], IdOrder=iD, TimeStamp=timestamp, Quantity=quantity, Price=price, Total=total, FillType=filltype, OrderType=ordertype)
-                bit_obj_vol.save()

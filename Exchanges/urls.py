@@ -4,8 +4,7 @@ from django.conf.urls.static import static
 from PiedPiper import settings
 from .tick_exchparser import ThreadingT, aggregation_trigger
 from threading import Thread
-from pymongo import MongoClient
-
+from mongo_db_connection import MongoDBConnection
 
 # Здесь есть баг для некоторых пар, нужно фиксить.
 urlpatterns = [
@@ -24,18 +23,15 @@ urlpatterns = [
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 # STATIC_URL нужен для импорта css , img, js файлов из папки static
 
-
-class MongoDBConnection:
-    def start_db(self):
-        connect = MongoClient('localhost', 27017)
-        return connect
-
-b = MongoDBConnection()
-connection = b.start_db()
-db = connection.PiedPiperStock
-test = db.Bittrex
-data1 = {'mama':'love'}
-test.insert(data1)
+# Вызов экземпляра класс MongoDBConnection из файла mongo_db_connection
+connectme = MongoDBConnection()
+# Подключение к БД PiedPiperStock(Дебаговая БД) После подключения все концы сбрасывает, так что технически безопасно
+db = connectme.start_db().PiedPiperStock
+# Выбор коллекции Bittrex из общего стэка коллекций БД.
+# test = db.Bittrex
+# data1 = {'mama':'love'}
+# Ввод данных. Предполагает работу с JSON.
+# test.insert(data1)
 # URLS.PY загружается только один раз, как следствие запускать наш скрипт на обработку данных можно отсюда
 # Необходимо для постоянного сбора данных. Вынесено в отдельный поток во избежания страданий основного из-за While(True)
 # Make daemonic(!) ПРОДУМАТЬ БЕЗОПАСНОСТЬ!
