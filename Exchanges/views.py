@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from Exchanges.models import BittrexOHLC, BittrexVolume, BittrexTick
 from django.views.generic import View
-
 # Create your views here.
 # Для чистоты кода используем переменные с названиями bit_obj_tick вместо bitObjTick
 # В_питоне_модно_с_граундами_писать , а не с АпперКейсомТипВотТак
@@ -37,7 +36,9 @@ class ChartsView(View): # Класс для вывода графиков
             market = 'BTC-1ST'
 
         book = BittrexOHLC.objects.all().filter(PairName=market)
-
+       # PublicApi = PublicAPI(PairName='PidorBaba', TimeStamp='2017.10.11')
+       # PublicApi.save()
+       # print(PublicApi.PairName)
         # Этих строк тут предположительно НЕ будет. Агреграция будет происходит по триггеру тикера В БЕСКОНЕЧНОМ режиме
         #testagr = TimeAggregator()
         #создает объект каждый раз, собственно нужен фикс. Строчку ниже не раскомменчивать до устранения!

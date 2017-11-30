@@ -7,6 +7,12 @@ from django.utils import timezone
 # Python != Java :'(((
 
 
+"""class PublicAPI(Document):
+    PairName = StringField(max_length=12)
+    TimeStamp = DateTimeField(default=timezone.now, help_text='returned date')
+    Tick = FloatField()
+    Aggregated = BooleanField(default=False)"""
+
 
 class BittrexOHLC(models.Model):
 
@@ -19,11 +25,8 @@ class BittrexOHLC(models.Model):
     PrevDay = models.FloatField(null=True)
     Aggregated = models.BooleanField(default=False)
 
-    def setVals(self):
-
+    def set_values(self):
         self.save()
-
-
 
 
 class BittrexTick(models.Model):
@@ -32,7 +35,7 @@ class BittrexTick(models.Model):
     Tick = models.FloatField()
     Aggregated = models.BooleanField(default=False)
 
-    def saveModel(self):
+    def save_model(self):
         self.save()
 
 
@@ -47,7 +50,7 @@ class BittrexVolume(models.Model):
     OrderType = models.CharField(max_length=15)
     Aggregated = models.BooleanField(default=False)
 
-    def autoSave(self):
+    def auto_save(self):
         self.save()
 
 
