@@ -25,18 +25,18 @@ class ThreadingT(Thread):
                 print(timeTemp)
                 try:
                     print('1')
-                    # t1 = Thread(target=api_get_getmarketsummaries)
-                    # t2 = Thread(target=api_get_getmarkethistory)
-                    # t3 = Thread(target=api_get_getticker)
-                    # t1._stop()
-                    # t2._stop()
-                    # t3._stop()
-                    # t1.start()
-                    # t2.start()
-                    # t3.start()
-                    # t1.join()
-                    # t2.join()
-                    # t3.join()
+                    t1 = Thread(target=api_get_getmarketsummaries)
+                    t2 = Thread(target=api_get_getmarkethistory)
+                    t3 = Thread(target=api_get_getticker)
+                    t1._stop()
+                    t2._stop()
+                    t3._stop()
+                    t1.start()
+                    t2.start()
+                    t3.start()
+                    t1.join()
+                    t2.join()
+                    t3.join()
                 except(Exception):
                     print('Mistake in random_seed')
                 time.sleep(timeTemp)
@@ -45,9 +45,9 @@ class ThreadingT(Thread):
 
 def aggregation_trigger():
     while 1:
-         print('Alive')
+         print('Starting aggregation...'+str(time.time()))
          # Примерный макет
          # TimeAggregator.flag = True
          # TimeAggregator.startcompile()
-         print('Queries are ready')
-         time.sleep(8)
+         print('Aggregated = true. Going to sleep.'+str(time.time()))
+         time.sleep(300)

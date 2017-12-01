@@ -36,12 +36,12 @@ class ChartsView(View): # Класс для вывода графиков
         else:
             market = 'BTC-1ST'
         # Инициализируем коннект, возвращаем объект коннекта из mongo_db_connection.
-        b = MongoDBConnection().start_db()
+       # b = MongoDBConnection().start_db()
         # Захватываем ту БД, что хотим
-        db = b.PiedPiperStock
+       # db = b.PiedPiperStock
         # В ней берем коллекцию и инсертим.
-        test = db.Bittrex
-        test.insert({'a': 1})
+       # test = db.Bittrex
+       # test.insert({'a': 1})
        # book = BittrexOHLC.objects.all().filter(PairName=market)
        # PublicApi = PublicAPI(PairName='PidorBaba', TimeStamp='2017.10.11')
        # PublicApi.save()

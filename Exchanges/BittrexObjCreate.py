@@ -3,6 +3,7 @@ import requests
 import json
 from django.utils import timezone
 import time
+from mongo_db_connection import MongoDBConnection
 from Exchanges.views import BittrexOHLC
 from Exchanges.views import BittrexTick
 from Exchanges.views import BittrexVolume
@@ -18,13 +19,15 @@ pairlist = ['BTC-1ST', 'BTC-LTC', 'BTC-ETH']
 
 # Метод получается последние биржевые данные, парсит поля и выносит в модель необходимое.
 def api_get_getmarketsummaries():
-    print('Before Bittrix call attempt to server - ' + str(time.time()))
-
+    print('Before getmarketsummaries call attempt to server - ' + str(time.time()))
+    b = MongoDBConnection().start_db()
+    db = b.PiedPiperStock
+    test = db.Bittrex
     api_request = requests.get("https://bittrex.com/api/v1.1/public/" + "getmarketsummaries")
     json_data = json.loads(api_request.text)
-
-    print("api get.Bittrix is called - " + str(time.time()))
-
+    #
+    print("api getmarketsummaries is called - " + str(time.time()))
+    #
     # Если полученный JSON массив из apiRequest несет в себе данные , а не разочарование , то , парсим по переменным
     # и передаем все это в новый объект из models.py
     # Для timestamp используем формат ISO8601, который DateTime модели без проблем распознает =)
@@ -39,9 +42,10 @@ def api_get_getmarketsummaries():
              iso8601.parse_date(item['TimeStamp']), float('{:.10f}'.format(item['Bid'])),\
              float('{:.10f}'.format(item['Ask'])), str(item['OpenBuyOrders']),\
              str(item['OpenSellOrders']), float('{:.10f}'.format(item['PrevDay']))
-
-            # Создаем объект типа BittrexOHLC ( models.py ) и в конструктор передаем результаты обращения к API
-        print("That's all, folks")
+            # Формируем словарь из значений
+            data = {'PairName':marketname, 'High': high, 'Low': low, 'Last': last, 'PrevDay': prevday, 'TimeStamp': timestamp}
+            test.insert(data)
+    print('After getmarketsummaries call attempt to server - ' + str(time.time()))
 
 
 # По некоторым соображениям, самый работающий график на данный момент.
@@ -50,6 +54,14 @@ def api_get_getmarketsummaries():
 def api_get_getticker():
     # Данные собираются для каждой валютной пары из списка pairlist
     # Получаем данные с API битрикса по конкретной валютной паре (ex. localhost/bittrex/btc-eth
+    print('Before getticker call attempt to server - ' + str(time.time()))
+    #
+    b = MongoDBConnection().start_db()
+    db = b.PiedPiperStock
+    test = db.BittrexTick
+    #
+    print("apis getticker is called - " + str(time.time()))
+    #
     for i in range(0, len(pairlist)):
         api_request = requests.get("https://bittrex.com/api/v1.1/public/" + "getticker?market=" + pairlist[i])
         # Формируем JSON массив из данных с API
@@ -60,22 +72,34 @@ def api_get_getticker():
             # Назначаем объект 'result' корневым, для простоты обращения
             root = json_data['result']
             bid, ask, last = float(root['Bid']), float(root['Ask']), str(root['Last'])
-
-            # Создаем объект по модели BittrexTick , в конструктор передаем распаршенные данные
-            print('Ended getticker['+str(i)+'] in - ', str(time.time()))
+            #
+            data = {'PairName':pairlist[i], 'Tick':(ask+bid)/2, 'TimeStamp':timezone.now()}
+            test.insert(data)
+    print('After getticker call attempt to server - ' + str(time.time()))
 
 
 # Получаем все сделки за некоторое(б-гу известное) время.
 # Из реальных минусов - TimeStamp в каком-то хаотичном порядке
 def api_get_getmarkethistory():
     # Данные собираются для каждой валютной пары из списка pairlist
+    print('Before getMHistory call attempt to server - ' + str(time.time()))
+    #
+    b = MongoDBConnection().start_db()
+    db = b.PiedPiperStock
+    test = db.BittrexMHist
+    #
+    print("apis getMHistory is called - " + str(time.time()))
+    #
     for i in range(0, len(pairlist)):
         api_request = requests.get("https://bittrex.com/api/v1.1/public/" + "getmarkethistory?market=" + pairlist[i])
         json_data = json.loads(api_request.text)
         if json_data['success']:
             result = json_data['result']
+
             for item in result:
                 iD, timestamp, quantity, price, total, filltype, ordertype = \
                 int(item['Id']), iso8601.parse_date(item['TimeStamp']), float(item['Quantity']), float(item['Price']), float(item['Total']), str(item['FillType']), str(item['OrderType'])
-
-                # Создаем объект по модели BittrexTick , в конструктор передаем распаршенные данные
+                #
+                data = {'PairName': pairlist[i], 'OrderID': iD, 'Quantity': quantity, 'Price': price, 'Total': total, 'FillType': filltype, 'OrderType':ordertype, 'TimeStamp': timestamp}
+                test.insert(data)
+    print('After getMHistory call attempt to server - ' + str(time.time()))
