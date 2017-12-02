@@ -4,9 +4,6 @@ import json
 from django.utils import timezone
 import time
 from mongo_db_connection import MongoDBConnection
-from Exchanges.views import BittrexOHLC
-from Exchanges.views import BittrexTick
-from Exchanges.views import BittrexVolume
 
 # Для чистоты кода используем переменные с названиями bit_obj_tick вместо bitObjTick
 # В_питоне_модно_с_граундами_писать , а не с АпперКейсомТипВотТак
@@ -43,7 +40,8 @@ def api_get_getmarketsummaries():
              float('{:.10f}'.format(item['Ask'])), str(item['OpenBuyOrders']),\
              str(item['OpenSellOrders']), float('{:.10f}'.format(item['PrevDay']))
             # Формируем словарь из значений
-            data = {'PairName':marketname, 'High': high, 'Low': low, 'Last': last, 'PrevDay': prevday, 'TimeStamp': timestamp}
+            data = {'PairName': marketname, 'High': high, 'Low': low, 'Last': last,
+                    'PrevDay': prevday, 'TimeStamp': timestamp}
             test.insert(data)
     print('After getmarketsummaries call attempt to server - ' + str(time.time()))
 
@@ -53,7 +51,7 @@ def api_get_getmarketsummaries():
 # Указаний по TimeStamp НЕ ТРЕБУЕТСЯ
 def api_get_getticker():
     # Данные собираются для каждой валютной пары из списка pairlist
-    # Получаем данные с API битрикса по конкретной валютной паре (ex. localhost/bittrex/btc-eth
+    # Получаем данные с API битрикса по конкретной валютной паре (ex. localhost/bittrex/btc-eth)
     print('Before getticker call attempt to server - ' + str(time.time()))
     #
     b = MongoDBConnection().start_db()
@@ -73,7 +71,7 @@ def api_get_getticker():
             root = json_data['result']
             bid, ask, last = float(root['Bid']), float(root['Ask']), str(root['Last'])
             #
-            data = {'PairName':pairlist[i], 'Tick':(ask+bid)/2, 'TimeStamp':timezone.now()}
+            data = {'PairName': pairlist[i], 'Tick': (ask+bid)/2, 'TimeStamp': timezone.now()}
             test.insert(data)
     print('After getticker call attempt to server - ' + str(time.time()))
 
@@ -98,8 +96,10 @@ def api_get_getmarkethistory():
 
             for item in result:
                 iD, timestamp, quantity, price, total, filltype, ordertype = \
-                int(item['Id']), iso8601.parse_date(item['TimeStamp']), float(item['Quantity']), float(item['Price']), float(item['Total']), str(item['FillType']), str(item['OrderType'])
+                    int(item['Id']), iso8601.parse_date(item['TimeStamp']), float(item['Quantity']), float(item['Price']), float(item['Total']),\
+                    str(item['FillType']), str(item['OrderType'])
                 #
-                data = {'PairName': pairlist[i], 'OrderID': iD, 'Quantity': quantity, 'Price': price, 'Total': total, 'FillType': filltype, 'OrderType':ordertype, 'TimeStamp': timestamp}
+                data = {'PairName': pairlist[i], 'OrderID': iD, 'Quantity': quantity, 'Price': price, 'Total': total,
+                        'FillType': filltype, 'OrderType': ordertype, 'TimeStamp': timestamp}
                 test.insert(data)
     print('After getMHistory call attempt to server - ' + str(time.time()))

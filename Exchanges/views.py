@@ -1,5 +1,4 @@
 from django.shortcuts import render
-from Exchanges.models import BittrexOHLC, BittrexVolume, BittrexTick
 from django.views.generic import View
 from mongo_db_connection import MongoDBConnection
 # Create your views here.
@@ -14,19 +13,21 @@ def index_view(request):
 
 # Создан исключительно для проверки и отладки получения текстовых(паршенных) данных
 def Bittrex_view(request, market=""):
+    b = MongoDBConnection().start_db()
+    db = b.PiedPiperStock
     if market != "":
         market = market.upper()
-        book = BittrexOHLC.objects.all().filter(PairName=market)
+        testdictOHLC = db.Bittrex.find({'PairName': market})
     else:
-        book = BittrexOHLC.objects.all()
-    return render(request, "Bittrex_template.html",  {'temp': book})  #
+        testdictOHLC = db.Bittrex.find({'PairName': 'BTC-ETH'})
+    return render(request, "Bittrex_template.html",  {'temp': testdictOHLC})  #
 
 
 # Наша гордость. Работа и построение графиков, в прямом режиме делаются срезы из БД
 # Предположительно это плохо. Возможно срезы нужно будет автоматизировать и убрать отсюда
 # Класс отвечает за получение запроса по рынку(set as default if market = null.(BTC-1ST))
 # В теории здесь должен остаться только блок управления контролами(Это не точно)
-class ChartsView(View): # Класс для вывода графиков
+class ChartsView(View):  # Класс для вывода графиков
     def get(self, request, market="", *args, **kwargs):
 
         if market != "":
@@ -36,24 +37,20 @@ class ChartsView(View): # Класс для вывода графиков
         else:
             market = 'BTC-1ST'
         # Инициализируем коннект, возвращаем объект коннекта из mongo_db_connection.
-       # b = MongoDBConnection().start_db()
+        b = MongoDBConnection().start_db()
         # Захватываем ту БД, что хотим
-       # db = b.PiedPiperStock
-        # В ней берем коллекцию и инсертим.
-       # test = db.Bittrex
-       # test.insert({'a': 1})
-       # book = BittrexOHLC.objects.all().filter(PairName=market)
-       # PublicApi = PublicAPI(PairName='PidorBaba', TimeStamp='2017.10.11')
-       # PublicApi.save()
-       # print(PublicApi.PairName)
-        # Этих строк тут предположительно НЕ будет. Агреграция будет происходит по триггеру тикера В БЕСКОНЕЧНОМ режиме
-        #testagr = TimeAggregator()
-        #создает объект каждый раз, собственно нужен фикс. Строчку ниже не раскомменчивать до устранения!
-        #testagr.OHLCaggregation(market)
+        db = b.PiedPiperStock
+        # В ней берем коллекцию и делаем выборку.
+        # Создаем 4 словаря. (Для MarketHistory срезы по Sell и Buy)
+        testdictOHLC = db.Bittrex.find({'PairName': market})
+        testdictMHistSell = db.BittrexMHist.find({'PairName': market, 'OrderType': 'SELL'})
+        testdictMHistBuy = db.BittrexMHist.find({'PairName': market, 'OrderType': 'BUY'})
+        testdictTick = db.BittrexTick.find({'PairName': market})
 
-        # Заполнение словарей QuerySetами для дальнейшей работы оных с JS
-       # book1 = BittrexTick.objects.all().filter(PairName=market)
-       # book_buy = BittrexVolume.objects.all().filter(PairName=market, OrderType='BUY')[:5]
-       # book_sell = BittrexVolume.objects.all().filter(PairName=market, OrderType='SELL')[:5]
-       # testaggr = BittrexOHLC.objects.all().filter(PairName=market, Aggregated=False)
-        return render(request, 'charts.html', {})  # магия
+        # Этих строк тут ТОЧНО НЕ будет. Агреграция будет происходить по триггеру тикера В БЕСКОНЕЧНОМ режиме
+        # testagr = TimeAggregator()
+        # создает объект каждый раз, собственно нужен фикс. Строчку ниже не раскомменчивать до устранения!
+        # testagr.OHLCaggregation(market)
+
+        return render(request, 'charts.html', {'testingOHLC': testdictOHLC, 'testingMHistSell': testdictMHistSell,
+                                               'testingMHistBuy': testdictMHistBuy, 'testingTick': testdictTick})

@@ -29,8 +29,8 @@ google.charts.setOnLoadCallback(drawChart);
         fractionDigits: 8
        });
 
-
-      {% for item in testAggr %}
+      //Словари юзаются так же как под sqlite3
+      {% for item in testing %}
       data.addRows([['{{ item.TimeStamp }}', {{ item.High }}, {{ item.PrevDay }}, {{ item.Last }}, {{ item.Low }},
                      '{{ item.TimeStamp }} \n High: ' + formatter.formatValue({{ item.High }}) +
                      ' \n Open: ' + formatter.formatValue({{ item.PrevDay }}) +
@@ -62,7 +62,7 @@ function drawDiffChart() {
       sellData.addColumn('string', 'Timestamp');
       sellData.addColumn('number', 'Sell');
 
-      {% for item in sellBook %}
+      {% for item in testingMHistSell %}
       sellData.addRows([['1', {{ item.Quantity }}]]);
       {% endfor %}
 
@@ -70,8 +70,8 @@ function drawDiffChart() {
       buyData.addColumn('string', 'Timestamp');
       buyData.addColumn('number', 'Buy');
 
-
-      {% for item in buyBook %}
+      //Обожаю нормальные комментарии.....
+      {% for item in testingMHistBuy %}
       buyData.addRows([['1', {{ item.Quantity }}]]);
       {% endfor %}
 
@@ -105,7 +105,7 @@ function drawDiffChart() {
        fractionDigits: 8
       });
 
-       {% for item in temp1 %}
+       {% for item in testingTick %}
        data.addRows([['{{ item.TimeStamp }}' , {{ item.Tick }},
        '{{ item.TimeStamp }} \n Tick: ' + formatter.formatValue({{ item.Tick }})]]);//
        {% endfor %}
