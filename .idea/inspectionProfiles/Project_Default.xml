@@ -17,6 +17,7 @@
           <option value="PiedPiper.*" />
           <option value="Exchanges.Daemon.DMN_Actions" />
           <option value="Exchanges.tick_exchparser.DMN_Actions" />
+          <option value="Exchanges.TimeAggregator.*" />
         </list>
       </option>
     </inspection_tool>

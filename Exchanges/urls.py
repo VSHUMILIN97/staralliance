@@ -1,3 +1,4 @@
+import datetime
 from django.conf.urls import url
 from Exchanges import views
 from django.conf.urls.static import static
@@ -5,6 +6,7 @@ from PiedPiper import settings
 from .tick_exchparser import ThreadingT, aggregation_trigger
 from threading import Thread
 from mongo_db_connection import MongoDBConnection
+from .TimeAggregator import OHLCaggregation
 
 # Здесь есть баг для некоторых пар, нужно фиксить.
 urlpatterns = [
@@ -27,15 +29,17 @@ urlpatterns = [
 connectme = MongoDBConnection()
 # Подключение к БД PiedPiperStock(Дебаговая БД) После подключения все концы сбрасывает, так что технически безопасно
 db = connectme.start_db().PiedPiperStock
-# 
+#
 # URLS.PY загружается только один раз, как следствие запускать наш скрипт на обработку данных можно отсюда
 # Необходимо для постоянного сбора данных. Вынесено в отдельный поток во избежания страданий основного из-за While(True)
 # Make daemonic(!) ПРОДУМАТЬ БЕЗОПАСНОСТЬ!
 testingThreads = ThreadingT()
 t2 = Thread(target=aggregation_trigger)
+#t3 = Thread(target=OHLCaggregation(datetime.datetime.utcnow()))
 try:
     testingThreads.start()
     t2.start()
+    #t3.start()
 except:
     print('urls mistake')
 

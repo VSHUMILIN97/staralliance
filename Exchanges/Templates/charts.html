@@ -30,7 +30,7 @@ google.charts.setOnLoadCallback(drawChart);
        });
 
       //Словари юзаются так же как под sqlite3
-      {% for item in testing %}
+      {% for item in testingOHLC %}
       data.addRows([['{{ item.TimeStamp }}', {{ item.High }}, {{ item.PrevDay }}, {{ item.Last }}, {{ item.Low }},
                      '{{ item.TimeStamp }} \n High: ' + formatter.formatValue({{ item.High }}) +
                      ' \n Open: ' + formatter.formatValue({{ item.PrevDay }}) +

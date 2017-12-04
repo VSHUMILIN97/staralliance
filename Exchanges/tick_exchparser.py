@@ -1,5 +1,8 @@
+import datetime
+
 from Exchanges.BittrexObjCreate import api_get_getmarkethistory, api_get_getticker, api_get_getmarketsummaries
 import random
+from .TimeAggregator import OHLCaggregation
 import time
 from threading import Thread
 
@@ -18,24 +21,24 @@ class ThreadingT(Thread):
 
     def random_seed(self):
         # Методом проб и ошибок мы выяснили, что потоки нужно останавливать прямо внутри цикла, благо
-        # писон позволяет/ Безопасность из говна и палок, как и код. Доработать со временем!
+        # питсон позволяет/ Безопасность из говна и палок, как и код. Доработать со временем!
         while 1:
             try:
-                timeTemp = random.uniform(10, 12.5)  # Значения можно менять
+                # Частота опроса биржи по их Public API. Легкая защита от отключения данных
+                timeTemp = random.uniform(50, 59.5)  # Значения можно менять
                 print(timeTemp)
                 # Пока что закрыто, так как БД очень сильно засирается.
                 try:
-                    print('\n')
-                   # t1 = Thread(target=api_get_getmarketsummaries)
+                    t1 = Thread(target=api_get_getmarketsummaries)
                    # t2 = Thread(target=api_get_getmarkethistory)
                    # t3 = Thread(target=api_get_getticker)
-                   # t1._stop()
+                    t1._stop()
                    # t2._stop()
                    # t3._stop()
-                   # t1.start()
+                    t1.start()
                    # t2.start()
                    # t3.start()
-                   # t1.join()
+                    t1.join()
                    # t2.join()
                    # t3.join()
                 except(Exception):
@@ -47,8 +50,6 @@ class ThreadingT(Thread):
 def aggregation_trigger():
     while 1:
          print('Starting aggregation...'+str(time.time()))
-         # Примерный макет
-         # TimeAggregator.flag = True
-         # TimeAggregator.startcompile()
+         OHLCaggregation(datetime.datetime.utcnow())
          print('Aggregated = true. Going to sleep.'+str(time.time()))
          time.sleep(300)

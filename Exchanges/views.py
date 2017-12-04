@@ -1,6 +1,10 @@
 from django.shortcuts import render
 from django.views.generic import View
 from mongo_db_connection import MongoDBConnection
+from django.utils import timezone
+from django.utils.timezone import utc
+import datetime
+import time
 # Create your views here.
 # Для чистоты кода используем переменные с названиями bit_obj_tick вместо bitObjTick
 # В_питоне_модно_с_граундами_писать , а не с АпперКейсомТипВотТак
@@ -42,15 +46,14 @@ class ChartsView(View):  # Класс для вывода графиков
         db = b.PiedPiperStock
         # В ней берем коллекцию и делаем выборку.
         # Создаем 4 словаря. (Для MarketHistory срезы по Sell и Buy)
-        testdictOHLC = db.Bittrex.find({'PairName': market})
+        testdictOHLC = db.Bittrex.find({'PairName': market, 'Aggregated': True})
         testdictMHistSell = db.BittrexMHist.find({'PairName': market, 'OrderType': 'SELL'})
         testdictMHistBuy = db.BittrexMHist.find({'PairName': market, 'OrderType': 'BUY'})
         testdictTick = db.BittrexTick.find({'PairName': market})
-
         # Этих строк тут ТОЧНО НЕ будет. Агреграция будет происходить по триггеру тикера В БЕСКОНЕЧНОМ режиме
-        # testagr = TimeAggregator()
+        #testagr = TimeAggregator()
         # создает объект каждый раз, собственно нужен фикс. Строчку ниже не раскомменчивать до устранения!
-        # testagr.OHLCaggregation(market)
+        #testagr.OHLCaggregation(datetime.datetime.utcnow())
 
         return render(request, 'charts.html', {'testingOHLC': testdictOHLC, 'testingMHistSell': testdictMHistSell,
                                                'testingMHistBuy': testdictMHistBuy, 'testingTick': testdictTick})

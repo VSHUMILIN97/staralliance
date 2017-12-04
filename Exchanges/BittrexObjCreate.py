@@ -41,7 +41,7 @@ def api_get_getmarketsummaries():
              str(item['OpenSellOrders']), float('{:.10f}'.format(item['PrevDay']))
             # Формируем словарь из значений
             data = {'PairName': marketname, 'High': high, 'Low': low, 'Last': last,
-                    'PrevDay': prevday, 'TimeStamp': timestamp}
+                    'PrevDay': prevday, 'TimeStamp': timestamp, 'Mod': False}
             test.insert(data)
     print('After getmarketsummaries call attempt to server - ' + str(time.time()))
 
@@ -71,7 +71,7 @@ def api_get_getticker():
             root = json_data['result']
             bid, ask, last = float(root['Bid']), float(root['Ask']), str(root['Last'])
             #
-            data = {'PairName': pairlist[i], 'Tick': (ask+bid)/2, 'TimeStamp': timezone.now()}
+            data = {'PairName': pairlist[i], 'Tick': (ask+bid)/2, 'TimeStamp': timezone.now(), 'Mod': False}
             test.insert(data)
     print('After getticker call attempt to server - ' + str(time.time()))
 
@@ -100,6 +100,6 @@ def api_get_getmarkethistory():
                     str(item['FillType']), str(item['OrderType'])
                 #
                 data = {'PairName': pairlist[i], 'OrderID': iD, 'Quantity': quantity, 'Price': price, 'Total': total,
-                        'FillType': filltype, 'OrderType': ordertype, 'TimeStamp': timestamp}
+                        'FillType': filltype, 'OrderType': ordertype, 'TimeStamp': timestamp, 'Mod': False}
                 test.insert(data)
     print('After getMHistory call attempt to server - ' + str(time.time()))
