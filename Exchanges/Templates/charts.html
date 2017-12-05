@@ -63,7 +63,7 @@ function drawDiffChart() {
       sellData.addColumn('number', 'Sell');
 
       {% for item in testingMHistSell %}
-      sellData.addRows([['1', {{ item.Quantity }}]]);
+      sellData.addRows([['{{ item.TimeStamp }}', {{ item.Price }}]]);
       {% endfor %}
 
     var buyData = new google.visualization.DataTable();
@@ -72,7 +72,7 @@ function drawDiffChart() {
 
       //Обожаю нормальные комментарии.....
       {% for item in testingMHistBuy %}
-      buyData.addRows([['1', {{ item.Quantity }}]]);
+      buyData.addRows([['{{ item.TimeStamp }}', {{ item.Price }}]]);
       {% endfor %}
 
     var colChartDiff = new google.visualization.ColumnChart(document.getElementById('diff_crt'));

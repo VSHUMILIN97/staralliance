@@ -33,9 +33,11 @@ def api_get_getmarketsummaries():
         result = json_data['result']
 
         for item in result:
-            marketname, high, low, volume, last, basevolume, timestamp, bid, ask, openbuyorders, opensellorders, prevday = \
+            marketname, high, low, volume, last, basevolume, timestamp,\
+            bid, ask, openbuyorders, opensellorders, prevday = \
              str(item['MarketName']), float('{:.10f}'.format(item['High'])), float('{:.10f}'.format(item['Low'])), \
-             float('{:.10f}'.format(item['Volume'])), float('{:.10f}'.format(item['Last'])), float('{:.10f}'.format(item['BaseVolume'])), \
+             float('{:.10f}'.format(item['Volume'])), float('{:.10f}'.format(item['Last'])),\
+             float('{:.10f}'.format(item['BaseVolume'])), \
              iso8601.parse_date(item['TimeStamp']), float('{:.10f}'.format(item['Bid'])),\
              float('{:.10f}'.format(item['Ask'])), str(item['OpenBuyOrders']),\
              str(item['OpenSellOrders']), float('{:.10f}'.format(item['PrevDay']))
@@ -96,7 +98,8 @@ def api_get_getmarkethistory():
 
             for item in result:
                 iD, timestamp, quantity, price, total, filltype, ordertype = \
-                    int(item['Id']), iso8601.parse_date(item['TimeStamp']), float(item['Quantity']), float(item['Price']), float(item['Total']),\
+                    int(item['Id']), iso8601.parse_date(item['TimeStamp']), float(item['Quantity']),\
+                    float(item['Price']), float(item['Total']),\
                     str(item['FillType']), str(item['OrderType'])
                 #
                 data = {'PairName': pairlist[i], 'OrderID': iD, 'Quantity': quantity, 'Price': price, 'Total': total,

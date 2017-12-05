@@ -1,5 +1,6 @@
 from datetime import datetime
 import time
+import pymongo.cursor
 from mongo_db_connection import MongoDBConnection
 import dateutil.parser
 from datetime import datetime, tzinfo, timedelta
@@ -7,14 +8,14 @@ from django.utils import timezone, datetime_safe
 
 
 def OHLCaggregation(ServerTime):
+    import pymongo
     print('Aggregating.....bzzzzz......'+str(time.time()))
-    global HighestValue, endingtime
-    global LowestValue
+    global highest_value, endingtime, startingtime
+    global lowest_value
     global LastValue
     global PrevDayValue
     global TimeStamp
     global PairName
-    # Комменты завтра. Я ща сдохну.
     print(ServerTime)
     b = MongoDBConnection().start_db()
     db = b.PiedPiperStock
@@ -26,64 +27,198 @@ def OHLCaggregation(ServerTime):
         #for secinner in range(0, len(pairlist)):
         #
         for secinner in pairlist:
-            #print(secinner)
             # All Matches in DB
-            timerDelay = db[exchname].find({'PairName': secinner, 'Mod': False}, {'TimeStamp': True}).limit(1)
-            #
             delayActivation = timedelta(minutes=5)
-            for subinto in timerDelay:
-                startingtime = dateutil.parser.parse(str(subinto['TimeStamp']))
+            half_delay = timedelta(minutes=2, seconds=30)
+            # Starting time magic
+            timer_at_first = db[exchname].find({'PairName': secinner, 'Mod': False}, {'TimeStamp': True}).limit(1)
+            #
+            enter_counter = db[exchname].find({'PairName': secinner, 'Aggregated': True},
+                                              {'TimeStamp': True}).count()
+            time_after_aggregation = db[exchname].find({'PairName': secinner, 'Aggregated': True},
+                                                       {'TimeStamp': True}).sort('TimeStamp', pymongo.DESCENDING).limit(1)
+            if enter_counter > 0:
+                for subintosub in time_after_aggregation:
+                    startingtime = dateutil.parser.parse(str(subintosub['TimeStamp']))
+                    startingtime = startingtime + half_delay
+            else:
+                for subinto in timer_at_first:
+                     startingtime = dateutil.parser.parse(str(subinto['TimeStamp']))
             #
             mergingtime = startingtime + delayActivation
             while 1:
                 if mergingtime < ServerTime:
-                    tempdel = timedelta(minutes=2, seconds=30)
                     # High Работа с глобальными переменными. Переприсвоится дальше.
-                    HighestValue = 0
+                    highest_value = 0
                     endingtime = startingtime + delayActivation
                     # Low Записываем значение из одномерного словаря (Это можно отрефакторить - WELCOME!)
-                    LowValDict = db[exchname].find({'PairName': secinner, 'Mod': False, 'TimeStamp': {'$gte': startingtime, '$lt': endingtime}}, {'Low': True}).limit(1)
+                    low_val_dict = db[exchname].find({'PairName': secinner, 'Mod': False, 'TimeStamp':
+                                                     {'$gte': startingtime, '$lt': endingtime}}, {'Low': True}).limit(1)
                     # Last Пишем первый объект из коллекции. Так и не разобрались с полем.
                     # Поиск по паре, полю Mod - Modified/ TimeStamp в разрезе от startingtime до endingtime
-                    LastValDict = db[exchname].find({'PairName': secinner, 'Mod': False, 'TimeStamp': {'$gte': startingtime, '$lt': endingtime}}, {'Last': True}).limit(1)
+                    last_val_dict = db[exchname].find({'PairName': secinner, 'Mod': False, 'TimeStamp':
+                                                      {'$gte': startingtime, '$lt': endingtime}},
+                                                      {'Last': True}).limit(1)
                     #
-                    pairmatcher = db[exchname].find({'PairName': secinner, 'Mod': False, 'TimeStamp': {'$gte': startingtime, '$lt': endingtime}})
+                    pair_matcher = db[exchname].find({'PairName': secinner, 'Mod': False, 'TimeStamp':
+                                                     {'$gte': startingtime, '$lt': endingtime}})
                     #
-                    PrevDayDict = db[exchname].find({'PairName': secinner, 'Mod': False, 'TimeStamp': {'$gte': startingtime, '$lt': endingtime}}, {'PrevDay': True})
-                    for subinLow in LowValDict:
-                        LowestValue = subinLow['Low']
+                    prev_day_dict = db[exchname].find({'PairName': secinner, 'Mod': False, 'TimeStamp':
+                                                      {'$gte': startingtime, '$lt': endingtime}}, {'PrevDay': True})
+                    for subinLow in low_val_dict:
+                        lowest_value = subinLow['Low']
                     # Last
-                    for subinLast in LastValDict:
+                    for subinLast in last_val_dict:
                         LastValue = subinLast['Last']
                     # PrevDay
-                    for subinPrevDay in PrevDayDict:
+                    for subinPrevDay in prev_day_dict:
                         PrevDayValue = subinPrevDay['PrevDay']
                     #
-                    for trdinner in pairmatcher:
-                        if trdinner['High'] > HighestValue:
-                            HighestValue = trdinner['High']
-                        if trdinner['Low'] < LowestValue:
-                            LowestValue = trdinner['Low']
-                    tempdict = {'PairName': secinner, 'High': HighestValue,
-                                'Low': LowestValue, 'TimeStamp': startingtime + tempdel, 'Last': LastValue,
+                    for trdinner in pair_matcher:
+                        if trdinner['High'] > highest_value:
+                            highest_value = trdinner['High']
+                        if trdinner['Low'] < lowest_value:
+                            lowest_value = trdinner['Low']
+                    tempdict = {'PairName': secinner, 'High': highest_value,
+                                'Low': lowest_value, 'TimeStamp': startingtime + half_delay, 'Last': LastValue,
                                 'PrevDay': PrevDayValue, 'Aggregated': True}
                     db[exchname].insert(tempdict)
                     db[exchname].update({'PairName': secinner, 'Mod': False, 'TimeStamp':
-                                        {'$gte': startingtime, '$lt': endingtime}}, {'$set':{'Mod': True}}, multi=True)
+                                        {'$gte': startingtime, '$lt': endingtime}}, {'$set': {'Mod': True}}, multi=True)
                     # Конец работы с циклом, переход на следующие 5 минут времени
 
                     startingtime = startingtime + delayActivation
                     mergingtime = mergingtime + delayActivation
-                    print('if again')
                 else:
-                    print('Not enough data')
                     break
-    print('Check DB....'+str(time.time()))
+    print('Check Bittrex collection ..........'+str(time.time()))
 
 
-def Volumeaggregation():
-    return None
+def Volumeaggregation(ServerTime):
+    import pymongo
+    print('Aggregating.....bzzzzz......' + str(time.time()))
+    global sell_data, endingtime, startingtime, buy_data, TimeStamp, PairName, sold_data, bought_data
+    print(ServerTime)
+    b = MongoDBConnection().start_db()
+    db = b.PiedPiperStock
+    exchlist = ['BittrexMHist']
+    for inner in range(0, len(exchlist)):
+        exchname = exchlist[inner]
+        pairlist = db[exchname].distinct('PairName')
+        # Подобная штука не работает, он тщательно отказывается видеть вложенный цикл.
+        # for secinner in range(0, len(pairlist)):
+        #
+        for secinner in pairlist:
+            # All Matches in DB
+            delayActivation = timedelta(minutes=5)
+            half_delay = timedelta(minutes=2, seconds=30)
+            # Starting time magic
+            timer_at_first = db[exchname].find({'PairName': secinner, 'Mod': False}, {'TimeStamp': True}).limit(1)
+            #
+            enter_counter = db[exchname].find({'PairName': secinner, 'Aggregated': True},
+                                              {'TimeStamp': True}).count()
+            time_after_aggregation = db[exchname].find({'PairName': secinner, 'Aggregated': True},
+                                                       {'TimeStamp': True})\
+                .sort('TimeStamp', pymongo.DESCENDING).limit(1)
+            if enter_counter > 0:
+                for subintosub in time_after_aggregation:
+                    startingtime = dateutil.parser.parse(str(subintosub['TimeStamp']))
+                    startingtime = startingtime + half_delay
+            else:
+                for subinto in timer_at_first:
+                    startingtime = dateutil.parser.parse(str(subinto['TimeStamp']))
+            #
+            mergingtime = startingtime + delayActivation
+            while 1:
+                if mergingtime < ServerTime:
+                    # High Работа с глобальными переменными. Переприсвоится дальше.
+                    endingtime = startingtime + delayActivation
+                    #
+                    pair_matcher = db[exchname].find({'PairName': secinner, 'Mod': False, 'TimeStamp':
+                                                     {'$gte': startingtime, '$lt': endingtime}})
+                    sell_data = 0
+                    sold_data = 0
+                    buy_data = 0
+                    bought_data = 0
+                    for trdinner in pair_matcher:
+                        if trdinner['OrderType'] == 'SELL':
+                            sell_data += trdinner['Quantity']
+                            sold_data += trdinner['Price']
+                        else:
+                            buy_data += trdinner['Quantity']
+                            bought_data += trdinner['Price']
+                    temp_dict_sell = {'PairName': secinner, 'Quantity': sell_data,
+                                      'OrderType': 'SELL', 'Price': sold_data,
+                                      'TimeStamp': startingtime + half_delay, 'Aggregated': True}
+                    temp_dict_buy = {'PairName': secinner, 'Quantity': sell_data,
+                                     'OrderType': 'BUY', 'Price': bought_data,
+                                     'TimeStamp': startingtime + half_delay, 'Aggregated': True}
+                    db[exchname].insert(temp_dict_sell)
+                    db[exchname].insert(temp_dict_buy)
+                    db[exchname].update({'PairName': secinner, 'Mod': False, 'TimeStamp':
+                                        {'$gte': startingtime, '$lt': endingtime}}, {'$set': {'Mod': True}}, multi=True)
+                    # Конец работы с циклом, переход на следующие 5 минут времени
+                    startingtime = startingtime + delayActivation
+                    mergingtime = mergingtime + delayActivation
+                else:
+                    break
+    print('Check collection..' + exchname + '...' + str(time.time()))
 
 
-def Tickaggregation():
-    return None
+def Tickaggregation(ServerTime):
+    import pymongo
+    print('Aggregating.....bzzzzz......' + str(time.time()))
+    global tick, endingtime, startingtime, TimeStamp, PairName
+    print(ServerTime)
+    b = MongoDBConnection().start_db()
+    db = b.PiedPiperStock
+    exchlist = ['BittrexTick']
+    for inner in range(0, len(exchlist)):
+        exchname = exchlist[inner]
+        pairlist = db[exchname].distinct('PairName')
+        # Подобная штука не работает, он тщательно отказывается видеть вложенный цикл.
+        # for secinner in range(0, len(pairlist)):
+        #
+        for secinner in pairlist:
+            # All Matches in DB
+            delayActivation = timedelta(minutes=5)
+            half_delay = timedelta(minutes=2, seconds=30)
+            # Starting time magic
+            timer_at_first = db[exchname].find({'PairName': secinner, 'Mod': False}, {'TimeStamp': True}).limit(1)
+            #
+            enter_counter = db[exchname].find({'PairName': secinner, 'Aggregated': True},
+                                              {'TimeStamp': True}).count()
+            time_after_aggregation = db[exchname].find({'PairName': secinner, 'Aggregated': True},
+                                                       {'TimeStamp': True}).sort('TimeStamp', pymongo.DESCENDING).limit(1)
+            if enter_counter > 0:
+                for subintosub in time_after_aggregation:
+                    startingtime = dateutil.parser.parse(str(subintosub['TimeStamp']))
+                    startingtime = startingtime + half_delay
+            else:
+                for subinto in timer_at_first:
+                    startingtime = dateutil.parser.parse(str(subinto['TimeStamp']))
+            #
+            mergingtime = startingtime + delayActivation
+            while 1:
+                tick = 0
+                if mergingtime < ServerTime:
+                    # .
+                    endingtime = startingtime + delayActivation
+                    #
+                    pair_matcher = db[exchname].find({'PairName': secinner, 'Mod': False, 'TimeStamp':
+                                                     {'$gte': startingtime, '$lt': endingtime}})
+
+                    for trdinner in pair_matcher:
+                        if trdinner['Tick'] > tick:
+                            tick = trdinner['Tick']
+                    temp_dict = {'PairName': secinner, 'Tick': tick,
+                                 'TimeStamp': startingtime + half_delay, 'Aggregated': True}
+                    db[exchname].insert(temp_dict)
+                    db[exchname].update({'PairName': secinner, 'Mod': False, 'TimeStamp':
+                        {'$gte': startingtime, '$lt': endingtime}}, {'$set': {'Mod': True}}, multi=True)
+                    # Конец работы с циклом, переход на следующие 5 минут времени
+                    startingtime = startingtime + delayActivation
+                    mergingtime = mergingtime + delayActivation
+                else:
+                    break
+    print('Check collection..' + exchname + '...' + str(time.time()))

@@ -47,13 +47,8 @@ class ChartsView(View):  # Класс для вывода графиков
         # В ней берем коллекцию и делаем выборку.
         # Создаем 4 словаря. (Для MarketHistory срезы по Sell и Buy)
         testdictOHLC = db.Bittrex.find({'PairName': market, 'Aggregated': True})
-        testdictMHistSell = db.BittrexMHist.find({'PairName': market, 'OrderType': 'SELL'})
-        testdictMHistBuy = db.BittrexMHist.find({'PairName': market, 'OrderType': 'BUY'})
-        testdictTick = db.BittrexTick.find({'PairName': market})
-        # Этих строк тут ТОЧНО НЕ будет. Агреграция будет происходить по триггеру тикера В БЕСКОНЕЧНОМ режиме
-        #testagr = TimeAggregator()
-        # создает объект каждый раз, собственно нужен фикс. Строчку ниже не раскомменчивать до устранения!
-        #testagr.OHLCaggregation(datetime.datetime.utcnow())
-
+        testdictMHistSell = db.BittrexMHist.find({'PairName': market, 'OrderType': 'SELL', 'Aggregated': True})
+        testdictMHistBuy = db.BittrexMHist.find({'PairName': market, 'OrderType': 'BUY', 'Aggregated': True})
+        testdictTick = db.BittrexTick.find({'PairName': market, 'Aggregated': True})
         return render(request, 'charts.html', {'testingOHLC': testdictOHLC, 'testingMHistSell': testdictMHistSell,
                                                'testingMHistBuy': testdictMHistBuy, 'testingTick': testdictTick})

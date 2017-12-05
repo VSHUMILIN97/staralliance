@@ -35,11 +35,9 @@ db = connectme.start_db().PiedPiperStock
 # Make daemonic(!) ПРОДУМАТЬ БЕЗОПАСНОСТЬ!
 testingThreads = ThreadingT()
 t2 = Thread(target=aggregation_trigger)
-#t3 = Thread(target=OHLCaggregation(datetime.datetime.utcnow()))
 try:
     testingThreads.start()
     t2.start()
-    #t3.start()
 except:
     print('urls mistake')
 
