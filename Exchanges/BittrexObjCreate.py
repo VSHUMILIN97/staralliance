@@ -2,8 +2,11 @@ import iso8601
 import requests
 import json
 from django.utils import timezone
-import time
 from mongo_db_connection import MongoDBConnection
+import logging
+
+logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
+                    level=logging.DEBUG)
 
 # Для чистоты кода используем переменные с названиями bit_obj_tick вместо bitObjTick
 # В_питоне_модно_с_граундами_писать , а не с АпперКейсомТипВотТак
@@ -16,14 +19,14 @@ pairlist = ['BTC-1ST', 'BTC-LTC', 'BTC-ETH']
 
 # Метод получается последние биржевые данные, парсит поля и выносит в модель необходимое.
 def api_get_getmarketsummaries():
-    print('Before getmarketsummaries call attempt to server - ' + str(time.time()))
+    logging.info(u'Bittrex getsummaries started')
     b = MongoDBConnection().start_db()
     db = b.PiedPiperStock
     test = db.Bittrex
     api_request = requests.get("https://bittrex.com/api/v1.1/public/" + "getmarketsummaries")
     json_data = json.loads(api_request.text)
     #
-    print("api getmarketsummaries is called - " + str(time.time()))
+    logging.info(u'Bittrex getsummaries API was called')
     #
     # Если полученный JSON массив из apiRequest несет в себе данные , а не разочарование , то , парсим по переменным
     # и передаем все это в новый объект из models.py
@@ -45,7 +48,7 @@ def api_get_getmarketsummaries():
             data = {'PairName': marketname, 'High': high, 'Low': low, 'Last': last,
                     'PrevDay': prevday, 'TimeStamp': timestamp, 'Mod': False}
             test.insert(data)
-    print('After getmarketsummaries call attempt to server - ' + str(time.time()))
+    logging.info(u'Bittrex getsummaries ended')
 
 
 # По некоторым соображениям, самый работающий график на данный момент.
@@ -54,13 +57,13 @@ def api_get_getmarketsummaries():
 def api_get_getticker():
     # Данные собираются для каждой валютной пары из списка pairlist
     # Получаем данные с API битрикса по конкретной валютной паре (ex. localhost/bittrex/btc-eth)
-    print('Before getticker call attempt to server - ' + str(time.time()))
+    logging.info(u'Bittrex getticker started')
     #
     b = MongoDBConnection().start_db()
     db = b.PiedPiperStock
     test = db.BittrexTick
     #
-    print("apis getticker is called - " + str(time.time()))
+    logging.info(u'Bittrex getticker API was called')
     #
     for i in range(0, len(pairlist)):
         api_request = requests.get("https://bittrex.com/api/v1.1/public/" + "getticker?market=" + pairlist[i])
@@ -75,20 +78,20 @@ def api_get_getticker():
             #
             data = {'PairName': pairlist[i], 'Tick': (ask+bid)/2, 'TimeStamp': timezone.now(), 'Mod': False}
             test.insert(data)
-    print('After getticker call attempt to server - ' + str(time.time()))
+    logging.info(u'Bittrex getticker ended')
 
 
 # Получаем все сделки за некоторое(б-гу известное) время.
 # Из реальных минусов - TimeStamp в каком-то хаотичном порядке
 def api_get_getmarkethistory():
     # Данные собираются для каждой валютной пары из списка pairlist
-    print('Before getMHistory call attempt to server - ' + str(time.time()))
+    logging.info(u'Bittrex getmarkethistory started')
     #
     b = MongoDBConnection().start_db()
     db = b.PiedPiperStock
     test = db.BittrexMHist
     #
-    print("apis getMHistory is called - " + str(time.time()))
+    logging.info(u'Bittrex getmarkethistory API was called')
     #
     for i in range(0, len(pairlist)):
         api_request = requests.get("https://bittrex.com/api/v1.1/public/" + "getmarkethistory?market=" + pairlist[i])
@@ -105,4 +108,4 @@ def api_get_getmarkethistory():
                 data = {'PairName': pairlist[i], 'OrderID': iD, 'Quantity': quantity, 'Price': price, 'Total': total,
                         'FillType': filltype, 'OrderType': ordertype, 'TimeStamp': timestamp, 'Mod': False}
                 test.insert(data)
-    print('After getMHistory call attempt to server - ' + str(time.time()))
+    logging.info(u'Bittrex getmarkethistory ended')

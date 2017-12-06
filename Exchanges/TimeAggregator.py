@@ -1,30 +1,33 @@
 from datetime import datetime
 import time
-import pymongo.cursor
 from mongo_db_connection import MongoDBConnection
 import dateutil.parser
 from datetime import datetime, tzinfo, timedelta
 from django.utils import timezone, datetime_safe
+import logging
+
+logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
+                    level=logging.DEBUG)
 
 
 def OHLCaggregation(ServerTime):
     import pymongo
-    print('Aggregating.....bzzzzz......'+str(time.time()))
     global highest_value, endingtime, startingtime
     global lowest_value
     global LastValue
     global PrevDayValue
     global TimeStamp
     global PairName
-    print(ServerTime)
+    logging.info(u'..OHLCAggregation started at..' + str(ServerTime))
     b = MongoDBConnection().start_db()
     db = b.PiedPiperStock
     exchlist = ['Bittrex']
     for inner in range(0, len(exchlist)):
         exchname = exchlist[inner]
         pairlist = db[exchname].distinct('PairName')
+        logging.info(u'Going through..' + str(exchname))
         # Подобная штука не работает, он тщательно отказывается видеть вложенный цикл.
-        #for secinner in range(0, len(pairlist)):
+        # for secinner in range(0, len(pairlist)):
         #
         for secinner in pairlist:
             # All Matches in DB
@@ -36,7 +39,8 @@ def OHLCaggregation(ServerTime):
             enter_counter = db[exchname].find({'PairName': secinner, 'Aggregated': True},
                                               {'TimeStamp': True}).count()
             time_after_aggregation = db[exchname].find({'PairName': secinner, 'Aggregated': True},
-                                                       {'TimeStamp': True}).sort('TimeStamp', pymongo.DESCENDING).limit(1)
+                                                       {'TimeStamp': True})\
+                .sort('TimeStamp', pymongo.DESCENDING).limit(1)
             if enter_counter > 0:
                 for subintosub in time_after_aggregation:
                     startingtime = dateutil.parser.parse(str(subintosub['TimeStamp']))
@@ -91,22 +95,20 @@ def OHLCaggregation(ServerTime):
                     mergingtime = mergingtime + delayActivation
                 else:
                     break
-    print('Check Bittrex collection ..........'+str(time.time()))
+        logging.info(u'Check' + exchname + u'collection')
 
 
 def Volumeaggregation(ServerTime):
     import pymongo
-    print('Aggregating.....bzzzzz......' + str(time.time()))
+    logging.info(u'..VolumeAggregation started at..' + str(ServerTime))
     global sell_data, endingtime, startingtime, buy_data, TimeStamp, PairName, sold_data, bought_data
-    print(ServerTime)
     b = MongoDBConnection().start_db()
     db = b.PiedPiperStock
     exchlist = ['BittrexMHist']
     for inner in range(0, len(exchlist)):
         exchname = exchlist[inner]
         pairlist = db[exchname].distinct('PairName')
-        # Подобная штука не работает, он тщательно отказывается видеть вложенный цикл.
-        # for secinner in range(0, len(pairlist)):
+        logging.info(u'Going through..' + exchname)
         #
         for secinner in pairlist:
             # All Matches in DB
@@ -162,22 +164,20 @@ def Volumeaggregation(ServerTime):
                     mergingtime = mergingtime + delayActivation
                 else:
                     break
-    print('Check collection..' + exchname + '...' + str(time.time()))
+        logging.info(u'Check' + exchname + u'collection')
 
 
 def Tickaggregation(ServerTime):
     import pymongo
-    print('Aggregating.....bzzzzz......' + str(time.time()))
+    logging.info(u'..TickAggregation started at..' + str(ServerTime))
     global tick, endingtime, startingtime, TimeStamp, PairName
-    print(ServerTime)
     b = MongoDBConnection().start_db()
     db = b.PiedPiperStock
     exchlist = ['BittrexTick']
     for inner in range(0, len(exchlist)):
         exchname = exchlist[inner]
         pairlist = db[exchname].distinct('PairName')
-        # Подобная штука не работает, он тщательно отказывается видеть вложенный цикл.
-        # for secinner in range(0, len(pairlist)):
+        logging.info(u'Going through..' + exchname)
         #
         for secinner in pairlist:
             # All Matches in DB
@@ -189,7 +189,8 @@ def Tickaggregation(ServerTime):
             enter_counter = db[exchname].find({'PairName': secinner, 'Aggregated': True},
                                               {'TimeStamp': True}).count()
             time_after_aggregation = db[exchname].find({'PairName': secinner, 'Aggregated': True},
-                                                       {'TimeStamp': True}).sort('TimeStamp', pymongo.DESCENDING).limit(1)
+                                                       {'TimeStamp': True})\
+                .sort('TimeStamp', pymongo.DESCENDING).limit(1)
             if enter_counter > 0:
                 for subintosub in time_after_aggregation:
                     startingtime = dateutil.parser.parse(str(subintosub['TimeStamp']))
@@ -202,7 +203,7 @@ def Tickaggregation(ServerTime):
             while 1:
                 tick = 0
                 if mergingtime < ServerTime:
-                    # .
+                    #
                     endingtime = startingtime + delayActivation
                     #
                     pair_matcher = db[exchname].find({'PairName': secinner, 'Mod': False, 'TimeStamp':
@@ -221,4 +222,4 @@ def Tickaggregation(ServerTime):
                     mergingtime = mergingtime + delayActivation
                 else:
                     break
-    print('Check collection..' + exchname + '...' + str(time.time()))
+        logging.info(u'Check' + exchname + u'collection')

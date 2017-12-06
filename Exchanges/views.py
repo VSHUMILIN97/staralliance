@@ -1,10 +1,6 @@
 from django.shortcuts import render
 from django.views.generic import View
 from mongo_db_connection import MongoDBConnection
-from django.utils import timezone
-from django.utils.timezone import utc
-import datetime
-import time
 # Create your views here.
 # Для чистоты кода используем переменные с названиями bit_obj_tick вместо bitObjTick
 # В_питоне_модно_с_граундами_писать , а не с АпперКейсомТипВотТак
@@ -21,9 +17,9 @@ def Bittrex_view(request, market=""):
     db = b.PiedPiperStock
     if market != "":
         market = market.upper()
-        testdictOHLC = db.Bittrex.find({'PairName': market})
+        testdictOHLC = db.Bittrex.find({'PairName': market, 'Aggregated': True})
     else:
-        testdictOHLC = db.Bittrex.find({'PairName': 'BTC-ETH'})
+        testdictOHLC = db.Bittrex.find({'PairName': 'BTC-ETH', 'Aggregated': True})
     return render(request, "Bittrex_template.html",  {'temp': testdictOHLC})  #
 
 

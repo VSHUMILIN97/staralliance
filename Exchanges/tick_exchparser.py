@@ -1,23 +1,19 @@
 import datetime
-
 from Exchanges.BittrexObjCreate import api_get_getmarkethistory, api_get_getticker, api_get_getmarketsummaries
 import random
 from .TimeAggregator import OHLCaggregation, Volumeaggregation, Tickaggregation
 import time
 from threading import Thread
+import logging
+
+logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
+                    level=logging.DEBUG)
 
 
 class ThreadingT(Thread):
     def run(self):
+        logging.info(u'Data requested')
         self.random_seed()
-
-        # Реально работает, но вызывает ошибку если пытаться вызывать методы =) Ошибка выше
-        # UPD: Ошибку пофиксил, изабвился от асинхрона.
-        # UPD(2):Запускается 1 раз при старте сервера и работает до талого. Фух сцук.
-        # С функциями на получение данных работает спокойно. Дополнительных импортов НЕ НАДО.
-        # Требует доработки по триггеру агрегатора
-        # Вот тут мы узнаем, что база данных блокируется, а по сему велю, сделать LOCK.
-        # Хранить часть данных в оперативе - наш кандидат
 
     def random_seed(self):
         # Методом проб и ошибок мы выяснили, что потоки нужно останавливать прямо внутри цикла, благо
@@ -26,8 +22,8 @@ class ThreadingT(Thread):
             try:
                 # Частота опроса биржи по их Public API. Легкая защита от отключения данных
                 timeTemp = random.uniform(52, 58)  # Значения можно менять
-                print(timeTemp)
-                # Пока что закрыто, так как БД очень сильно засирается.
+                logging.info(u'Delay before request..' + str(timeTemp))
+                #
                 try:
                     t1 = Thread(target=api_get_getmarketsummaries)
                     t2 = Thread(target=api_get_getmarkethistory)
@@ -41,27 +37,27 @@ class ThreadingT(Thread):
                     t1.join()
                     t2.join()
                     t3.join()
-                except(Exception):
-                    print('Mistake in random_seed')
+                except():
+                    logging.error(u'Data were not recieved')
                 time.sleep(timeTemp)
-            except:
-                print('Overflow error in tick_exchparser')
+            except():
+                logging.error('Threads bump')
 
 
 def aggregation_trigger():
     while 1:
-        print('Starting aggregation...'+str(time.time()))
-        thread = Thread(target=OHLCaggregation(datetime.datetime.utcnow()))
-        thread2 = Thread(target=Volumeaggregation(datetime.datetime.utcnow()))
-        thread3 = Thread(target=Tickaggregation(datetime.datetime.utcnow()))
-        thread._stop()
-        thread2._stop()
-        thread3._stop()
-        thread.start()
-        thread2.start()
-        thread3.start()
-        thread.join()
-        thread2.join()
-        thread3.join()
-        print('Aggregated = true. Going to sleep.'+str(time.time()))
+        logging.info(u'Aggregations started')
+        try:
+           threadf = Thread(target=OHLCaggregation(datetime.datetime.utcnow()))
+           thread2f = Thread(target=Volumeaggregation(datetime.datetime.utcnow()))
+           thread3f = Thread(target=Tickaggregation(datetime.datetime.utcnow()))
+           threadf.start()
+           thread2f.start()
+           thread3f.start()
+           threadf.join()
+           thread2f.join()
+           #thread3f.join()
+        except():
+            logging.error(u'Aggregation had not been finished')
+        logging.info(u'Aggregation confirmed')
         time.sleep(300)
