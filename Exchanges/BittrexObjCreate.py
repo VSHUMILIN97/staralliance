@@ -109,3 +109,34 @@ def api_get_getmarkethistory():
                         'FillType': filltype, 'OrderType': ordertype, 'TimeStamp': timestamp, 'Mod': False}
                 test.insert(data)
     logging.info(u'Bittrex getmarkethistory ended')
+
+
+def livecoin_ticker():
+    logging.info(u'livecoin getticker started')
+    #
+    ownpairlist = ['LTC/BTC', 'ETH/BTC']
+    b = MongoDBConnection().start_db()
+    db = b.PiedPiperStock
+    test = db.LCoinTick
+    #
+    logging.info(u'livecoin getticker API was called')
+    #a = '/exchange/ticker?currencyPair=LTC/BTC'
+    for i in range(0, len(ownpairlist)):
+        api_request = requests.get("https://api.livecoin.net" + "/exchange/ticker?currencyPair=" + ownpairlist[i])
+        # Формируем JSON массив из данных с API
+        json_data = json.loads(api_request.text)
+        # Если все ок - парсим
+        # Назначаем объект 'result' корневым, для простоты обращения
+        root = json_data
+        best_bid, best_ask = float(root['best_bid']), float(root['best_ask'])
+        #
+        a = ownpairlist[i]
+        if a == 'LTC/BTC':
+            a = 'BTC-LTC'
+        else:
+            a = 'BTC-ETH'
+
+        data = {'PairName': a, 'Tick': (best_ask + best_bid) / 2, 'TimeStamp': timezone.now(), 'Mod': False}
+        test.insert(data)
+    logging.info(u'livecoin getticker ended')
+

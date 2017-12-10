@@ -51,50 +51,53 @@ def OHLCaggregation(ServerTime):
             #
             mergingtime = startingtime + delayActivation
             while 1:
-                if mergingtime < ServerTime:
-                    # High Работа с глобальными переменными. Переприсвоится дальше.
-                    highest_value = 0
-                    endingtime = startingtime + delayActivation
-                    # Low Записываем значение из одномерного словаря (Это можно отрефакторить - WELCOME!)
-                    low_val_dict = db[exchname].find({'PairName': secinner, 'Mod': False, 'TimeStamp':
-                                                     {'$gte': startingtime, '$lt': endingtime}}, {'Low': True}).limit(1)
-                    # Last Пишем первый объект из коллекции. Так и не разобрались с полем.
-                    # Поиск по паре, полю Mod - Modified/ TimeStamp в разрезе от startingtime до endingtime
-                    last_val_dict = db[exchname].find({'PairName': secinner, 'Mod': False, 'TimeStamp':
-                                                      {'$gte': startingtime, '$lt': endingtime}},
-                                                      {'Last': True}).limit(1)
-                    #
-                    pair_matcher = db[exchname].find({'PairName': secinner, 'Mod': False, 'TimeStamp':
-                                                     {'$gte': startingtime, '$lt': endingtime}})
-                    #
-                    prev_day_dict = db[exchname].find({'PairName': secinner, 'Mod': False, 'TimeStamp':
-                                                      {'$gte': startingtime, '$lt': endingtime}}, {'PrevDay': True})
-                    for subinLow in low_val_dict:
-                        lowest_value = subinLow['Low']
-                    # Last
-                    for subinLast in last_val_dict:
-                        LastValue = subinLast['Last']
-                    # PrevDay
-                    for subinPrevDay in prev_day_dict:
-                        PrevDayValue = subinPrevDay['PrevDay']
-                    #
-                    for trdinner in pair_matcher:
-                        if trdinner['High'] > highest_value:
-                            highest_value = trdinner['High']
-                        if trdinner['Low'] < lowest_value:
-                            lowest_value = trdinner['Low']
-                    tempdict = {'PairName': secinner, 'High': highest_value,
-                                'Low': lowest_value, 'TimeStamp': startingtime + half_delay, 'Last': LastValue,
-                                'PrevDay': PrevDayValue, 'Aggregated': True}
-                    db[exchname].insert(tempdict)
-                    db[exchname].update({'PairName': secinner, 'Mod': False, 'TimeStamp':
-                                        {'$gte': startingtime, '$lt': endingtime}}, {'$set': {'Mod': True}}, multi=True)
-                    # Конец работы с циклом, переход на следующие 5 минут времени
+                try:
+                    if mergingtime < ServerTime:
+                        # High Работа с глобальными переменными. Переприсвоится дальше.
+                        highest_value = 0
+                        endingtime = startingtime + delayActivation
+                        # Low Записываем значение из одномерного словаря (Это можно отрефакторить - WELCOME!)
+                        low_val_dict = db[exchname].find({'PairName': secinner, 'Mod': False, 'TimeStamp':
+                                                         {'$gte': startingtime, '$lt': endingtime}}, {'Low': True}).limit(1)
+                        # Last Пишем первый объект из коллекции. Так и не разобрались с полем.
+                        # Поиск по паре, полю Mod - Modified/ TimeStamp в разрезе от startingtime до endingtime
+                        last_val_dict = db[exchname].find({'PairName': secinner, 'Mod': False, 'TimeStamp':
+                                                          {'$gte': startingtime, '$lt': endingtime}},
+                                                          {'Last': True}).limit(1)
+                        #
+                        pair_matcher = db[exchname].find({'PairName': secinner, 'Mod': False, 'TimeStamp':
+                                                         {'$gte': startingtime, '$lt': endingtime}})
+                        #
+                        prev_day_dict = db[exchname].find({'PairName': secinner, 'Mod': False, 'TimeStamp':
+                                                          {'$gte': startingtime, '$lt': endingtime}}, {'PrevDay': True})
+                        for subinLow in low_val_dict:
+                            lowest_value = subinLow['Low']
+                        # Last
+                        for subinLast in last_val_dict:
+                            LastValue = subinLast['Last']
+                        # PrevDay
+                        for subinPrevDay in prev_day_dict:
+                            PrevDayValue = subinPrevDay['PrevDay']
+                        #
+                        for trdinner in pair_matcher:
+                            if trdinner['High'] > highest_value:
+                                highest_value = trdinner['High']
+                            if trdinner['Low'] < lowest_value:
+                                lowest_value = trdinner['Low']
+                        tempdict = {'PairName': secinner, 'High': highest_value,
+                                    'Low': lowest_value, 'TimeStamp': startingtime + half_delay, 'Last': LastValue,
+                                    'PrevDay': PrevDayValue, 'Aggregated': True}
+                        db[exchname].insert(tempdict)
+                        db[exchname].update({'PairName': secinner, 'Mod': False, 'TimeStamp':
+                                            {'$gte': startingtime, '$lt': endingtime}}, {'$set': {'Mod': True}}, multi=True)
+                        # Конец работы с циклом, переход на следующие 5 минут времени
 
-                    startingtime = startingtime + delayActivation
-                    mergingtime = mergingtime + delayActivation
-                else:
-                    break
+                        startingtime = startingtime + delayActivation
+                        mergingtime = mergingtime + delayActivation
+                    else:
+                        break
+                except:
+                    logging.error(u'OHLCAgg')
         logging.info(u'Check' + exchname + u'collection')
 
 
@@ -132,38 +135,41 @@ def Volumeaggregation(ServerTime):
             #
             mergingtime = startingtime + delayActivation
             while 1:
-                if mergingtime < ServerTime:
-                    # High Работа с глобальными переменными. Переприсвоится дальше.
-                    endingtime = startingtime + delayActivation
-                    #
-                    pair_matcher = db[exchname].find({'PairName': secinner, 'Mod': False, 'TimeStamp':
-                                                     {'$gte': startingtime, '$lt': endingtime}})
-                    sell_data = 0
-                    sold_data = 0
-                    buy_data = 0
-                    bought_data = 0
-                    for trdinner in pair_matcher:
-                        if trdinner['OrderType'] == 'SELL':
-                            sell_data += trdinner['Quantity']
-                            sold_data += trdinner['Price']
-                        else:
-                            buy_data += trdinner['Quantity']
-                            bought_data += trdinner['Price']
-                    temp_dict_sell = {'PairName': secinner, 'Quantity': sell_data,
-                                      'OrderType': 'SELL', 'Price': sold_data,
-                                      'TimeStamp': startingtime + half_delay, 'Aggregated': True}
-                    temp_dict_buy = {'PairName': secinner, 'Quantity': sell_data,
-                                     'OrderType': 'BUY', 'Price': bought_data,
-                                     'TimeStamp': startingtime + half_delay, 'Aggregated': True}
-                    db[exchname].insert(temp_dict_sell)
-                    db[exchname].insert(temp_dict_buy)
-                    db[exchname].update({'PairName': secinner, 'Mod': False, 'TimeStamp':
-                                        {'$gte': startingtime, '$lt': endingtime}}, {'$set': {'Mod': True}}, multi=True)
-                    # Конец работы с циклом, переход на следующие 5 минут времени
-                    startingtime = startingtime + delayActivation
-                    mergingtime = mergingtime + delayActivation
-                else:
-                    break
+                try:
+                    if mergingtime < ServerTime:
+                        # High Работа с глобальными переменными. Переприсвоится дальше.
+                        endingtime = startingtime + delayActivation
+                        #
+                        pair_matcher = db[exchname].find({'PairName': secinner, 'Mod': False, 'TimeStamp':
+                                                         {'$gte': startingtime, '$lt': endingtime}})
+                        sell_data = 0
+                        sold_data = 0
+                        buy_data = 0
+                        bought_data = 0
+                        for trdinner in pair_matcher:
+                            if trdinner['OrderType'] == 'SELL':
+                                sell_data += trdinner['Quantity']
+                                sold_data += trdinner['Price']
+                            else:
+                                buy_data += trdinner['Quantity']
+                                bought_data += trdinner['Price']
+                        temp_dict_sell = {'PairName': secinner, 'Quantity': sell_data,
+                                          'OrderType': 'SELL', 'Price': sold_data,
+                                          'TimeStamp': startingtime + half_delay, 'Aggregated': True}
+                        temp_dict_buy = {'PairName': secinner, 'Quantity': sell_data,
+                                         'OrderType': 'BUY', 'Price': bought_data,
+                                         'TimeStamp': startingtime + half_delay, 'Aggregated': True}
+                        db[exchname].insert(temp_dict_sell)
+                        db[exchname].insert(temp_dict_buy)
+                        db[exchname].update({'PairName': secinner, 'Mod': False, 'TimeStamp':
+                                            {'$gte': startingtime, '$lt': endingtime}}, {'$set': {'Mod': True}}, multi=True)
+                        # Конец работы с циклом, переход на следующие 5 минут времени
+                        startingtime = startingtime + delayActivation
+                        mergingtime = mergingtime + delayActivation
+                    else:
+                        break
+                except:
+                    logging.error(u'VolumeAgg')
         logging.info(u'Check' + exchname + u'collection')
 
 
@@ -173,9 +179,10 @@ def Tickaggregation(ServerTime):
     global tick, endingtime, startingtime, TimeStamp, PairName
     b = MongoDBConnection().start_db()
     db = b.PiedPiperStock
-    exchlist = ['BittrexTick']
+    exchlist = ['BittrexTick', 'LCoinTick']
     for inner in range(0, len(exchlist)):
         exchname = exchlist[inner]
+        print(exchname)
         pairlist = db[exchname].distinct('PairName')
         logging.info(u'Going through..' + exchname)
         #
@@ -200,26 +207,64 @@ def Tickaggregation(ServerTime):
                     startingtime = dateutil.parser.parse(str(subinto['TimeStamp']))
             #
             mergingtime = startingtime + delayActivation
-            while 1:
-                tick = 0
-                if mergingtime < ServerTime:
-                    #
-                    endingtime = startingtime + delayActivation
-                    #
-                    pair_matcher = db[exchname].find({'PairName': secinner, 'Mod': False, 'TimeStamp':
-                                                     {'$gte': startingtime, '$lt': endingtime}})
 
-                    for trdinner in pair_matcher:
-                        if trdinner['Tick'] > tick:
-                            tick = trdinner['Tick']
-                    temp_dict = {'PairName': secinner, 'Tick': tick,
-                                 'TimeStamp': startingtime + half_delay, 'Aggregated': True}
-                    db[exchname].insert(temp_dict)
-                    db[exchname].update({'PairName': secinner, 'Mod': False, 'TimeStamp':
-                        {'$gte': startingtime, '$lt': endingtime}}, {'$set': {'Mod': True}}, multi=True)
-                    # Конец работы с циклом, переход на следующие 5 минут времени
-                    startingtime = startingtime + delayActivation
-                    mergingtime = mergingtime + delayActivation
-                else:
-                    break
+            while 1:
+                try:
+
+                    tick = 0
+                    if mergingtime < ServerTime:
+                        #
+                        endingtime = startingtime + delayActivation
+                        #
+                        pair_matcher = db[exchname].find({'PairName': secinner, 'Mod': False, 'TimeStamp':
+                                                         {'$gte': startingtime, '$lt': endingtime}})
+
+                        for trdinner in pair_matcher:
+                            if trdinner['Tick'] > tick:
+                                tick = trdinner['Tick']
+                        temp_dict = {'PairName': secinner, 'Tick': tick,
+                                     'TimeStamp': startingtime + half_delay, 'Aggregated': True}
+                        db[exchname].insert(temp_dict)
+                        db[exchname].update({'PairName': secinner, 'Mod': False, 'TimeStamp':
+                            {'$gte': startingtime, '$lt': endingtime}}, {'$set': {'Mod': True}}, multi=True)
+                        # Конец работы с циклом, переход на следующие 5 минут времени
+                        startingtime = startingtime + delayActivation
+                        mergingtime = mergingtime + delayActivation
+                    else:
+                        break
+                except:
+                    logging.error(u'Tickagg')
         logging.info(u'Check' + exchname + u'collection')
+
+
+def arbitration_aggregate():
+    import pymongo
+    logging.info(u'arbitration reset')
+    global tick, timestamp, pair_name
+    b = MongoDBConnection().start_db()
+    db = b.PiedPiperStock
+    exchlist = ['BittrexTick', 'LCoinTick']
+    for inner in range(0, len(exchlist)):
+        exchname = exchlist[inner]
+        pairlist = db[exchname].distinct('PairName')
+        logging.info(u'Going through..' + exchname)
+        #
+        for secinner in pairlist:
+            slice = db[exchname].find({'PairName': secinner, 'Aggregated': True}) \
+                .sort('TimeStamp', pymongo.ASCENDING).limit(2)
+            i = 0
+            prev = 0
+            for trdinner in slice:
+                if i == 0:
+                    prev = trdinner['Tick']
+                elif i == 1:
+                    ref = ((trdinner['Tick'] - prev) / prev) * 100
+                    if (abs(ref)) >= 3:
+                        if ref > 0:
+                            tdict = {'Exch': exchname, 'PairName': secinner, 'Tick': trdinner['Tick'], 'Chg': 'U'}
+                        else:
+                            tdict = {'Exch': exchname, 'PairName': secinner, 'Tick': trdinner['Tick'], 'Chg': 'D'}
+                    else:
+                        tdict = {'Exch': exchname, 'PairName': secinner, 'Tick': trdinner['Tick'], 'Chg': 'N'}
+                    db.temporaryTick.insert(tdict)
+                i = i + 1

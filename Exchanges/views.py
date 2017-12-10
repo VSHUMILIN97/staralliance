@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import View
 from mongo_db_connection import MongoDBConnection
+from .TimeAggregator import arbitration_aggregate
 # Create your views here.
 # Для чистоты кода используем переменные с названиями bit_obj_tick вместо bitObjTick
 # В_питоне_модно_с_граундами_писать , а не с АпперКейсомТипВотТак
@@ -20,7 +21,8 @@ def Bittrex_view(request, market=""):
         testdictOHLC = db.Bittrex.find({'PairName': market, 'Aggregated': True})
     else:
         testdictOHLC = db.Bittrex.find({'PairName': 'BTC-ETH', 'Aggregated': True})
-    return render(request, "Bittrex_template.html",  {'temp': testdictOHLC})  #
+    slice = db.temporaryTick.find({'PairName': 'BTC-1ST'}).limit(1)
+    return render(request, "Bittrex_template.html",  {'temp': slice})  #
 
 
 # Наша гордость. Работа и построение графиков, в прямом режиме делаются срезы из БД
@@ -48,3 +50,24 @@ class ChartsView(View):  # Класс для вывода графиков
         testdictTick = db.BittrexTick.find({'PairName': market, 'Aggregated': True})
         return render(request, 'charts.html', {'testingOHLC': testdictOHLC, 'testingMHistSell': testdictMHistSell,
                                                'testingMHistBuy': testdictMHistBuy, 'testingTick': testdictTick})
+
+
+
+class Comparison(View):
+    def get(self, request, *args, **kwargs):
+        market = 'BTC-1ST'
+        b = MongoDBConnection().start_db()
+        db = b.PiedPiperStock
+        db.temporaryTick.drop()
+        arbitration_aggregate()
+
+        ticks = list(db.temporaryTick.find())
+        columns = len(db.temporaryTick.distinct('Exch'))
+        rows = len(db.temporaryTick.distinct('PairName'))
+        cnames = db.temporaryTick.distinct('Exch')
+        rnames = db.temporaryTick.distinct('PairName')
+
+
+        return render(request, 'compare.html',
+                      {'ticks': ticks, 'market': market, 'columns': columns, 'rows': rows, 'cnames': cnames,
+                       'rnames': rnames})

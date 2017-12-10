@@ -2,7 +2,7 @@ from django.conf.urls import url
 from Exchanges import views
 from django.conf.urls.static import static
 from PiedPiper import settings
-from .tick_exchparser import ThreadingT, aggregation_trigger
+from .tick_exchparser import ThreadingT
 from threading import Thread
 from mongo_db_connection import MongoDBConnection
 import logging
@@ -23,6 +23,8 @@ urlpatterns = [
     url(r'^charts/(?P<market>[A-Za-z]+-[A-Za-z]+)/$', views.ChartsView.as_view(), name='charts/marketname'),
     url(r'^charts/(?P<market>[A-Za-z]+-\d[A-Za-z]+)/$', views.ChartsView.as_view(), name='charts/2give'),
     url(r'^charts/(?P<market>[A-Za-z]+-[A-Za-z]+\d)/$', views.ChartsView.as_view(), name='charts/emc2'),
+
+    url(r'^compare/$', views.Comparison.as_view(), name='Comparison'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 # STATIC_URL нужен для импорта css , img, js файлов из папки static
 
@@ -39,10 +41,11 @@ db = connectme.start_db().PiedPiperStock
 # Make daemonic(!) ПРОДУМАТЬ БЕЗОПАСНОСТЬ!
 logging.info(u'Server started')
 testingThreads = ThreadingT()
-t2 = Thread(target=aggregation_trigger)
+#t2 = Thread(target=aggregation_trigger)
 try:
     testingThreads.start()
-    t2.start()
+ #   t2._stop()
+  #  t2.start()
     logging.info(u'Threads"re successfully started')
 except:
     logging.critical(u'Threads were not started')
