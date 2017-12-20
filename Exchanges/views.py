@@ -1,7 +1,10 @@
+import asyncio
+
 from django.shortcuts import render
 from django.views.generic import View
 from mongo_db_connection import MongoDBConnection
 from .TimeAggregator import arbitration_aggregate
+from .websockets import returner
 # Create your views here.
 # Для чистоты кода используем переменные с названиями bit_obj_tick вместо bitObjTick
 # В_питоне_модно_с_граундами_писать , а не с АпперКейсомТипВотТак
@@ -55,19 +58,20 @@ class ChartsView(View):  # Класс для вывода графиков
 
 class Comparison(View):
     def get(self, request, *args, **kwargs):
-        market = 'BTC-1ST'
-        b = MongoDBConnection().start_db()
-        db = b.PiedPiperStock
-        db.temporaryTick.drop()
-        arbitration_aggregate()
+       #market = 'BTC-1ST'
+       #b = MongoDBConnection().start_db()
+       #db = b.PiedPiperStock
+       #db.temporaryTick.drop()
+       #arbitration_aggregate()
 
-        ticks = list(db.temporaryTick.find())
-        columns = len(db.temporaryTick.distinct('Exch'))
-        rows = len(db.temporaryTick.distinct('PairName'))
-        cnames = db.temporaryTick.distinct('Exch')
-        rnames = db.temporaryTick.distinct('PairName')
+        asyncio.get_event_loop().run_until_complete(returner())
+        asyncio.get_event_loop().run_forever()#
+       ##ticks = list(db.temporaryTick.find())
+       #columns = len(db.temporaryTick.distinct('Exch'))
+       #rows = len(db.temporaryTick.distinct('PairName'))
+       #cnames = db.temporaryTick.distinct('Exch')
+       #rnames = db.temporaryTick.distinct('PairName')
 
-
-        return render(request, 'compare.html',
-                      {'ticks': ticks, 'market': market, 'columns': columns, 'rows': rows, 'cnames': cnames,
-                       'rnames': rnames})
+        return render(request, 'compare.html', {})
+                     # {'ticks': ticks, 'market': market, 'columns': columns, 'rows': rows, 'cnames': cnames,
+                      # 'rnames': rnames})

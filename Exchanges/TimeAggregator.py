@@ -255,15 +255,14 @@ def arbitration_aggregate():
             i = 0
             prev = 0
             for trdinner in slice:
-                if i == 0:
+                if (i == 0):
                     prev = trdinner['Tick']
-                elif i == 1:
-                    ref = ((trdinner['Tick'] - prev) / prev) * 100
-                    if (abs(ref)) >= 3:
-                        if ref > 0:
-                            tdict = {'Exch': exchname, 'PairName': secinner, 'Tick': trdinner['Tick'], 'Chg': 'U'}
-                        else:
-                            tdict = {'Exch': exchname, 'PairName': secinner, 'Tick': trdinner['Tick'], 'Chg': 'D'}
+                elif (i == 1):
+                    ref = ((trdinner['Tick']-prev)/prev)*100
+                    if (ref > 0):
+                        tdict = {'Exch': exchname, 'PairName': secinner, 'Tick': trdinner['Tick'], 'Chg': 'U'}
+                    elif (ref < 0):
+                        tdict = {'Exch': exchname, 'PairName': secinner, 'Tick': trdinner['Tick'], 'Chg': 'D'}
                     else:
                         tdict = {'Exch': exchname, 'PairName': secinner, 'Tick': trdinner['Tick'], 'Chg': 'N'}
                     db.temporaryTick.insert(tdict)

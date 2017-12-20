@@ -43,7 +43,7 @@ logging.info(u'Server started')
 testingThreads = ThreadingT()
 #t2 = Thread(target=aggregation_trigger)
 try:
-    testingThreads.start()
+    #testingThreads.start()
  #   t2._stop()
   #  t2.start()
     logging.info(u'Threads"re successfully started')
