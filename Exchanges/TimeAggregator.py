@@ -179,7 +179,7 @@ def Tickaggregation(ServerTime):
     global tick, endingtime, startingtime, TimeStamp, PairName
     b = MongoDBConnection().start_db()
     db = b.PiedPiperStock
-    exchlist = ['BittrexTick', 'LCoinTick']
+    exchlist = ['BittrexTick', 'LiveCoinTick']
     for inner in range(0, len(exchlist)):
         exchname = exchlist[inner]
         print(exchname)
@@ -243,7 +243,8 @@ def arbitration_aggregate():
     global tick, timestamp, pair_name
     b = MongoDBConnection().start_db()
     db = b.PiedPiperStock
-    exchlist = ['BittrexTick', 'LCoinTick']
+
+    exchlist = ['BittrexTick', 'LiveCoinTick']
     for inner in range(0, len(exchlist)):
         exchname = exchlist[inner]
         pairlist = db[exchname].distinct('PairName')

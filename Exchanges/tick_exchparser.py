@@ -1,6 +1,6 @@
 import datetime
 from Exchanges.BittrexObjCreate import api_get_getmarkethistory, api_get_getticker,\
-     api_get_getmarketsummaries, livecoin_ticker
+     api_get_getmarketsummaries, livecoin_ticker,livecoin_ticker_all_info
 import random
 from .TimeAggregator import OHLCaggregation, Volumeaggregation, Tickaggregation
 import time
@@ -30,22 +30,27 @@ class ThreadingT(Thread):
                     t2 = Thread(target=api_get_getmarkethistory)
                     t3 = Thread(target=api_get_getticker)
                     t4 = Thread(target=livecoin_ticker())
+                    t5 = Thread(target=livecoin_ticker_all_info())
                     t1._stop()
                     t2._stop()
                     t3._stop()
                     t4._stop()
+                    t5._stop()
                     t1.setDaemon(True)
                     t2.setDaemon(True)
                     t3.setDaemon(True)
                     t4.setDaemon(True)
+                    t5.setDaemon(True)
                     t1.start()
                     t2.start()
                     t3.start()
                     t4.start()
+                    t5.start()
                     t1.join()
                     t2.join()
                     t3.join()
                     t4.join()
+                    t5.join()
                     Tickaggregation(datetime.datetime.utcnow())
                 except():
                     logging.error(u'Data were not recieved')
