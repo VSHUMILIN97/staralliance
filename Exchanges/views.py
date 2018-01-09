@@ -53,7 +53,6 @@ class ChartsView(View):  # Класс для вывода графиков
                                                'testingMHistBuy': testdictMHistBuy, 'testingTick': testdictTick})
 
 
-
 class Comparison(View):
     def get(self, request, *args, **kwargs):
         market = 'BTC-1ST'

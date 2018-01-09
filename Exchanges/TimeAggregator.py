@@ -162,7 +162,8 @@ def Volumeaggregation(ServerTime):
                         db[exchname].insert(temp_dict_sell)
                         db[exchname].insert(temp_dict_buy)
                         db[exchname].update({'PairName': secinner, 'Mod': False, 'TimeStamp':
-                                            {'$gte': startingtime, '$lt': endingtime}}, {'$set': {'Mod': True}}, multi=True)
+                                            {'$gte': startingtime, '$lt': endingtime}},
+                                            {'$set': {'Mod': True}}, multi=True)
                         # Конец работы с циклом, переход на следующие 5 минут времени
                         startingtime = startingtime + delayActivation
                         mergingtime = mergingtime + delayActivation
@@ -179,7 +180,7 @@ def Tickaggregation(ServerTime):
     global tick, endingtime, startingtime, TimeStamp, PairName
     b = MongoDBConnection().start_db()
     db = b.PiedPiperStock
-    exchlist = ['BittrexTick', 'LiveCoinTick']
+    exchlist = ['BittrexTick', 'LiveCoinTick', 'GatecoinTick']
     for inner in range(0, len(exchlist)):
         exchname = exchlist[inner]
         print(exchname)
@@ -244,7 +245,7 @@ def arbitration_aggregate():
     b = MongoDBConnection().start_db()
     db = b.PiedPiperStock
 
-    exchlist = ['BittrexTick', 'LiveCoinTick']
+    exchlist = ['BittrexTick', 'GatecoinTick']  # LiveCoinTick не юзаем, так как пары составлены не корректно.
     for inner in range(0, len(exchlist)):
         exchname = exchlist[inner]
         pairlist = db[exchname].distinct('PairName')

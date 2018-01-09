@@ -145,7 +145,8 @@ def livecoin_ticker():
             #
             a = ownpairlist[i]
 
-            data = {'PairName': pair_name_formater(a), 'Tick': (best_ask + best_bid) / 2, 'TimeStamp': timezone.now(), 'Mod': False}
+            data = {'PairName': pair_name_formater(a), 'Tick': (best_ask + best_bid) / 2,
+                    'TimeStamp': timezone.now(), 'Mod': False}
             test.insert(data)
         logging.info(u'livecoin getticker ended successfully')
     except:
@@ -168,15 +169,18 @@ def livecoin_ticker_all_info():
             json_data = json.loads(api_request.text)
             # Если все ок - парсим
             # Назначаем объект 'result' корневым, для простоты обращения
-            root = json_data
 
             for item in json_data:
 
                     #logging.info("COUNT TEST " + item['symbol'] + " --- " + str(i))
-                    marketname, high, low , volume , last = item['symbol'] , float('{:.10f}'.format(item['high'])) , float('{:.10f}'.format(item['low'])),\
-                                            float('{:.10f}'.format(item['volume'])), float('{:.10f}'.format(item['last']))
+                    marketname, high, low , volume , last = item['symbol'] , \
+                                                            float('{:.10f}'.format(item['high'])) ,\
+                                                            float('{:.10f}'.format(item['low'])),\
+                                                            float('{:.10f}'.format(item['volume'])),\
+                                                            float('{:.10f}'.format(item['last']))
 
-                    #logging.info("LIVECOIN TEST: ___" + marketname + "  -  " + str(high) + "  -  " + str(low)+ "  -  " + str(volume) + "  -  " + str(last) )
+                    #logging.info("LIVECOIN TEST: ___" + marketname + "  -  " + str(high) + "
+                    # -  " + str(low)+ "  -  " + str(volume) + "  -  " + str(last) )
                     data = {'PairName': pair_name_formater(marketname), 'High': high, 'Low': low, 'Volume': volume,
                            'Last': last, 'TimeStamp': timezone.now(), 'Mod': False}
                     #Пишем только пары с USD, потому что можем
@@ -188,3 +192,36 @@ def livecoin_ticker_all_info():
             logging.info(u'LiveCoin Data collected successfully')
     except:
         logging.info(u' LiveCoin collect all data Failed')
+
+
+def gatecoin_ticker():
+    logging.info(u'Gatecoin collection of data in parse')
+
+
+    try:
+        b = MongoDBConnection().start_db()
+        db = b.PiedPiperStock
+        gcstock = db.GatecoinTick
+        api_request = requests.get("https://api.gatecoin.com/Public/LiveTickers")
+        json_data = json.loads(api_request.text)
+
+
+        result = json_data['tickers']
+        for item in result:
+            if item['currencyPair'] == 'ETHBTC':
+                market, bid, ask = str(item['currencyPair']), float(item['bid']), float(item['ask'])
+                a = market.replace('ETHBTC', 'BTC-ETH')
+                data = {'PairName': a, 'Tick': (bid + ask)/2, 'TimeStamp': timezone.now(), 'Mod': False}
+                gcstock.insert(data)
+            elif item['currencyPair'] == '1STBTC':
+                market, bid, ask = str(item['currencyPair']), float(item['bid']), float(item['ask'])
+                b = market.replace('1STBTC', 'BTC-1ST')
+                data = {'PairName': b, 'Tick': (bid + ask) / 2, 'TimeStamp': timezone.now(), 'Mod': False}
+                gcstock.insert(data)
+            elif item['currencyPair'] == 'LTCBTC':
+                market, bid, ask = str(item['currencyPair']), float(item['bid']), float(item['ask'])
+                h = market.replace('LTCBTC', 'BTC-LTC')
+                data = {'PairName': h, 'Tick': (bid + ask) / 2, 'TimeStamp': timezone.now(), 'Mod': False}
+                gcstock.insert(data)
+    except:
+        logging.error(r'gatecoin ticker mistake')

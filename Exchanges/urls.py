@@ -52,7 +52,7 @@ testingThreads = ThreadingT()
 # Далее открываем субпроцесс, в качестве "входа" используем PIPE.
 child = os.path.join(os.path.dirname(__file__), "../websocketapp.py")
 command = [sys.executable, child]
-pipe = subprocess.Popen(command, stdin=subprocess.PIPE)
+pipe = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
 
 t2 = Thread(target=aggregation_trigger)
 try:
