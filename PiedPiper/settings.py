@@ -80,7 +80,12 @@ DATABASES = {
     },
 }
 
-
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "asgiref.inmemory.ChannelLayer",
+        "ROUTING": "Exchanges.routing.channel_routing",
+    },
+}
 # Before
 """
 DATABASES = {

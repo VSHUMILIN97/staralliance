@@ -9,9 +9,25 @@
   <button class="hidbt" id="hidebt">Hide Useless</button>
 </div>
 
-<script type="text/javascript">
-    var ws = new WebSocket("ws://127.0.0.1:5678/");
+
+
+    <script>
+
+     var ws = new WebSocket("ws://127.0.0.1:8080/");
+    ws.onopen = function(event){
+        alert("We're opened!")
+    };
     ws.onmessage = function (event) {
+        alert(event.data)
+    };
+
+    ws.onclose = function (event) {
+      alert('See you next time')
+    }
+    </script>
+
+<script type="text/javascript">
+
     var table = document.getElementById("tableID");
 
     var tableHead = document.createElement('thead');
@@ -146,7 +162,7 @@
 			this.innerText="Show Useless";
 			}
 	 }, false);
-    }
+
 </script>
 
 <style>

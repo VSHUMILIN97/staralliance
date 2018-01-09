@@ -51,7 +51,6 @@ class ThreadingT(Thread):
                     t3.join()
                     t4.join()
                     t5.join()
-                    Tickaggregation(datetime.datetime.utcnow())
                 except():
                     logging.error(u'Data were not recieved')
                 time.sleep(timeTemp)
@@ -59,7 +58,7 @@ class ThreadingT(Thread):
                 logging.error('Threads bump')
 
 
-"""def aggregation_trigger():
+def aggregation_trigger():
     while 1:
         logging.info(u'Aggregations started')
         try:
@@ -78,4 +77,4 @@ class ThreadingT(Thread):
         except():
             logging.error(u'Aggregation had not been finished')
         logging.info(u'Aggregation confirmed')
-        time.sleep(300)"""
+        time.sleep(300)
