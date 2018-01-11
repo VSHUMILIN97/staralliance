@@ -143,9 +143,11 @@ def livecoin_ticker():
             root = json_data
             best_bid, best_ask = float(root['best_bid']), float(root['best_ask'])
             #
-            a = ownpairlist[i]
-
-            data = {'PairName': pair_name_formater(a), 'Tick': (best_ask + best_bid) / 2,
+            if ownpairlist[i] == 'LTC/BTC':
+                a = "BTC-LTC"
+            else:
+                a = "BTC-ETH"
+            data = {'PairName': a, 'Tick': (best_ask + best_bid) / 2,
                     'TimeStamp': timezone.now(), 'Mod': False}
             test.insert(data)
         logging.info(u'livecoin getticker ended successfully')

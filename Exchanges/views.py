@@ -55,16 +55,16 @@ class ChartsView(View):  # Класс для вывода графиков
 
 class Comparison(View):
     def get(self, request, *args, **kwargs):
-        market = 'BTC-1ST'
-        b = MongoDBConnection().start_db()
-        db = b.PiedPiperStock
-        db.temporaryTick.drop()
-        arbitration_aggregate()
-        ticks = list(db.temporaryTick.find())
-        columns = len(db.temporaryTick.distinct('Exch'))
-        rows = len(db.temporaryTick.distinct('PairName'))
-        cnames = db.temporaryTick.distinct('Exch')
-        rnames = db.temporaryTick.distinct('PairName')
+        #market = 'BTC-1ST'
+        #b = MongoDBConnection().start_db()
+        #db = b.PiedPiperStock
+        #db.temporaryTick.drop()
+        #arbitration_aggregate()
+        #ticks = list(db.temporaryTick.find())
+        ##columns = len(db.temporaryTick.distinct('Exch'))
+        ##rows = len(db.temporaryTick.distinct('PairName'))
+        ##cnames = db.temporaryTick.distinct('Exch')
+        ##rnames = db.temporaryTick.distinct('PairName')
 
-        return render(request, 'compare.html', {'ticks': ticks, 'market': market, 'columns': columns,
-                                                'rows': rows, 'cnames': cnames, 'rnames': rnames})
+        return render(request, 'compare.html', {})
+    # 'columns': columns, 'rows': rows {'ticks': ticks, 'market': market, 'cnames': cnames, 'rnames': rnames}

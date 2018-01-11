@@ -9,160 +9,164 @@
   <button class="hidbt" id="hidebt">Hide Useless</button>
 </div>
 
-
-
-    <script>
-
-     var ws = new WebSocket("ws://127.0.0.1:8080/");
-    ws.onopen = function(event){
-        alert("We're opened!")
-    };
-    ws.onmessage = function (event) {
-        alert(event.data)
-    };
-
-    ws.onclose = function (event) {
-      alert('See you next time')
-    }
-    </script>
-
 <script type="text/javascript">
 
-    var table = document.getElementById("tableID");
+ var ws = new WebSocket("ws://127.0.0.1:8080/");
+    ws.onopen = function(event){
 
-    var tableHead = document.createElement('thead');
-    table.appendChild(tableHead);
-    var tr = document.createElement('tr');
-    tr.style.minHeight = "5px";
-    tableHead.appendChild(tr);
+    };
+    ws.onclose = function (event) {
+         if (event.wasClean){
+             alert('Соединение закрыто');
+         } else{
+             alert('Соединение оборвано по причине: ' + event.reason + ' - код ошибки: '+ event.code );
+         }
+     };
+    ws.onerror = function (error) {
+         alert('Ошибка - ' + error.data);
+     };
+    ws.onmessage = function (event) {
+        function rfrsh(){
+            window.location.reload()
+        }
+        setTimeout(rfrsh, 30000); //Мерзкий хак. Требует переделки.
 
-	var rows = {{ rows }},
-	columns = {{ columns }};
+        var msg = JSON.parse(event.data);
+        var json_msg = JSON.parse(msg['ticks']);
+        var table = document.getElementById("tableID");
+        var tableHead = document.createElement('thead');
+        table.appendChild(tableHead);
+        var tr = document.createElement('tr');
+        tr.style.minHeight = "5px";
+        tableHead.appendChild(tr);
 
-	var th = document.createElement('th');
-    th.style.width = "130px";
-    tr.appendChild(th);
+        //var rows = msg['rows'],
+        // columns = msg['columns'];
 
-    {% for name in cnames %}
-      var th = document.createElement('th');
-      th.appendChild(document.createTextNode('{{ name }}'));
-      th.style.width = "127px";
-      tr.appendChild(th);
-    {% endfor %}
-    var min = -10;
-    var max = 10;
+        var th = document.createElement('th');
+        th.style.width = "130px";
+        tr.appendChild(th);
 
-    var tableBody = document.createElement('tbody');
-    table.appendChild(tableBody);
+        for (var name in msg['cnames']) {
+            var th = document.createElement('th');
+            th.appendChild(document.createTextNode((msg['cnames'])[name]));
+            th.style.width = "127px";
+            tr.appendChild(th);
+        }
+        var min = -10;
+        var max = 10;
 
-	{% for r in rnames %}
-	  var tr = document.createElement('tr');
-	  var text = '{{ r }}';
-      var th = document.createElement('th');
-      th.appendChild(document.createTextNode(text));
-      tr.appendChild(th);
-	    {% for c in cnames %}
-	        var success = false;
-	        {% for i in ticks %}
-	        {
-	            if (('{{ i.PairName }}' == '{{ r }}') && ('{{ i.Exch }}' == '{{ c }}')) {
-	                var td = document.createElement('td');
-	                var v = {{ i.Tick|floatformat:10 }};
-                    td.appendChild(document.createTextNode(v));
-                    if ('{{ i.Chg }}' == 'U') {
-                    td.appendChild(document.createElement("up"));
-                    } else if ('{{ i.Chg }}' == 'D') {
-                    td.appendChild(document.createElement("down"));
+        var tableBody = document.createElement('tbody');
+        table.appendChild(tableBody);
+
+
+        for (var r in msg['rnames']) {
+            var tr = document.createElement('tr');
+            var text = (msg['rnames'])[r];
+            var th = document.createElement('th');
+            th.appendChild(document.createTextNode(text));
+            tr.appendChild(th);
+            for (var c in msg['cnames']) {
+                var success = false;
+                for (var i in json_msg) {
+                    {
+                        if ((json_msg[i]['PairName'] == (msg['rnames'])[r]) && (json_msg[i]['Exch'] == (msg['cnames'])[c])) {
+                            var td = document.createElement('td');
+                            var v =  json_msg[i]['Tick'] ;
+                            td.appendChild(document.createTextNode(v));
+                            if (json_msg[i]['Chg'] == 'U') {
+                                td.appendChild(document.createElement("up"));
+                            } else if (json_msg[i]['Chg'] == 'D') {
+                                td.appendChild(document.createElement("down"));
+                            }
+                            tr.appendChild(td);
+                            //tr.replaceChild(td);
+                            success = true;
+                        }
                     }
-		            tr.appendChild(td);
-		            success = true;
                 }
-	        }
-	        {% endfor %}
-	        if (success == false) {
-	            var td = document.createElement('td');
-	            var v = '—';
-                td.appendChild(document.createTextNode(v));
-                tr.appendChild(td);
-	        }
-	    {% endfor %}
-	  tr.setAttribute("title",text);
-      tableBody.appendChild(tr);
-	{% endfor %}
+                if (success == false) {
+                    var td = document.createElement('td');
+                    var v = '—';
+                    td.appendChild(document.createTextNode(v));
+                    tr.appendChild(td);
+                }
+            }
+            tr.setAttribute("title", text);
+            tableBody.appendChild(tr);
+        }
+        var tbody = table.getElementsByTagName('tbody')[0];
+        var trow = tbody.getElementsByTagName('tr');
 
-    var table = document.getElementById('tableID');
-    var tbody = table.getElementsByTagName('tbody')[0];
-    var trow = tbody.getElementsByTagName('tr');
+        for (var i = 0, len = trow.length; i < len; i++) {
+            var cells = trow[i].getElementsByTagName('td');
+            var max = -11,
+                min = 11,
+                maxi, mini;
+            for (var j = 0, lent = cells.length; j < lent; j++) {
+                if (parseFloat(cells[j].innerHTML, 10) > max) {
+                    max = parseFloat(cells[j].innerHTML, 10);
+                }
+                if (parseFloat(cells[j].innerHTML, 10) < min) {
+                    min = parseFloat(cells[j].innerHTML, 10);
+                }
+                if (cells[j].innerText == '—') {
+                    cells[j].classList.toggle("nope");
+                }
+            }
+            if (((max - min) / max) * 100 > 3) {
+                for (var j = 0, lent = cells.length; j < lent; j++) {
+                    if (parseFloat(cells[j].innerHTML, 10) == max) {
+                        cells[j].classList.toggle("max");
+                    }
+                    else if (parseFloat(cells[j].innerHTML, 10) == min) {
+                        cells[j].classList.toggle("min");
+                    }
+                }
+            }
+            else {
+                trow[i].classList.add("hid");
+            }
+        }
 
-    for (var i = 0, len = trow.length; i < len; i++) {
-      var cells = trow[i].getElementsByTagName('td');
-      var max = -11,
-        min = 11,
-        maxi, mini;
-      for (var j = 0, lent = cells.length; j < lent; j++) {
-        if (parseFloat(cells[j].innerHTML, 10) > max) {
-          max = parseFloat(cells[j].innerHTML, 10);
+        var elements = document.getElementsByTagName('tr');
+        for (var i = 1; i < elements.length; i++) {
+            (elements)[i].addEventListener("click", function () {
+                this.classList.toggle("selected");
+                var ups = this.getElementsByTagName('up');
+                var downs = this.getElementsByTagName('down');
+                var cells = this.getElementsByTagName("td");
+                var h = this.getElementsByTagName("th");
+                for (var i = 0, len = cells.length; i < len; i++) {
+                    cells[i].classList.toggle("selected");
+                }
+                for (var i = 0, len = ups.length; i < len; i++) {
+                    ups[i].classList.toggle("selected");
+                }
+                for (var i = 0, len = downs.length; i < len; i++) {
+                    downs[i].classList.toggle("selected");
+                }
+                for (var i = 0, len = h.length; i < len; i++) {
+                    h[i].classList.toggle("selected");
+                }
+            });
         }
-        if (parseFloat(cells[j].innerHTML, 10) < min) {
-          min = parseFloat(cells[j].innerHTML, 10);
-        }
-        if (cells[j].innerText == '—') {
-          cells[j].classList.toggle("nope");
-        }
-      }
-	  if (((max-min)/max)*100 > 3) {
-		for (var j = 0, lent = cells.length; j < lent; j++) {
-          if (parseFloat(cells[j].innerHTML, 10) == max) {
-        	cells[j].classList.toggle("max");
-          }
-          else if (parseFloat(cells[j].innerHTML, 10) == min) {
-            cells[j].classList.toggle("min");
-          }
-      	}
-	  }
-	  else {
-		trow[i].classList.add("hid");
-	  }
-    }
 
-    var elements = document.getElementsByTagName('tr');
-    for (var i = 1; i < elements.length; i++) {
-      (elements)[i].addEventListener("click", function() {
-        this.classList.toggle("selected");
-        var ups = this.getElementsByTagName('up');
-        var downs = this.getElementsByTagName('down');
-				var cells = this.getElementsByTagName("td");
-				var h = this.getElementsByTagName("th");
-				for (var i = 0, len = cells.length; i < len; i++) {
-          cells[i].classList.toggle("selected");
-        }
-				for (var i = 0, len = ups.length; i < len; i++) {
-          ups[i].classList.toggle("selected");
-        }
-				for (var i = 0, len = downs.length; i < len; i++) {
-          downs[i].classList.toggle("selected");
-        }
-				for (var i = 0, len = h.length; i < len; i++) {
-          h[i].classList.toggle("selected");
-        }
-      });
-    }
+        document.getElementById("scrdiv").addEventListener('scroll', function () {
+            var translate = "translate(0," + this.scrollTop + "px)";
+            this.querySelector("thead").style.transform = translate;
+        }, false);
 
-	 document.getElementById("scrdiv").addEventListener('scroll',function(){
-   		var translate = "translate(0,"+this.scrollTop+"px)";
-   		this.querySelector("thead").style.transform = translate;
-	 }, false);
-
-	 document.getElementById("hidebt").addEventListener('click',function(){
-   		table.classList.toggle("hideUninteresting");
-			if (this.innerText == "Show Useless") {
-				this.innerText="Hide Useless";
-			}
-			else {
-			this.innerText="Show Useless";
-			}
-	 }, false);
-
+        document.getElementById("hidebt").addEventListener('click', function () {
+            table.classList.toggle("hideUninteresting");
+            if (this.innerText == "Show Useless") {
+                this.innerText = "Hide Useless";
+            }
+            else {
+                this.innerText = "Show Useless";
+            }
+        }, false);
+    };
 </script>
 
 <style>

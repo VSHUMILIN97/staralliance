@@ -189,8 +189,8 @@ def Tickaggregation(ServerTime):
         #
         for secinner in pairlist:
             # All Matches in DB
-            delayActivation = timedelta(minutes=5)
-            half_delay = timedelta(minutes=2, seconds=30)
+            delayActivation = timedelta(seconds=30)
+            half_delay = timedelta(seconds=15)
             # Starting time magic
             timer_at_first = db[exchname].find({'PairName': secinner, 'Mod': False}, {'TimeStamp': True}).limit(1)
             #
@@ -228,7 +228,7 @@ def Tickaggregation(ServerTime):
                         db[exchname].insert(temp_dict)
                         db[exchname].update({'PairName': secinner, 'Mod': False, 'TimeStamp':
                             {'$gte': startingtime, '$lt': endingtime}}, {'$set': {'Mod': True}}, multi=True)
-                        # Конец работы с циклом, переход на следующие 5 минут времени
+                        # Конец работы с циклом, переход на следующие 30 секунд времени
                         startingtime = startingtime + delayActivation
                         mergingtime = mergingtime + delayActivation
                     else:
@@ -245,7 +245,8 @@ def arbitration_aggregate():
     b = MongoDBConnection().start_db()
     db = b.PiedPiperStock
 
-    exchlist = ['BittrexTick', 'GatecoinTick']  # LiveCoinTick не юзаем, так как пары составлены не корректно.
+    exchlist = ['BittrexTick', 'LiveCoinTick', 'GatecoinTick']  # LiveCoinTick не юзаем,
+    # так как пары составлены не корректно.
     for inner in range(0, len(exchlist)):
         exchname = exchlist[inner]
         pairlist = db[exchname].distinct('PairName')
@@ -253,7 +254,7 @@ def arbitration_aggregate():
         #
         for secinner in pairlist:
             slice = db[exchname].find({'PairName': secinner, 'Aggregated': True}) \
-                .sort('TimeStamp', pymongo.ASCENDING).limit(2)
+                .sort('TimeStamp', pymongo.DESCENDING).limit(2)
             i = 0
             prev = 0
             for trdinner in slice:
@@ -262,10 +263,10 @@ def arbitration_aggregate():
                 elif (i == 1):
                     ref = ((trdinner['Tick']-prev)/prev)*100
                     if (ref > 0):
-                        tdict = {'Exch': exchname, 'PairName': secinner, 'Tick': trdinner['Tick'], 'Chg': 'U'}
+                        tdict = {'Exch': exchname.replace('Tick', ''), 'PairName': secinner, 'Tick': trdinner['Tick'], 'Chg': 'U'}
                     elif (ref < 0):
-                        tdict = {'Exch': exchname, 'PairName': secinner, 'Tick': trdinner['Tick'], 'Chg': 'D'}
+                        tdict = {'Exch': exchname.replace('Tick', ''), 'PairName': secinner, 'Tick': trdinner['Tick'], 'Chg': 'D'}
                     else:
-                        tdict = {'Exch': exchname, 'PairName': secinner, 'Tick': trdinner['Tick'], 'Chg': 'N'}
+                        tdict = {'Exch': exchname.replace('Tick', ''), 'PairName': secinner, 'Tick': trdinner['Tick'], 'Chg': 'N'}
                     db.temporaryTick.insert(tdict)
                 i = i + 1

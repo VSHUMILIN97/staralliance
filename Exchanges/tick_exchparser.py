@@ -23,7 +23,7 @@ class ThreadingT(Thread):
             try:
                 # Частота опроса биржи по их Public API. Легкая защита от отключения данных
                 # Lock стоит для графиков на время работы с арбитражом.
-                timeTemp = random.uniform(52, 58)  # Значения можно менять
+                timeTemp = random.uniform(20, 27)  # Значения можно менять
                 logging.info(u'Delay before request..' + str(timeTemp))
                 #
                 try:
@@ -31,23 +31,27 @@ class ThreadingT(Thread):
                     #t2 = Thread(target=api_get_getmarkethistory)
                     t3 = Thread(target=api_get_getticker)
                     t4 = Thread(target=livecoin_ticker)
+                    thread3f = Thread(target=Tickaggregation(datetime.datetime.utcnow()))
                     #t5 = Thread(target=livecoin_ticker_all_info)
                     t6 = Thread(target=gatecoin_ticker)
                     #t1._stop()
                     #t2._stop()
                     t3._stop()
                     t4._stop()
+                    thread3f._stop()
                     #t5._stop()
                     t6._stop()
                     #t1.setDaemon(True)
                     #t2.setDaemon(True)
                     t3.setDaemon(True)
+                    thread3f.setDaemon(True)
                     t4.setDaemon(True)
                     #t5.setDaemon(True)
                     t6.setDaemon(True)
                     #t1.start()
                     #t2.start()
                     t3.start()
+                    thread3f.start()
                     t4.start()
                     #t5.start()
                     t6.start()
