@@ -183,7 +183,6 @@ def Tickaggregation(ServerTime):
     exchlist = ['BittrexTick', 'LiveCoinTick', 'GatecoinTick']
     for inner in range(0, len(exchlist)):
         exchname = exchlist[inner]
-        print(exchname)
         pairlist = db[exchname].distinct('PairName')
         logging.info(u'Going through..' + exchname)
         #
@@ -211,9 +210,8 @@ def Tickaggregation(ServerTime):
 
             while 1:
                 try:
-
-                    tick = 0
                     if mergingtime < ServerTime:
+                        tick = 0
                         #
                         endingtime = startingtime + delayActivation
                         #
@@ -221,13 +219,14 @@ def Tickaggregation(ServerTime):
                                                          {'$gte': startingtime, '$lt': endingtime}})
 
                         for trdinner in pair_matcher:
-                            if trdinner['Tick'] > tick:
+                            if trdinner['Tick'] >= tick:
                                 tick = trdinner['Tick']
                         temp_dict = {'PairName': secinner, 'Tick': tick,
                                      'TimeStamp': startingtime + half_delay, 'Aggregated': True}
                         db[exchname].insert(temp_dict)
                         db[exchname].update({'PairName': secinner, 'Mod': False, 'TimeStamp':
-                            {'$gte': startingtime, '$lt': endingtime}}, {'$set': {'Mod': True}}, multi=True)
+                                            {'$gte': startingtime, '$lt': endingtime}},
+                                            {'$set': {'Mod': True}}, multi=True)
                         # Конец работы с циклом, переход на следующие 30 секунд времени
                         startingtime = startingtime + delayActivation
                         mergingtime = mergingtime + delayActivation
@@ -262,9 +261,9 @@ def arbitration_aggregate():
                     prev = trdinner['Tick']
                 elif (i == 1):
                     ref = ((trdinner['Tick']-prev)/prev)*100
-                    if (ref > 0):
+                    if (ref < 0):
                         tdict = {'Exch': exchname.replace('Tick', ''), 'PairName': secinner, 'Tick': trdinner['Tick'], 'Chg': 'U'}
-                    elif (ref < 0):
+                    elif (ref > 0):
                         tdict = {'Exch': exchname.replace('Tick', ''), 'PairName': secinner, 'Tick': trdinner['Tick'], 'Chg': 'D'}
                     else:
                         tdict = {'Exch': exchname.replace('Tick', ''), 'PairName': secinner, 'Tick': trdinner['Tick'], 'Chg': 'N'}

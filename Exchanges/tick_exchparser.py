@@ -23,7 +23,7 @@ class ThreadingT(Thread):
             try:
                 # Частота опроса биржи по их Public API. Легкая защита от отключения данных
                 # Lock стоит для графиков на время работы с арбитражом.
-                timeTemp = random.uniform(20, 27)  # Значения можно менять
+                timeTemp = random.uniform(13.1, 15)  # Значения можно менять
                 logging.info(u'Delay before request..' + str(timeTemp))
                 #
                 try:

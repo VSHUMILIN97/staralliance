@@ -26,14 +26,11 @@
          alert('Ошибка - ' + error.data);
      };
     ws.onmessage = function (event) {
-        function rfrsh(){
-            window.location.reload()
-        }
-        setTimeout(rfrsh, 30000); //Мерзкий хак. Требует переделки.
 
         var msg = JSON.parse(event.data);
         var json_msg = JSON.parse(msg['ticks']);
         var table = document.getElementById("tableID");
+        while(table.firstChild) table.removeChild( table.firstChild ); // Удаляет все корневые элементы на старте и заполняет таблицу заново
         var tableHead = document.createElement('thead');
         table.appendChild(tableHead);
         var tr = document.createElement('tr');
@@ -79,6 +76,7 @@
                             } else if (json_msg[i]['Chg'] == 'D') {
                                 td.appendChild(document.createElement("down"));
                             }
+                            td.setAttribute("id",(msg['rnames'])[r] + "_" + (msg['cnames'])[c]);
                             tr.appendChild(td);
                             //tr.replaceChild(td);
                             success = true;
@@ -166,7 +164,8 @@
                 this.innerText = "Show Useless";
             }
         }, false);
-    };
+   };
+
 </script>
 
 <style>

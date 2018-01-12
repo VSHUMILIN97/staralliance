@@ -28,7 +28,7 @@ urlpatterns = [
     url(r'^charts/(?P<market>[A-Za-z]+-\d[A-Za-z]+)/$', views.ChartsView.as_view(), name='charts/2give'),
     url(r'^charts/(?P<market>[A-Za-z]+-[A-Za-z]+\d)/$', views.ChartsView.as_view(), name='charts/emc2'),
 
-    url(r'^compare/$', views.Comparison.as_view(), name='Comparison'),
+    url(r'^compare/$', views.Comparison.as_view(), name='Comparison'),  # выставить compare для другой страницы
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 # STATIC_URL нужен для импорта css , img, js файлов из папки static
 
