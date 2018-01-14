@@ -16,9 +16,7 @@
 
      var ws = new WebSocket("ws://127.0.0.1:8080/");
 
-
     ws.onopen = function(event){
-    alert('Opened');
     };
     ws.onclose = function (event) {
          if (event.wasClean){
@@ -103,18 +101,21 @@
             }
             tr.appendChild(td);
             j++;
-            if (j >= 10) {
+            if (j >= 10) {00
                 tableBody.appendChild(tr);
                 j = 0;
                 var tr = document.createElement('tr');
             }
 
             tableBody.appendChild(tr);
+        }
 
-            var time = document.getElementById("timeStamp");
+        var time = document.getElementById("timeStamp");
             var datetime = new Date().toLocaleString();
             time.innerText = "Last update: " + datetime;
 
+            var btn = document.getElementById("hidebt");
+            if (!btn.hasAttribute("onclick")) {
             document.getElementById("hidebt").addEventListener('click', function () {
                 table.classList.toggle("hideUninteresting");
                 if (this.innerText == "Show Useless") {
@@ -124,6 +125,7 @@
                     this.innerText = "Show Useless";
                 }
             }, false);
+            btn.setAttribute("onclick","true");
         }
     }
 

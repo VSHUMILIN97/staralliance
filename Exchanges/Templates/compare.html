@@ -155,17 +155,20 @@
             this.querySelector("thead").style.transform = translate;
         }, false);
 
-        document.getElementById("hidebt").addEventListener('click', function () {
-            table.classList.toggle("hideUninteresting");
-            if (this.innerText == "Show Useless") {
-                this.innerText = "Hide Useless";
-            }
-            else {
-                this.innerText = "Show Useless";
-            }
-        }, false);
+        var btn = document.getElementById("hidebt");
+        if (!btn.hasAttribute("onclick")) {
+            document.getElementById("hidebt").addEventListener('click', function () {
+                table.classList.toggle("hideUninteresting");
+                if (this.innerText == "Show Useless") {
+                    this.innerText = "Hide Useless";
+                }
+                else {
+                    this.innerText = "Show Useless";
+                }
+            }, false);
+            btn.setAttribute("onclick","true");
+        }
    };
-
 </script>
 
 <style>

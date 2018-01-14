@@ -58,7 +58,8 @@ def OHLCaggregation(ServerTime):
                         endingtime = startingtime + delayActivation
                         # Low Записываем значение из одномерного словаря (Это можно отрефакторить - WELCOME!)
                         low_val_dict = db[exchname].find({'PairName': secinner, 'Mod': False, 'TimeStamp':
-                                                         {'$gte': startingtime, '$lt': endingtime}}, {'Low': True}).limit(1)
+                                                         {'$gte': startingtime, '$lt': endingtime}},
+                                                         {'Low': True}).limit(1)
                         # Last Пишем первый объект из коллекции. Так и не разобрались с полем.
                         # Поиск по паре, полю Mod - Modified/ TimeStamp в разрезе от startingtime до endingtime
                         last_val_dict = db[exchname].find({'PairName': secinner, 'Mod': False, 'TimeStamp':
@@ -89,7 +90,8 @@ def OHLCaggregation(ServerTime):
                                     'PrevDay': PrevDayValue, 'Aggregated': True}
                         db[exchname].insert(tempdict)
                         db[exchname].update({'PairName': secinner, 'Mod': False, 'TimeStamp':
-                                            {'$gte': startingtime, '$lt': endingtime}}, {'$set': {'Mod': True}}, multi=True)
+                                            {'$gte': startingtime, '$lt': endingtime}}, {'$set': {'Mod': True}},
+                                            multi=True)
                         # Конец работы с циклом, переход на следующие 5 минут времени
 
                         startingtime = startingtime + delayActivation
@@ -176,7 +178,7 @@ def Volumeaggregation(ServerTime):
 
 def Tickaggregation(ServerTime):
     import pymongo
-    logging.info(u'..TickAggregation started at..' + str(ServerTime))
+    logging.info(u'TickAggregation started at..' + str(ServerTime))
     global tick, endingtime, startingtime, TimeStamp, PairName
     b = MongoDBConnection().start_db()
     db = b.PiedPiperStock
@@ -184,7 +186,6 @@ def Tickaggregation(ServerTime):
     for inner in range(0, len(exchlist)):
         exchname = exchlist[inner]
         pairlist = db[exchname].distinct('PairName')
-        logging.info(u'Going through..' + exchname)
         #
         for secinner in pairlist:
             # All Matches in DB
@@ -211,13 +212,14 @@ def Tickaggregation(ServerTime):
             while 1:
                 try:
                     if mergingtime < ServerTime:
-                        tick = 0
+                        tick = 0  # 1
                         #
                         endingtime = startingtime + delayActivation
                         #
                         pair_matcher = db[exchname].find({'PairName': secinner, 'Mod': False, 'TimeStamp':
                                                          {'$gte': startingtime, '$lt': endingtime}})
-
+                        if pair_matcher is None:
+                            logging.critical('ALERT. CURSOR IS FREAKING EMPTY')
                         for trdinner in pair_matcher:
                             if trdinner['Tick'] >= tick:
                                 tick = trdinner['Tick']
@@ -231,6 +233,8 @@ def Tickaggregation(ServerTime):
                         startingtime = startingtime + delayActivation
                         mergingtime = mergingtime + delayActivation
                     else:
+                        startingtime = startingtime + delayActivation
+                        mergingtime = mergingtime + delayActivation
                         break
                 except:
                     logging.error(u'Tickagg')
@@ -244,12 +248,11 @@ def arbitration_aggregate():
     b = MongoDBConnection().start_db()
     db = b.PiedPiperStock
 
-    exchlist = ['BittrexTick', 'LiveCoinTick', 'GatecoinTick']  # LiveCoinTick не юзаем,
-    # так как пары составлены не корректно.
+    exchlist = ['BittrexTick', 'LiveCoinTick', 'GatecoinTick']
+    #
     for inner in range(0, len(exchlist)):
         exchname = exchlist[inner]
         pairlist = db[exchname].distinct('PairName')
-        logging.info(u'Going through..' + exchname)
         #
         for secinner in pairlist:
             slice = db[exchname].find({'PairName': secinner, 'Aggregated': True}) \
@@ -262,10 +265,13 @@ def arbitration_aggregate():
                 elif (i == 1):
                     ref = ((trdinner['Tick']-prev)/prev)*100
                     if (ref < 0):
-                        tdict = {'Exch': exchname.replace('Tick', ''), 'PairName': secinner, 'Tick': trdinner['Tick'], 'Chg': 'U'}
+                        tdict = {'Exch': exchname.replace('Tick', ''), 'PairName': secinner,
+                                 'Tick': trdinner['Tick'], 'Chg': 'U'}
                     elif (ref > 0):
-                        tdict = {'Exch': exchname.replace('Tick', ''), 'PairName': secinner, 'Tick': trdinner['Tick'], 'Chg': 'D'}
+                        tdict = {'Exch': exchname.replace('Tick', ''), 'PairName': secinner,
+                                 'Tick': trdinner['Tick'], 'Chg': 'D'}
                     else:
-                        tdict = {'Exch': exchname.replace('Tick', ''), 'PairName': secinner, 'Tick': trdinner['Tick'], 'Chg': 'N'}
+                        tdict = {'Exch': exchname.replace('Tick', ''), 'PairName': secinner,
+                                 'Tick': trdinner['Tick'], 'Chg': 'N'}
                     db.temporaryTick.insert(tdict)
                 i = i + 1

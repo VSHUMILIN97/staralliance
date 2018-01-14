@@ -14,19 +14,12 @@ async def arbitration_socket(websocket, path):
        db.temporaryTick.drop()
        Exchanges.TimeAggregator.arbitration_aggregate()
        ticks = list(db.temporaryTick.find())
-       # columns = len(db.temporaryTick.distinct('Exch'))
-       # rows = len(db.temporaryTick.distinct('PairName'))
        cnames = db.temporaryTick.distinct('Exch')
        rnames = db.temporaryTick.distinct('PairName')
        from bson.json_util import dumps as dss
        websocket_arbitration = {'ticks': dss(ticks), 'cnames': cnames, 'rnames': rnames}
        websocket_arbitration = json.dumps(websocket_arbitration)
        await websocket.send(websocket_arbitration)
-       # await websocket.send(str(ticks))
-       # await websocket.send((columns))
-       # await websocket.send((rows))
-       # await websocket.send((cnames))
-       # await websocket.send((rnames))
        await asyncio.sleep(30)
 #
 

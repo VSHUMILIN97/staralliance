@@ -55,4 +55,4 @@ class ChartsView(View):  # Класс для вывода графиков
 
 class Comparison(View):
     def get(self, request, *args, **kwargs):
-        return render(request, 'comparebeta.html', {})  # установить compare для другого отображения арбитража
+        return render(request, 'compare.html', {})  # установить compare для другого отображения арбитража

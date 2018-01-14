@@ -54,11 +54,11 @@ child = os.path.join(os.path.dirname(__file__), "../websocketapp.py")
 command = [sys.executable, child]
 pipe = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
 
-#t2 = Thread(target=aggregation_trigger)
+t2 = Thread(target=aggregation_trigger)
 try:
     testingThreads.start()
-    #t2._stop()
-    #t2.start()
+    t2._stop()
+    t2.start()
     logging.info(u'Threads"re successfully started')
 except:
     logging.critical(u'Threads were not started')
