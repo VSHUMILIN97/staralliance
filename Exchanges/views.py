@@ -22,7 +22,7 @@ def Bittrex_view(request, market=""):
         testdictOHLC = db.Bittrex.find({'PairName': market, 'Aggregated': True})
     else:
         testdictOHLC = db.Bittrex.find({'PairName': 'BTC-ETH', 'Aggregated': True})
-    slice = db.temporaryTick.find({'PairName': 'BTC-1ST'}).limit(1)
+    slice = db.temporaryTick.find({'PairName': 'BTC-1ST'}).limit(5)
     return render(request, "Bittrex_template.html",  {'temp': slice})  #
 
 
@@ -50,7 +50,8 @@ class ChartsView(View):  # Класс для вывода графиков
         testdictMHistBuy = db.BittrexMHist.find({'PairName': market, 'OrderType': 'BUY', 'Aggregated': True})
         testdictTick = db.BittrexTick.find({'PairName': market, 'Aggregated': True})
         return render(request, 'charts.html', {'testingOHLC': testdictOHLC, 'testingMHistSell': testdictMHistSell,
-                                               'testingMHistBuy': testdictMHistBuy, 'testingTick': testdictTick})
+                                               'testingMHistBuy': testdictMHistBuy, 'testingTick': testdictTick,
+                                               'market': market})
 
 
 class Comparison(View):

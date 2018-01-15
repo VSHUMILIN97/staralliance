@@ -1,6 +1,8 @@
 import os
 import subprocess
 import sys
+import signal
+import atexit
 from django.conf.urls import url
 from Exchanges import views
 from django.conf.urls.static import static
@@ -46,6 +48,7 @@ db = connectme.start_db().PiedPiperStock
 # Make daemonic(!) ПРОДУМАТЬ БЕЗОПАСНОСТЬ!
 logging.info(u'Server started')
 testingThreads = ThreadingT()
+t2 = Thread(target=aggregation_trigger)
 
 # В качестве подпроцесса child выбираем скрипт websocketapp.py
 # В качестве аргументов для начала работы подпроцесса передаем команду execute и указываем на потомка
@@ -54,12 +57,22 @@ child = os.path.join(os.path.dirname(__file__), "../websocketapp.py")
 command = [sys.executable, child]
 pipe = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
 
-t2 = Thread(target=aggregation_trigger)
+child_pid = pipe.pid
+
+
+def child_kill():
+    if child_pid is None:
+        pass
+    else:
+        os.kill(child_pid, signal.SIGTERM)
+        logging.info(u'WebSocket rundown')
+
+
 try:
     testingThreads.start()
-    t2._stop()
     t2.start()
     logging.info(u'Threads"re successfully started')
-except:
+except():
     logging.critical(u'Threads were not started')
 
+atexit.register(child_kill)

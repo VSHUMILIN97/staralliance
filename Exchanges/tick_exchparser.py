@@ -1,6 +1,9 @@
 import datetime
-from Exchanges.BittrexObjCreate import api_get_getmarkethistory, api_get_getticker,\
-     api_get_getmarketsummaries, livecoin_ticker,livecoin_ticker_all_info, gatecoin_ticker
+from .ExchangeAPI.bittrexAPI import api_get_getmarketsummaries, api_get_getmarkethistory, api_get_getticker
+from .ExchangeAPI.liquiAPI import liqui_ticker
+from .ExchangeAPI.gatecoinAPI import gatecoin_ticker
+from .ExchangeAPI.livecoinAPI import livecoin_ticker, livecoin_ticker_all_info
+from .ExchangeAPI.bleutradeAPI import bleutrade_ticker
 import random
 from .TimeAggregator import OHLCaggregation, Volumeaggregation, Tickaggregation
 import time
@@ -33,30 +36,35 @@ class ThreadingT(Thread):
                     t4 = Thread(target=livecoin_ticker)
                     #t5 = Thread(target=livecoin_ticker_all_info)
                     t6 = Thread(target=gatecoin_ticker)
+                    t7 = Thread(target=liqui_ticker)
+                    t8 = Thread(target=bleutrade_ticker)
                     #t1._stop()
                     #t2._stop()
+                    logging.info('t3 alive - ' + str(t3.is_alive()) + ', t4 alive - ' + str(t4.is_alive())
+                                 + ', t6 alive - ' + str(t6.is_alive()) + ', t7 alive - ' + str(t7.is_alive()) +
+                                 ', t8 alive - ' + str(t8.is_alive()))
                     t3._stop()
                     t4._stop()
                     #t5._stop()
                     t6._stop()
+                    t7._stop()
+                    t8._stop()
                     #t1.setDaemon(True)
                     #t2.setDaemon(True)
                     t3.setDaemon(True)
                     t4.setDaemon(True)
                     #t5.setDaemon(True)
                     t6.setDaemon(True)
+                    t7.setDaemon(True)
+                    t8.setDaemon(True)
                     #t1.start()
                     #t2.start()
                     t3.start()
                     t4.start()
                     #t5.start()
                     t6.start()
-                    #t1.join()
-                    #t2.join()
-                    t3.join()
-                    t4.join()
-                    #t5.join()
-                    t6.join()
+                    t7.start()
+                    t8.start()
                 except():
                     logging.error(u'Data were not recieved')
                 time.sleep(timeTemp)

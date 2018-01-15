@@ -1,126 +1,396 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="https://code.highcharts.com/stock/highstock.js"></script>
+<script src="https://code.highcharts.com/stock/modules/drag-panes.js"></script>
+<script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
 
-<div class="row">
-<div id="cndlstk_crt" style="border: 1px"></div>
-<div id="diff_crt" style="border: 1px"></div>
-<div id="curve_chart" style="border: 1px"></div>
-</div>
+<div id="OHLCContainer" style="height: 600px; min-width: 310px"></div>
+<div id="tickContainer" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 
-<script type="text/javascript">
-google.charts.load('current', {'packages':['corechart', 'bar']});
+<script>
+$.getJSON('https://jsonplaceholder.typicode.com/posts', function (data) {
+//я В ДУШЕ не знаю ПОЧЕМУ он не работает без обращения за jsonом здесь, НО РАБОТАЕТ на фидле
+//(нет, я знаю, как заставить его работать и без обращения, но тогда падает цветовая схема)
+//возможно, когда-нибудь у нас будет своя страница, с которой можно будет взять json для графиков,
+//поэтому давайте дружно сделаем вид, что эта ссылка - временная и стоит здесь как укор совести для того, чтобы не забыть об этом
+//upd. теоретически, можно таскать данные и напрямую с бирж, если по пути избавиться от всего лишнего что они предоставляют
+//и выделить только нужное (у меня на это не хватает мозгов)
 
-google.charts.setOnLoadCallback(drawCandlestick);
-google.charts.setOnLoadCallback(drawDiffChart);
-google.charts.setOnLoadCallback(drawChart);
+        var ohlc = [],
+        volBuy = [],
+        volSell = [],
 
-	  function drawCandlestick() {
-	  var data = new google.visualization.DataTable();
-      data.addColumn('string', 'Timestamp');
-      data.addColumn('number', 'High');
-      data.addColumn('number', 'Open');
-      data.addColumn('number', 'Last');
-      data.addColumn('number', 'Low');
-      data.addColumn({type: 'string', role: 'tooltip'});
+        groupingUnits = [[
+            'hour',
+            [1,3,6,12]
+        ], [
+            'day',
+            [1,3,5,10]
+        ], [
+            'week',
+            [1,2]
+        ], [
+            'month',
+            [1, 2, 3, 4, 6]
+        ]],
 
-      var formatter = new google.visualization.NumberFormat({
-        fractionDigits: 8
-       });
+        i = 0;
 
-      //Словари юзаются так же как под sqlite3
-      {% for item in testingOHLC %}
-      data.addRows([['{{ item.TimeStamp }}', {{ item.High }}, {{ item.PrevDay }}, {{ item.Last }}, {{ item.Low }},
-                     '{{ item.TimeStamp }} \n High: ' + formatter.formatValue({{ item.High }}) +
-                     ' \n Open: ' + formatter.formatValue({{ item.PrevDay }}) +
-                     ' \n Close: ' + formatter.formatValue({{ item.Last }}) +
-                     ' \n Low: ' + formatter.formatValue({{ item.Low }})]]);
-      {% endfor %}
+    {% for item in testingOHLC %}
+        ohlc.push([
+            new Date('{{ item.TimeStamp|date:"d F Y"}} {{ item.TimeStamp|time:"H:i"}}').getTime(),
+            {{ item.PrevDay|floatformat:8 }},
+            {{ item.High|floatformat:8 }},
+            {{ item.Low|floatformat:8 }},
+            {{ item.Last|floatformat:8 }}
+        ]);
+    {% endfor %}
 
-    	var options = {
-    	title: 'График японских свечек для {{market}} (временно взято Open=item[-1].Last)',
-    	width:1000,
-        height:400,
-	    legend:'none',
-        bar: { groupWidth: '61.8%' },
-        colors: ['black'],
-        candlestick: {
-            fallingColor: { strokeWidth: 1, fill: '#e60000', stroke: 'black' }, // red
-            risingColor: { strokeWidth: 1, fill: '#2eb82e', stroke: 'black' }   // green
+    {% for item in testingMHistBuy %}
+        volBuy.push([
+            new Date('{{ item.TimeStamp|date:"d F Y"}} {{ item.TimeStamp|time:"H:i"}}').getTime(),
+            {{ item.Price|floatformat:8 }}
+        ]);
+    {% endfor %}
+    {% for item in testingMHistSell %}
+        volSell.push([
+            new Date('{{ item.TimeStamp|date:"d F Y"}} {{ item.TimeStamp|time:"H:i"}}').getTime(),
+            {{ item.Price|floatformat:8 }}
+        ]);
+    {% endfor %}
+
+
+    Highcharts.stockChart('OHLCContainer', {
+    		rangeSelector: {
+            selected: 1,
+            buttons: [{
+            type: 'hour',
+            count: 1,
+            text: '1h'
+            }, {
+            type: 'day',
+            count: 1,
+            text: '1d'
+            }, {
+            type: 'week',
+            count: 1,
+            text: '1w'
+            }, {
+            type: 'month',
+            count: 1,
+            text: '1m'
+            }, {
+            type: 'month',
+            count: 6,
+            text: '6m'
+            }, {
+            type: 'year',
+            count: 1,
+            text: '1y'
+            }, {
+            type: 'all',
+            text: 'All'
+            }]
         },
-        vAxis: {logScale:true},
-	    };
 
-    	var chart = new google.visualization.CandlestickChart(document.getElementById('cndlstk_crt'));
+        chart: {
+            zoomType: 'x',
+            events: {
+    			load: function () {
+      			this.pointCount = 1;
+      		    },
+    			redraw: function () {
+      			this.pointCount = 1;
+      		    }
+    		},
+        selectionMarkerFill: 'rgba(230, 220, 204, .3)'
+        },
 
-	    chart.draw(data, options);
-		  }
+        title: {
+            text: 'График свечек и объемов для {{ market }}'
+        },
 
-function drawDiffChart() {
-    var sellData = new google.visualization.DataTable();
-      sellData.addColumn('string', 'Timestamp');
-      sellData.addColumn('number', 'Sell');
+        yAxis: [{
+            labels: {
+                align: 'right',
+                x: -3
+            },
+            title: {
+                text: 'Свечки'
+            },
+            height: '60%',
+            lineWidth: 2,
+            resize: {
+                enabled: true
+            }
+        }, {
+            labels: {
+                align: 'right',
+                x: -3
+            },
+            title: {
+                text: 'Объемы'
+            },
+            top: '65%',
+            height: '35%',
+            offset: 0,
+            lineWidth: 2
+        }],
+		plotOptions: {
+            column: {
+                grouping: false,
+                shadow: false,
+                borderWidth: 0.5,
+            }
+    	},
+        tooltip: {
+            shared: true,
+            useHTML: true,
+            headerFormat: '<span>{point.key}</span>'
+        },
 
-      {% for item in testingMHistSell %}
-      sellData.addRows([['{{ item.TimeStamp }}', {{ item.Price }}]]);
-      {% endfor %}
+        series: [{
+            type: 'candlestick',
+            name: '{{ market }} OHLC',
+            data: ohlc,
+            dataGrouping: {
+                units: groupingUnits
+            },
+            tooltip: {
+                valueDecimals: 8
+            },
+        }, {
+            type: 'column',
+            name: 'Покупка',
+            data: volBuy,
+            yAxis: 1,
+            color: 'rgba(113, 218, 113, .7)',
+            dataGrouping: {
+                units: groupingUnits
+            },
+            tooltip: {
+                valueDecimals: 8
+            },
+        },
+        {
+            type: 'column',
+            name: 'Продажа',
+            data: volSell,
+            yAxis: 1,
+            color: 'rgba(245, 112, 112, .9)',
+            pointPadding: 0.3,
+            dataGrouping: {
+                units: groupingUnits
+            },
+            tooltip: {
+                valueDecimals: 8
+            },
+        }]
+    });
+});
+</script>
 
-    var buyData = new google.visualization.DataTable();
-      buyData.addColumn('string', 'Timestamp');
-      buyData.addColumn('number', 'Buy');
+<script>
+    $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=usdeur.json&callback=?', function (data) {
 
-      //Обожаю нормальные комментарии.....
-      {% for item in testingMHistBuy %}
-      buyData.addRows([['{{ item.TimeStamp }}', {{ item.Price }}]]);
-      {% endfor %}
+    var ticks = [];
 
-    var colChartDiff = new google.visualization.ColumnChart(document.getElementById('diff_crt'));
+    {% for item in testingTick %}
+        ticks.push([
+            new Date('{{ item.TimeStamp|date:"d F Y"}} {{ item.TimeStamp|time:"H:i"}}').getTime(),
+            {{ item.Tick|floatformat:8 }}
+        ]);
+    {% endfor %}
 
-	var options = {
-	title: 'Будущий график объемов покупок-продаж для {{ market }}',
-	width:1000,
-    height:400,
-    legend: { position: 'top'},
-    bar: { groupWidth: '41.8%' },
-    diff: {
-        oldData: { opacity: 1, color: '#31e607', tooltip: { prefix:'Продажа' } },
-        newData: { opacity: 1, widthFactor: 0.7, tooltip: { prefix:'Покупка' } }
-    } ,
-    colors: ['#b80009']
-    };
+    Highcharts.stockChart('tickContainer', {
+    		rangeSelector: {
+            selected: 1,
+            buttons: [{
+            type: 'hour',
+            count: 1,
+            text: '1h'
+            }, {
+            type: 'day',
+            count: 1,
+            text: '1d'
+            }, {
+            type: 'week',
+            count: 1,
+            text: '1w'
+            }, {
+            type: 'month',
+            count: 1,
+            text: '1m'
+            }, {
+            type: 'month',
+            count: 6,
+            text: '6m'
+            }, {
+            type: 'year',
+            count: 1,
+            text: '1y'
+            }, {
+            type: 'all',
+            text: 'All'
+            }]
+        },
 
-    var diffData = colChartDiff.computeDiff(buyData, sellData);
-    colChartDiff.draw(diffData, options);
-    }
+        chart: {
+            zoomType: 'x',
+            events: {
+    			load: function () {
+      			this.pointCount = 1;
+      		    },
+    			redraw: function () {
+      			this.pointCount = 1;
+      		    }
+    		},
+        selectionMarkerFill: 'rgba(230, 220, 204, .3)'
+        },
 
+        title: {
+            text: 'График тика {{ market }}'
+        },
 
-    function drawChart() {
-    var data = new google.visualization.DataTable();
-    data.addColumn('string', 'Timestamp');
-    data.addColumn('number', '{{ market }}');
-    data.addColumn({type: 'string', role: 'tooltip'});
+        plotOptions: {
+            series: {
+                states: {
+                    hover: {
+                        halo: {
+                            size: 9,
+                            attributes: {
+                                fill: 'rgb(54, 54, 54)'
+                            }
+                        },
+                        lineWidth: 1
+                    }
+                },
+                marker: {
+                    fillColor: 'rgb(54, 54, 54)'
+                },
+            },
+        },
 
-      var formatter = new google.visualization.NumberFormat({
-       fractionDigits: 8
-      });
+        series: [{
+            name: '{{ market }}',
+            data: ticks,
+            type: 'spline',
+            tooltip: {
+                valueDecimals: 8,
+                useHTML: true,
+                headerFormat: '<span>{point.key}</span>'
+            },
+            lineColor: 'rgb(54,54,54)'
+        }]
+    });
+});
+</script>
 
-       {% for item in testingTick %}
-       data.addRows([['{{ item.TimeStamp }}' , {{ item.Tick }},
-       '{{ item.TimeStamp }} \n Tick: ' + formatter.formatValue({{ item.Tick }})]]);//
-       {% endfor %}
-
-       formatter.format(data, 2);
-
-        var options = {
-          title: '{{ market }}',
-          curveType: 'function',
-          legend: { position: 'bottom' }
-        };
-
-        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
-
-        chart.draw(data, options);
+<script>
+Highcharts.theme = {
+   colors: ['#f35858', '#8085e9', '#8d4654', '#7798BF', '#aaeeee',
+      '#ff0066', '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee'],
+   chart: {
+      backgroundColor: null,
+      style: {
+         fontFamily: 'Century Gothic, sans-serif'
       }
+   },
+   title: {
+      style: {
+         color: 'black',
+         fontSize: '18px',
+         fontWeight: 'bold'
+      }
+   },
+   subtitle: {
+      style: {
+         color: 'black'
+      }
+   },
+   tooltip: {
+      borderWidth: 0.5,
+      borderColor: '#3a3a3a'
+   },
+
+   plotOptions: {
+      candlestick: {
+      	upColor: '#33cc33',
+        lineColor: '#3a3a3a',
+        lineWidth: 0.5,
+        animation: {
+            duration: 500
+        }
+      },
+      column: {
+      	 borderColor: '#4a4a4a',
+         animation: {
+            duration: 500
+         }
+      },
+      spline: {
+         animation: {
+            duration: 500
+         }
+      },
+   },
+
+   legend: {
+      itemStyle: {
+         fontWeight: 'bold',
+         fontSize: '13px'
+      }
+   },
+   xAxis: {
+      labels: {
+         style: {
+            color: '#6e6e70'
+         }
+      },
+      minRange: 3600 * 1000
+   },
+   yAxis: {
+      labels: {
+         style: {
+            color: '#6e6e70'
+         }
+      }
+   },
+
+   // Highstock specific
+   navigator: {
+      xAxis: {
+         gridLineColor: '#D0D0D8'
+      },
+      series: {
+         color: '#aaaaaa',
+         lineWidth: 1
+      },
+      maskFill: 'rgba(230, 220, 204, .5)'
+   },
+   rangeSelector: {
+      buttonTheme: {
+         fill: 'white',
+         stroke: '#C0C0C8',
+         'stroke-width': 1,
+         states: {
+            select: {
+               fill: '#D0D0D8'
+            }
+         }
+      }
+   },
+   scrollbar: {
+      trackBorderColor: '#C0C0C8'
+   },
+
+   // General
+   background2: '#E0E0E8'
+
+};
+
+Highcharts.setOptions(Highcharts.theme);
 </script>
 {% endblock content %}

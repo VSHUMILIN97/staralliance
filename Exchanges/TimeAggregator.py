@@ -182,7 +182,7 @@ def Tickaggregation(ServerTime):
     global tick, endingtime, startingtime, TimeStamp, PairName
     b = MongoDBConnection().start_db()
     db = b.PiedPiperStock
-    exchlist = ['BittrexTick', 'LiveCoinTick', 'GatecoinTick']
+    exchlist = ['BittrexTick', 'LiveCoinTick', 'GatecoinTick', 'LiquiTick', 'BleutradeTick']
     for inner in range(0, len(exchlist)):
         exchname = exchlist[inner]
         pairlist = db[exchname].distinct('PairName')
@@ -220,6 +220,8 @@ def Tickaggregation(ServerTime):
                                                          {'$gte': startingtime, '$lt': endingtime}})
                         if pair_matcher is None:
                             logging.critical('ALERT. CURSOR IS FREAKING EMPTY')
+                        elif pair_matcher.count() == 0:
+                            logging.critical('MISSING DATA IN 224 TA.py')
                         for trdinner in pair_matcher:
                             if trdinner['Tick'] >= tick:
                                 tick = trdinner['Tick']
@@ -232,12 +234,15 @@ def Tickaggregation(ServerTime):
                         # Конец работы с циклом, переход на следующие 30 секунд времени
                         startingtime = startingtime + delayActivation
                         mergingtime = mergingtime + delayActivation
+                        pair_matcher.close()
                     else:
                         startingtime = startingtime + delayActivation
                         mergingtime = mergingtime + delayActivation
                         break
                 except:
                     logging.error(u'Tickagg')
+            timer_at_first.close()
+            time_after_aggregation.close()
         logging.info(u'Check' + exchname + u'collection')
 
 
@@ -248,7 +253,7 @@ def arbitration_aggregate():
     b = MongoDBConnection().start_db()
     db = b.PiedPiperStock
 
-    exchlist = ['BittrexTick', 'LiveCoinTick', 'GatecoinTick']
+    exchlist = ['BittrexTick', 'LiveCoinTick', 'GatecoinTick', 'LiquiTick', 'BleutradeTick']
     #
     for inner in range(0, len(exchlist)):
         exchname = exchlist[inner]
@@ -258,20 +263,20 @@ def arbitration_aggregate():
             slice = db[exchname].find({'PairName': secinner, 'Aggregated': True}) \
                 .sort('TimeStamp', pymongo.DESCENDING).limit(2)
             i = 0
-            prev = 0
+            future_tick = 0
             for trdinner in slice:
                 if (i == 0):
-                    prev = trdinner['Tick']
+                    future_tick = trdinner['Tick']
                 elif (i == 1):
-                    ref = ((trdinner['Tick']-prev)/prev)*100
-                    if (ref < 0):
+                    ref = ((trdinner['Tick']-future_tick)/future_tick)*100
+                    if (ref > 0):
                         tdict = {'Exch': exchname.replace('Tick', ''), 'PairName': secinner,
-                                 'Tick': trdinner['Tick'], 'Chg': 'U'}
-                    elif (ref > 0):
+                                 'Tick': future_tick, 'Chg': 'D'}
+                    elif (ref < 0):
                         tdict = {'Exch': exchname.replace('Tick', ''), 'PairName': secinner,
-                                 'Tick': trdinner['Tick'], 'Chg': 'D'}
+                                 'Tick': future_tick, 'Chg': 'U'}
                     else:
                         tdict = {'Exch': exchname.replace('Tick', ''), 'PairName': secinner,
-                                 'Tick': trdinner['Tick'], 'Chg': 'N'}
+                                 'Tick': future_tick, 'Chg': 'N'}
                     db.temporaryTick.insert(tdict)
                 i = i + 1
