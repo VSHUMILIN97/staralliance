@@ -1,6 +1,7 @@
 import datetime
 from .ExchangeAPI.bittrexAPI import api_get_getmarketsummaries, api_get_getmarkethistory, api_get_getticker
 from .ExchangeAPI.liquiAPI import liqui_ticker
+from .ExchangeAPI.poloniexAPI import poloniex_ticker
 from .ExchangeAPI.gatecoinAPI import gatecoin_ticker
 from .ExchangeAPI.livecoinAPI import livecoin_ticker, livecoin_ticker_all_info
 from .ExchangeAPI.bleutradeAPI import bleutrade_ticker
@@ -38,17 +39,20 @@ class ThreadingT(Thread):
                     t6 = Thread(target=gatecoin_ticker)
                     t7 = Thread(target=liqui_ticker)
                     t8 = Thread(target=bleutrade_ticker)
+                    t9 = Thread(target=poloniex_ticker)
                     #t1._stop()
                     #t2._stop()
                     logging.info('t3 alive - ' + str(t3.is_alive()) + ', t4 alive - ' + str(t4.is_alive())
                                  + ', t6 alive - ' + str(t6.is_alive()) + ', t7 alive - ' + str(t7.is_alive()) +
-                                 ', t8 alive - ' + str(t8.is_alive()))
+                                 ', t8 alive - ' + str(t8.is_alive()) + ', t9 alive - ' + str(t9.is_alive()) +
+                                 ', t10 alive - ' + str(t9.is_alive()))
                     t3._stop()
                     t4._stop()
                     #t5._stop()
                     t6._stop()
                     t7._stop()
                     t8._stop()
+                    t9._stop()
                     #t1.setDaemon(True)
                     #t2.setDaemon(True)
                     t3.setDaemon(True)
@@ -57,6 +61,7 @@ class ThreadingT(Thread):
                     t6.setDaemon(True)
                     t7.setDaemon(True)
                     t8.setDaemon(True)
+                    t9.setDaemon(True)
                     #t1.start()
                     #t2.start()
                     t3.start()
@@ -65,6 +70,7 @@ class ThreadingT(Thread):
                     t6.start()
                     t7.start()
                     t8.start()
+                    t9.start()
                 except():
                     logging.error(u'Data were not recieved')
                 time.sleep(timeTemp)
