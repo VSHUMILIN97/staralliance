@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="tblHolder" id="scrdiv" style="width:auto; height:500px; overflow-x:auto; overflow-y:auto">
-  <table id="tableID" style="width:100%; height:100%; table-layout:fixed">
+  <table id="tableID" style="table-layout:fixed">
   </table>
 </div>
 <div class="btnHolder">
@@ -12,6 +12,10 @@
 <script type="text/javascript">
 
  var ws = new WebSocket("ws://127.0.0.1:8080/");
+    function fix(value) {
+       return Number(Math.round(value+'e8')+'e-8');
+    }
+
     ws.onopen = function(event){
 
     };
@@ -70,7 +74,7 @@
                         if ((json_msg[i]['PairName'] == (msg['rnames'])[r]) && (json_msg[i]['Exch'] == (msg['cnames'])[c])) {
                             var td = document.createElement('td');
                             var v =  json_msg[i]['Tick'] ;
-                            td.appendChild(document.createTextNode(v));
+                            td.appendChild(document.createTextNode(fix(v)));
                             if (json_msg[i]['Chg'] == 'U') {
                                 td.appendChild(document.createElement("up"));
                             } else if (json_msg[i]['Chg'] == 'D') {
