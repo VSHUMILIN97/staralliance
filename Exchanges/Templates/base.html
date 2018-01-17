@@ -22,7 +22,13 @@
       <ul>
         <li><a href="/bittrex">See Data</a></li>
         <li><a href="/charts">See Charts</a></li>
-        <li class="last"><a href="/compare">See Pairs</a></li>
+        <li class="last" id="drop" style="width: 200px;">
+          <a href="/compare/" class="dropbtn">See Pairs</a>
+          <div class="dropdown-content">
+            <a href="/compare/old">Old</a>
+            <a href="/compare/new" style="padding-bottom: 32px;">New</a>
+          </div>
+        </li>
       </ul>
     </nav>
   </header>
@@ -82,3 +88,49 @@
 </div>
   </body>
 </html>
+
+<style>
+
+li a, .dropbtn {
+    display: inline-block;
+    color: white;
+    background-color: #fff;
+    text-align: center;
+    text-decoration: none;
+}
+
+li. #drop {
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 100px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    margin-left: 197.5px;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+    height: 35px;
+    width: 110px;
+}
+
+.dropdown-content a:hover {background-color: #f1f1f1}
+
+#drop:hover .dropdown-content {
+    display: block;
+}
+
+.last {
+  background-color: #fff;
+  height: 100px;
+}
+</style>

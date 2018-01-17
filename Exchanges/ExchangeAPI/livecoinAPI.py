@@ -7,11 +7,26 @@ from mongo_db_connection import MongoDBConnection
 logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
                     level=logging.DEBUG)
 
+
+def pair_name_formater(current_name):
+    symbols_collection = ['/', '_'] #to be continued
+    for symbol in symbols_collection:
+        if current_name.find(symbol):
+            correct_name = current_name.replace(str(symbol), '-')
+            #logging.info("FOUND MATCH -- " + symbol)
+            break
+    correct_name = correct_name.upper()
+    # if correct_name == 'LTC-BTC':
+    #    correct_name = 'BTC-LTC'
+    # logging.info(u'String ' + str(current_name) + " has been transformed into " + str(correct_name))
+    return correct_name
+
+
 def livecoin_ticker():
     logging.info(u'livecoin getticker started')
     #
     try:
-        ownpairlist = ['LTC/BTC', 'ETH/BTC']
+        ownpairlist = ['LTC/BTC', 'ETH/BTC', 'DASH/BTC']
         b = MongoDBConnection().start_db()
         db = b.PiedPiperStock
         test = db.LiveCoinTick
@@ -27,10 +42,13 @@ def livecoin_ticker():
             root = json_data
             best_bid, best_ask = float(root['best_bid']), float(root['best_ask'])
             #
+            a = ''
             if ownpairlist[i] == 'LTC/BTC':
                 a = "BTC-LTC"
-            else:
+            elif ownpairlist[i] == 'ETH/BTC':
                 a = "BTC-ETH"
+            else:
+                a = 'BTC-DASH'
             data = {'PairName': a, 'Tick': (best_ask + best_bid) / 2,
                     'TimeStamp': timezone.now(), 'Mod': False}
             test.insert(data)

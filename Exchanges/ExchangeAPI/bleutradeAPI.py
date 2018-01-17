@@ -5,7 +5,7 @@ from django.utils import timezone
 import requests
 from mongo_db_connection import MongoDBConnection
 
-pairlist = ['ETH_BTC', 'LTC_BTC']
+pairlist = ['ETH_BTC', 'LTC_BTC', 'LTC_ETH', 'DASH_BTC']
 
 
 def bleutrade_ticker():
@@ -29,8 +29,12 @@ def bleutrade_ticker():
             h = pairlist[i]
             if h == 'ETH_BTC':
                 h = 'BTC-ETH'
-            else:
+            elif h == 'LTC_BTC':
                 h = 'BTC-LTC'
+            elif h == 'LTC_ETH':
+                h = 'ETH-LTC'
+            else:
+                h = 'BTC-DASH'
             data = {'PairName': h, 'Tick': (ask+bid)/2, 'TimeStamp': timezone.now(), 'Mod': False}
             test.insert(data)
     except():

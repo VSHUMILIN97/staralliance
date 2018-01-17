@@ -14,7 +14,7 @@ def liqui_ticker():
     logging.info(u'Liqui getticker started')
     #
     try:
-        ownpairlist = ['eth_btc', 'ltc_btc']
+        ownpairlist = ['eth_btc', 'ltc_btc', 'dash_btc', 'ltc_eth']
         b = MongoDBConnection().start_db()
         db = b.PiedPiperStock
         release = db.LiquiTick
@@ -28,10 +28,15 @@ def liqui_ticker():
             best_ask = root['asks'][0][0]
             best_bid = root['bids'][0][0]
             #
+            a = ''
             if ownpairlist[i] == 'eth_btc':
                 a = "BTC-ETH"
-            else:
+            elif ownpairlist[i] == 'ltc_btc':
                 a = "BTC-LTC"
+            elif ownpairlist[i] == 'dash_btc':
+                a = 'BTC-DASH'
+            else:
+                a = 'ETH-LTC'
             data = {'PairName': a, 'Tick': (best_ask + best_bid) / 2,
                     'TimeStamp': timezone.now(), 'Mod': False}
             release.insert(data)

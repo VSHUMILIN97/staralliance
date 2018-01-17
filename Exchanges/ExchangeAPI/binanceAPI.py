@@ -24,14 +24,24 @@ def binance_ticker():
         root = json_data
         for item in root:
             if item['symbol'] == 'ETHBTC':
-                print('1')
                 bid, ask = float(item['bidPrice']), float(item['askPrice'])
                 data = {'PairName': 'BTC-ETH', 'Tick': (ask + bid) / 2, 'TimeStamp': timezone.now(), 'Mod': False}
                 release.insert(data)
             elif item['symbol'] == 'LTCBTC':
-                print('2')
                 bid, ask = float(item['bidPrice']), float(item['askPrice'])
                 data = {'PairName': 'BTC-LTC', 'Tick': (ask + bid) / 2, 'TimeStamp': timezone.now(), 'Mod': False}
+                release.insert(data)
+            elif item['symbol'] == 'LTCETH':
+                bid, ask = float(item['bidPrice']), float(item['askPrice'])
+                data = {'PairName': 'ETH-LTC', 'Tick': (ask + bid) / 2, 'TimeStamp': timezone.now(), 'Mod': False}
+                release.insert(data)
+            elif item['symbol'] == 'DASHBTC':
+                bid, ask = float(item['bidPrice']), float(item['askPrice'])
+                data = {'PairName': 'BTC-DASH', 'Tick': (ask + bid) / 2, 'TimeStamp': timezone.now(), 'Mod': False}
+                release.insert(data)
+            elif item['symbol'] == 'XRPBTC':
+                bid, ask = float(item['bidPrice']), float(item['askPrice'])
+                data = {'PairName': 'BTC-XRP', 'Tick': (ask + bid) / 2, 'TimeStamp': timezone.now(), 'Mod': False}
                 release.insert(data)
             else:
                 continue

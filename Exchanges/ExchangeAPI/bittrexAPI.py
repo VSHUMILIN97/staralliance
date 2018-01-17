@@ -14,8 +14,7 @@ logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(a
 
 # Вот эта беда должна быть огромных размеров, но девать нам её некуда особо, да и незачем. Надо собирать информацию.
 # Ну и разумеется настало время try: catch: блоков. А то ху-о работает пока что, на соплях
-pairlist = ['BTC-1ST', 'BTC-LTC', 'BTC-ETH']
-
+pairlist = ['BTC-1ST', 'BTC-LTC', 'BTC-ETH', 'BTC-DASH', 'BTC-XRP', 'ETH-LTC']
 
 # Метод получается последние биржевые данные, парсит поля и выносит в модель необходимое.
 def api_get_getmarketsummaries():

@@ -31,29 +31,43 @@ def Bittrex_view(request, market=""):
 # Класс отвечает за получение запроса по рынку(set as default if market = null.(BTC-1ST))
 # В теории здесь должен остаться только блок управления контролами(Это не точно)
 class ChartsView(View):  # Класс для вывода графиков
-    def get(self, request, market="", *args, **kwargs):
-
-        if market != "":
-            # Переводим имя пары из URL в upper case
-            market = market.upper()
-            # Обращаемся к модели BittrexOHLC из models.py
-        else:
-            market = 'BTC-1ST'
-        # Инициализируем коннект, возвращаем объект коннекта из mongo_db_connection.
+    def get(self, request, exchange="", pair="", *args, **kwargs):
         b = MongoDBConnection().start_db()
-        # Захватываем ту БД, что хотим
         db = b.PiedPiperStock
-        # В ней берем коллекцию и делаем выборку.
-        # Создаем 4 словаря. (Для MarketHistory срезы по Sell и Buy)
-        testdictOHLC = db.Bittrex.find({'PairName': market, 'Aggregated': True})
-        testdictMHistSell = db.BittrexMHist.find({'PairName': market, 'OrderType': 'SELL', 'Aggregated': True})
-        testdictMHistBuy = db.BittrexMHist.find({'PairName': market, 'OrderType': 'BUY', 'Aggregated': True})
-        testdictTick = db.BittrexTick.find({'PairName': market, 'Aggregated': True})
-        return render(request, 'charts.html', {'testingOHLC': testdictOHLC, 'testingMHistSell': testdictMHistSell,
-                                               'testingMHistBuy': testdictMHistBuy, 'testingTick': testdictTick,
-                                               'market': market})
+        db.ExchsAndPairs.drop()
+        ins = db.ExchsAndPairs
+        exchlist = ['Bittrex', 'Gatecoin', 'LiveCoin', 'Liqui', 'Bleutrade', 'Poloniex',
+                    'Binance']  # пополняем вручную по мере поступления бирж
+        for inner in range(0, len(exchlist)):
+            exchname = exchlist[inner]
+            pairlist = db[exchname + 'Tick'].distinct('PairName')
+            for secinner in pairlist:
+                tdict = {'Exch': exchname, 'Pair': secinner}
+                ins.insert(tdict)
+        combinations = db.ExchsAndPairs.find()  # эту базу теперь можно еще где-нибудь поюзать
+
+        if (pair != "") and (exchange != ""):
+            pair = pair.upper()
+
+            # ALEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEERT тут надо переделать
+
+            testdictOHLC = db.Bittrex.find({'PairName': pair, 'Aggregated': True})
+            testdictMHistSell = db.BittrexMHist.find({'PairName': pair, 'OrderType': 'SELL', 'Aggregated': True})
+            testdictMHistBuy = db.BittrexMHist.find({'PairName': pair, 'OrderType': 'BUY', 'Aggregated': True})
+            tick = db[exchange + 'Tick'].find({'PairName': pair, 'Aggregated': True})
+
+            return render(request, 'charts.html', {'testingOHLC': testdictOHLC, 'testingMHistSell': testdictMHistSell,
+                                                   'testingMHistBuy': testdictMHistBuy, 'ticks': tick,
+                                                   'pair': pair, 'exchange': exchange,
+                                                   'exchList': sorted(exchlist), 'combinations': combinations})
+        else:
+            # все это надо отсюда куда-нибудь унести
+            return render(request, 'choose.html', {'exchList': sorted(exchlist), 'combinations': combinations})
 
 
 class Comparison(View):
-    def get(self, request, *args, **kwargs):
-        return render(request, 'compare.html', {})  # установить compare для другого отображения арбитража
+    def get(self, request, mode="",*args, **kwargs):
+        if (mode == 'new'):
+            return render(request, 'comparebeta.html', {})  # установить compare для другого отображения арбитража
+        else:
+            return render(request, 'compare.html', {})  # установить compare для другого отображения арбитража

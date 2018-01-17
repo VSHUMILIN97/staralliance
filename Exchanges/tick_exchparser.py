@@ -84,6 +84,7 @@ class ThreadingT(Thread):
 
 
 def aggregation_trigger():
+    time.sleep(30)
     while 1:
         logging.info(u'Aggregations started')
         try:

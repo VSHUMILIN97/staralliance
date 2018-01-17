@@ -73,7 +73,7 @@
                     {
                         if ((json_msg[i]['PairName'] == (msg['rnames'])[r]) && (json_msg[i]['Exch'] == (msg['cnames'])[c])) {
                             var td = document.createElement('td');
-                            var v =  json_msg[i]['Tick'] ;
+                            var v = json_msg[i]['Tick'];
                             td.appendChild(document.createTextNode(fix(v)));
                             if (json_msg[i]['Chg'] == 'U') {
                                 td.appendChild(document.createElement("up"));

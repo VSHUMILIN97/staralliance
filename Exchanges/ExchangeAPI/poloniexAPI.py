@@ -27,9 +27,22 @@ def poloniex_ticker():
     #
     data = {'PairName': 'BTC-ETH', 'Tick': (ask+bid)/2, 'TimeStamp': timezone.now(), 'Mod': False}
     test.insert(data)
+    #
     js = json_data['BTC_LTC']
     bid, ask = float(js['highestBid']), float(js['lowestAsk'])
     #
     data = {'PairName': 'BTC-LTC', 'Tick': (ask+bid)/2, 'TimeStamp': timezone.now(), 'Mod': False}
+    test.insert(data)
+    #
+    js = json_data['BTC_DASH']
+    bid, ask = float(js['highestBid']), float(js['lowestAsk'])
+    #
+    data = {'PairName': 'BTC-DASH', 'Tick': (ask + bid) / 2, 'TimeStamp': timezone.now(), 'Mod': False}
+    test.insert(data)
+    #
+    js = json_data['BTC_XRP']
+    bid, ask = float(js['highestBid']), float(js['lowestAsk'])
+    #
+    data = {'PairName': 'BTC-XRP', 'Tick': (ask + bid) / 2, 'TimeStamp': timezone.now(), 'Mod': False}
     test.insert(data)
     logging.info(u'Poloniex getticker ended')

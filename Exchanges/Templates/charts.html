@@ -5,6 +5,34 @@
 <script src="https://code.highcharts.com/stock/highstock.js"></script>
 <script src="https://code.highcharts.com/stock/modules/drag-panes.js"></script>
 <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
+<!-- (Optional) Latest compiled and minified JavaScript translation files -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/i18n/defaults-*.min.js"></script>
+
+<table>
+    <tr>
+        <td class="headerText"><p class="textWrapper">Сменить биржу и пару: &nbsp;</p></td>
+        <td class="exchDropdown">
+            <select class="selectpicker show-tick" id="exchSelector" data-live-search="true" data-size="3" title="Биржа" data-width="165px">
+            </select>
+        </td>
+        <td>&nbsp;</td>
+        <td class="pairDropdown">
+            <select class="selectpicker show-tick" id="pairSelector" data-live-search="true" data-size="3" title="Пара" data-width="165px" disabled>
+            </select>
+        </td>
+        <td>&nbsp;</td>
+        <td class="btnHolder">
+            <button type="button" class="btn btn-default btn-outline" id="okBtn"><span style="font-size: 14px;">Показать</span></button>
+        </td>
+        <td>&nbsp;</td>
+        <td class="nothing">Сочетание не выбрано</td>
+    </tr>
+</table>
 
 <div id="OHLCContainer" style="height: 600px; min-width: 310px"></div>
 <div id="tickContainer" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
@@ -40,7 +68,7 @@ $.getJSON('https://jsonplaceholder.typicode.com/posts', function (data) {
 
     {% for item in testingOHLC %}
         ohlc.push([
-            new Date('{{ item.TimeStamp|date:"d F Y"}} {{ item.TimeStamp|time:"H:i"}}').getTime(),
+            new Date('{{ item.TimeStamp|date:"d F Y T"}} {{ item.TimeStamp|time:"H:i"}}').getTime(),
             {{ item.PrevDay|floatformat:8 }},
             {{ item.High|floatformat:8 }},
             {{ item.Low|floatformat:8 }},
@@ -50,13 +78,13 @@ $.getJSON('https://jsonplaceholder.typicode.com/posts', function (data) {
 
     {% for item in testingMHistBuy %}
         volBuy.push([
-            new Date('{{ item.TimeStamp|date:"d F Y"}} {{ item.TimeStamp|time:"H:i"}}').getTime(),
+            new Date('{{ item.TimeStamp|date:"d F Y T"}} {{ item.TimeStamp|time:"H:i"}}').getTime(),
             {{ item.Price|floatformat:8 }}
         ]);
     {% endfor %}
     {% for item in testingMHistSell %}
         volSell.push([
-            new Date('{{ item.TimeStamp|date:"d F Y"}} {{ item.TimeStamp|time:"H:i"}}').getTime(),
+            new Date('{{ item.TimeStamp|date:"d F Y T"}} {{ item.TimeStamp|time:"H:i"}}').getTime(),
             {{ item.Price|floatformat:8 }}
         ]);
     {% endfor %}
@@ -109,7 +137,7 @@ $.getJSON('https://jsonplaceholder.typicode.com/posts', function (data) {
         },
 
         title: {
-            text: 'График свечек и объемов для {{ market }}'
+            text: 'График свечек и объемов для {{ pair }} ({{ exchange }})'
         },
 
         yAxis: [{
@@ -153,7 +181,7 @@ $.getJSON('https://jsonplaceholder.typicode.com/posts', function (data) {
 
         series: [{
             type: 'candlestick',
-            name: '{{ market }} OHLC',
+            name: '{{ pair }} OHLC',
             data: ohlc,
             dataGrouping: {
                 units: groupingUnits
@@ -197,9 +225,9 @@ $.getJSON('https://jsonplaceholder.typicode.com/posts', function (data) {
 
     var ticks = [];
 
-    {% for item in testingTick %}
+    {% for item in ticks %}
         ticks.push([
-            new Date('{{ item.TimeStamp|date:"d F Y"}} {{ item.TimeStamp|time:"H:i"}}').getTime(),
+            new Date('{{ item.TimeStamp|date:"d F Y T"}} {{ item.TimeStamp|time:"H:i:s"}}').getTime(),
             {{ item.Tick|floatformat:8 }}
         ]);
     {% endfor %}
@@ -251,7 +279,7 @@ $.getJSON('https://jsonplaceholder.typicode.com/posts', function (data) {
         },
 
         title: {
-            text: 'График тика {{ market }}'
+            text: 'График тика {{ pair }} ({{ exchange }})'
         },
 
         plotOptions: {
@@ -259,7 +287,7 @@ $.getJSON('https://jsonplaceholder.typicode.com/posts', function (data) {
                 states: {
                     hover: {
                         halo: {
-                            size: 9,
+                            size: 6,
                             attributes: {
                                 fill: 'rgb(54, 54, 54)'
                             }
@@ -274,7 +302,7 @@ $.getJSON('https://jsonplaceholder.typicode.com/posts', function (data) {
         },
 
         series: [{
-            name: '{{ market }}',
+            name: '{{ pair }}',
             data: ticks,
             type: 'spline',
             tooltip: {
@@ -392,5 +420,123 @@ Highcharts.theme = {
 };
 
 Highcharts.setOptions(Highcharts.theme);
+</script>
+
+<style>
+.headerText {
+  font-family: "Roboto", Sans-Serif;
+  font-size: 14px;
+  color: rgb(54, 54, 54);
+  display: inline-block;
+  padding-left: 200px;
+}
+
+.pairDropdown {
+    position: relative;
+    display: inline-block;
+    font-family: "Roboto", Sans-Serif;
+}
+
+.exchDropdown {
+    position: relative;
+    display: inline-block;
+    font-family: "Roboto", Sans-Serif;
+}
+
+.btnHolder {
+    color: rgb(54, 54, 54);
+    font-family: "Roboto", Sans-Serif;
+    display: inline-block;
+}
+
+.btn-default:focus {
+    outline: none !important;
+}
+
+.btn-default:active {
+    outline: none !important;
+}
+
+.selectpicker:focus {
+    outline: none !important;
+}
+
+.selectpicker:active {
+    outline: none !important;
+}
+
+.smallEmptySpace {
+    margin-top: 10px;
+}
+
+.mediumEmptySpace {
+    margin-top: 0px;
+}
+
+.bigEmptySpace {
+    margin-top: 543px;
+}
+
+.nothing {
+  margin-top: 5px;
+  color: transparent;
+}
+
+.textWrapper {
+  margin-top: 10px;
+}
+</style>
+
+<script>
+var exchs = document.getElementById("exchSelector");
+{% for item in exchList %}
+  var opt = document.createElement("option");
+  opt.innerText = '{{ item }}';
+  opt.style.textAlign = "left";
+  exchs.appendChild(opt);
+{% endfor %}
+
+var update_pairs = function () {
+    var success = false;
+    $('#pairSelector').empty();
+    $('.nothing').css('color', 'transparent');
+    var pairs = document.getElementById("pairSelector");
+    {% for item in combinations %}
+        if ('{{ item.Exch }}' == $('#exchSelector').val()) {
+          var opt = document.createElement("option");
+          opt.innerText = '{{ item.Pair }}';
+          opt.style.textAlign = "left";
+          pairs.appendChild(opt);
+          success = true;
+        }
+    {% endfor %}
+    if (success == false) {
+      $('.nothing').css('color', 'rgb(54, 54, 54)');
+      $('.nothing').text('Похоже, для этой биржи ничего нет');
+      $('#pairSelector').prop('disabled', true);
+    }
+    else {
+      $('#pairSelector').prop('disabled', false);
+    }
+    $('#pairSelector').selectpicker('refresh');
+};
+
+$("#exchSelector").change(update_pairs);
+$("#pairSelector").change( function () { $('.nothing').css('color', 'transparent'); } );
+
+
+$('#okBtn').click( function() {
+    if ($('#exchSelector').val().length && $('#pairSelector').val().length) {
+        $('.nothing').css('color', 'transparent');
+        var redirect = $(location).attr('href').replace('{{ exchange }}/','').replace('{{ pair }}/','');
+        window.location.href = redirect+$('#exchSelector').val()+'/'+$('#pairSelector').val();
+    }
+    else
+    {
+        $('.nothing').text('Сочетание не выбрано');
+        $('.nothing').css('color', 'rgb(54, 54, 54)');
+    }
+});
+
 </script>
 {% endblock content %}

@@ -179,7 +179,7 @@ def Volumeaggregation(ServerTime):
 def Tickaggregation(ServerTime):
     import pymongo
     logging.info(u'TickAggregation started at..' + str(ServerTime))
-    global tick, endingtime, startingtime, TimeStamp, PairName
+    global tick, endingtime, startingtime, TimeStamp, PairName, hammertime
     b = MongoDBConnection().start_db()
     db = b.PiedPiperStock
     exchlist = ['BittrexTick', 'LiveCoinTick', 'GatecoinTick', 'LiquiTick', 'BleutradeTick', 'PoloniexTick',
@@ -192,6 +192,7 @@ def Tickaggregation(ServerTime):
             # All Matches in DB
             delayActivation = timedelta(seconds=30)
             half_delay = timedelta(seconds=15)
+            microdelta = timedelta(milliseconds=1)
             # Starting time magic
             timer_at_first = db[exchname].find({'PairName': secinner, 'Mod': False}, {'TimeStamp': True}).limit(1)
             #
@@ -200,7 +201,12 @@ def Tickaggregation(ServerTime):
             time_after_aggregation = db[exchname].find({'PairName': secinner, 'Aggregated': True},
                                                        {'TimeStamp': True})\
                 .sort('TimeStamp', pymongo.DESCENDING).limit(1)
-            if enter_counter > 0:
+            hammertime = ServerTime
+            for subintosub in time_after_aggregation:
+                hammertime = dateutil.parser.parse(str(subintosub['TimeStamp']))
+            if hammertime != ServerTime and hammertime + half_delay < ServerTime:
+                startingtime = ServerTime - delayActivation - microdelta
+            elif enter_counter > 0:
                 for subintosub in time_after_aggregation:
                     startingtime = dateutil.parser.parse(str(subintosub['TimeStamp']))
                     startingtime = startingtime + half_delay
@@ -222,7 +228,7 @@ def Tickaggregation(ServerTime):
                         if pair_matcher is None:
                             logging.critical('ALERT. CURSOR IS FREAKING EMPTY')
                         elif pair_matcher.count() == 0:
-                            logging.critical('MISSING DATA IN 224 TA.py')
+                            logging.critical('MISSING DATA IN 231 TA.py')
                         for trdinner in pair_matcher:
                             if trdinner['Tick'] >= tick:
                                 tick = trdinner['Tick']
