@@ -37,7 +37,7 @@ class ChartsView(View):  # Класс для вывода графиков
         db.ExchsAndPairs.drop()
         ins = db.ExchsAndPairs
         exchlist = ['Bittrex', 'Gatecoin', 'LiveCoin', 'Liqui', 'Bleutrade', 'Poloniex',
-                    'Binance']  # пополняем вручную по мере поступления бирж
+                    'Binance', 'Exmo']  # пополняем вручную по мере поступления бирж
         for inner in range(0, len(exchlist)):
             exchname = exchlist[inner]
             pairlist = db[exchname + 'Tick'].distinct('PairName')

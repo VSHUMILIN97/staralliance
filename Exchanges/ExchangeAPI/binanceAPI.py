@@ -45,6 +45,6 @@ def binance_ticker():
                 release.insert(data)
             else:
                 continue
-            logging.info(u'Binance getticker ended successfully')
+        logging.info(u'Binance getticker ended successfully')
     except():
         logging.error(u'Binance parse mistake')

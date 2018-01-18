@@ -6,6 +6,7 @@ from .ExchangeAPI.binanceAPI import binance_ticker
 from .ExchangeAPI.gatecoinAPI import gatecoin_ticker
 from .ExchangeAPI.livecoinAPI import livecoin_ticker, livecoin_ticker_all_info
 from .ExchangeAPI.bleutradeAPI import bleutrade_ticker
+from .ExchangeAPI.ExmoAPI import exmo_ticker
 import random
 from .TimeAggregator import OHLCaggregation, Volumeaggregation, Tickaggregation
 import time
@@ -32,8 +33,8 @@ class ThreadingT(Thread):
                 logging.info(u'Delay before request..' + str(timeTemp))
                 #
                 try:
-                    #t1 = Thread(target=api_get_getmarketsummaries)
-                    #t2 = Thread(target=api_get_getmarkethistory)
+                    t1 = Thread(target=api_get_getmarketsummaries)
+                    t2 = Thread(target=api_get_getmarkethistory)
                     t3 = Thread(target=api_get_getticker)
                     t4 = Thread(target=livecoin_ticker)
                     #t5 = Thread(target=livecoin_ticker_all_info)
@@ -42,12 +43,14 @@ class ThreadingT(Thread):
                     t8 = Thread(target=bleutrade_ticker)
                     t9 = Thread(target=poloniex_ticker)
                     t10 = Thread(target=binance_ticker)
-                    #t1._stop()
-                    #t2._stop()
-                    logging.info('t3 alive - ' + str(t3.is_alive()) + ', t4 alive - ' + str(t4.is_alive())
-                                 + ', t6 alive - ' + str(t6.is_alive()) + ', t7 alive - ' + str(t7.is_alive()) +
+                    t11 = Thread(target=exmo_ticker)
+                    t1._stop()
+                    t2._stop()
+                    logging.info('t1 alive - ' + str(t1.is_alive()) + ', t2 alive - ' + str(t2.is_alive()) +
+                                 ', t3 alive - ' + str(t3.is_alive()) + ', t4 alive - ' + str(t4.is_alive()) +
+                                 ', t6 alive - ' + str(t6.is_alive()) + ', t7 alive - ' + str(t7.is_alive()) +
                                  ', t8 alive - ' + str(t8.is_alive()) + ', t9 alive - ' + str(t9.is_alive()) +
-                                 ', t10 alive - ' + str(t10.is_alive()))
+                                 ', t10 alive - ' + str(t10.is_alive())+ ', t11 alive -' + str(t11.is_alive()))
                     t3._stop()
                     t4._stop()
                     #t5._stop()
@@ -56,8 +59,9 @@ class ThreadingT(Thread):
                     t8._stop()
                     t9._stop()
                     t10._stop()
-                    #t1.setDaemon(True)
-                    #t2.setDaemon(True)
+                    t11._stop()
+                    t1.setDaemon(True)
+                    t2.setDaemon(True)
                     t3.setDaemon(True)
                     t4.setDaemon(True)
                     #t5.setDaemon(True)
@@ -66,8 +70,9 @@ class ThreadingT(Thread):
                     t8.setDaemon(True)
                     t9.setDaemon(True)
                     t10.setDaemon(True)
-                    #t1.start()
-                    #t2.start()
+                    t11.setDaemon(True)
+                    t1.start()
+                    t2.start()
                     t3.start()
                     t4.start()
                     #t5.start()
@@ -76,6 +81,7 @@ class ThreadingT(Thread):
                     t8.start()
                     t9.start()
                     t10.start()
+                    t11.start()
                 except():
                     logging.error(u'Data were not recieved')
                 time.sleep(timeTemp)
@@ -88,17 +94,17 @@ def aggregation_trigger():
     while 1:
         logging.info(u'Aggregations started')
         try:
-            threadf = Thread(target=OHLCaggregation(datetime.datetime.utcnow()))
-            thread2f = Thread(target=Volumeaggregation(datetime.datetime.utcnow()))
+            # threadf = Thread(target=OHLCaggregation(datetime.datetime.utcnow()))
+            # thread2f = Thread(target=Volumeaggregation(datetime.datetime.utcnow()))
             thread3f = Thread(target=Tickaggregation(datetime.datetime.utcnow()))
-            threadf._stop()
-            thread2f._stop()
+            # threadf._stop()
+            # thread2f._stop()
             thread3f._stop()
-            threadf.setDaemon(True)
-            thread2f.setDaemon(True)
+            # threadf.setDaemon(True)
+            # thread2f.setDaemon(True)
             thread3f.setDaemon(True)
-            threadf.start()
-            thread2f.start()
+            # threadf.start()
+            # thread2f.start()
             thread3f.start()
         except():
             logging.error(u'Aggregation had not been finished')

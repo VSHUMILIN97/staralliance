@@ -33,6 +33,7 @@ def OHLCaggregation(ServerTime):
             # All Matches in DB
             delayActivation = timedelta(minutes=5)
             half_delay = timedelta(minutes=2, seconds=30)
+            microdelta = timedelta(milliseconds=1)
             # Starting time magic
             timer_at_first = db[exchname].find({'PairName': secinner, 'Mod': False}, {'TimeStamp': True}).limit(1)
             #
@@ -41,7 +42,12 @@ def OHLCaggregation(ServerTime):
             time_after_aggregation = db[exchname].find({'PairName': secinner, 'Aggregated': True},
                                                        {'TimeStamp': True})\
                 .sort('TimeStamp', pymongo.DESCENDING).limit(1)
-            if enter_counter > 0:
+            hammertime = ServerTime
+            for subintosub in time_after_aggregation:
+                hammertime = dateutil.parser.parse(str(subintosub['TimeStamp']))
+            if hammertime != ServerTime and hammertime + half_delay < ServerTime:
+                startingtime = ServerTime - delayActivation - microdelta
+            elif enter_counter > 0:
                 for subintosub in time_after_aggregation:
                     startingtime = dateutil.parser.parse(str(subintosub['TimeStamp']))
                     startingtime = startingtime + half_delay
@@ -119,6 +125,7 @@ def Volumeaggregation(ServerTime):
             # All Matches in DB
             delayActivation = timedelta(minutes=5)
             half_delay = timedelta(minutes=2, seconds=30)
+            microdelta = timedelta(milliseconds=1)
             # Starting time magic
             timer_at_first = db[exchname].find({'PairName': secinner, 'Mod': False}, {'TimeStamp': True}).limit(1)
             #
@@ -127,7 +134,12 @@ def Volumeaggregation(ServerTime):
             time_after_aggregation = db[exchname].find({'PairName': secinner, 'Aggregated': True},
                                                        {'TimeStamp': True})\
                 .sort('TimeStamp', pymongo.DESCENDING).limit(1)
-            if enter_counter > 0:
+            hammertime = ServerTime
+            for subintosub in time_after_aggregation:
+                hammertime = dateutil.parser.parse(str(subintosub['TimeStamp']))
+            if hammertime != ServerTime and hammertime + half_delay < ServerTime:
+                startingtime = ServerTime - delayActivation - microdelta
+            elif enter_counter > 0:
                 for subintosub in time_after_aggregation:
                     startingtime = dateutil.parser.parse(str(subintosub['TimeStamp']))
                     startingtime = startingtime + half_delay
@@ -183,7 +195,7 @@ def Tickaggregation(ServerTime):
     b = MongoDBConnection().start_db()
     db = b.PiedPiperStock
     exchlist = ['BittrexTick', 'LiveCoinTick', 'GatecoinTick', 'LiquiTick', 'BleutradeTick', 'PoloniexTick',
-                'BinanceTick']
+                'BinanceTick', 'ExmoTick']
     for inner in range(0, len(exchlist)):
         exchname = exchlist[inner]
         pairlist = db[exchname].distinct('PairName')
@@ -261,7 +273,7 @@ def arbitration_aggregate():
     db = b.PiedPiperStock
 
     exchlist = ['BittrexTick', 'LiveCoinTick', 'GatecoinTick', 'LiquiTick', 'BleutradeTick', 'PoloniexTick',
-                'BinanceTick']
+                'BinanceTick', 'ExmoTick']
     #
     for inner in range(0, len(exchlist)):
         exchname = exchlist[inner]
