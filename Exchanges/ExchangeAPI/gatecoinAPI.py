@@ -10,6 +10,14 @@ logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(a
 
 
 # Боевая задачка - написать неунифицированные парсилки пар, чтобы все совпадало. Без хардкода.
+pairlist = ['ETHBTC', '1STBTC', 'LTCBTC', 'LTCETH']
+coins = ['ETH', 'BTC', 'LTC', 'DASH', 'XRP', '1ST']
+
+
+def pair_fix(pair_string):
+    for i in range(0, len(coins)):
+        if str(pair_string).startswith(coins[i]) is True:
+            return str(pair_string).replace(coins[i], coins[i]+'-')
 
 
 def gatecoin_ticker():
@@ -20,34 +28,18 @@ def gatecoin_ticker():
         db = b.PiedPiperStock
         gcstock = db.GatecoinTick
         api_request = requests.get("https://api.gatecoin.com/Public/LiveTickers")
-        json_data = json.loads(api_request.text)
-
-        result = json_data['tickers']
-        for item in result:
-            if item['currencyPair'] == 'ETHBTC':
-                market, bid, ask = str(item['currencyPair']), float(item['bid']), float(item['ask'])
-                a = market.replace('ETHBTC', 'BTC-ETH')
-                data = {'PairName': a, 'Tick': (bid + ask)/2, 'TimeStamp': timezone.now(), 'Mod': False}
-                gcstock.insert(data)
-            elif item['currencyPair'] == '1STBTC':
-                market, bid, ask = str(item['currencyPair']), float(item['bid']), float(item['ask'])
-                b = market.replace('1STBTC', 'BTC-1ST')
-                data = {'PairName': b, 'Tick': (bid + ask) / 2, 'TimeStamp': timezone.now(), 'Mod': False}
-                gcstock.insert(data)
-            elif item['currencyPair'] == 'LTCBTC':
-                market, bid, ask = str(item['currencyPair']), float(item['bid']), float(item['ask'])
-                h = market.replace('LTCBTC', 'BTC-LTC')
-                data = {'PairName': h, 'Tick': (bid + ask) / 2, 'TimeStamp': timezone.now(), 'Mod': False}
-                gcstock.insert(data)
-            elif item['currencyPair'] == 'LTCETH':
-                market, bid, ask = str(item['currencyPair']), float(item['bid']), float(item['ask'])
-                h = market.replace('LTCETH', 'ETH-LTC')
-                data = {'PairName': h, 'Tick': (bid + ask) / 2, 'TimeStamp': timezone.now(), 'Mod': False}
-                gcstock.insert(data)
-            elif item['currencyPair'] == '1STBTC':
-                market, bid, ask = str(item['currencyPair']), float(item['bid']), float(item['ask'])
-                h = market.replace('1STBTC', 'BTC-1ST')
-                data = {'PairName': h, 'Tick': (bid + ask) / 2, 'TimeStamp': timezone.now(), 'Mod': False}
-                gcstock.insert(data)
+        #
+        logging.info('Gatecoin API returned - ' + str(api_request.status_code))
+        if api_request.status_code == 200:
+            json_data = json.loads(api_request.text)
+            result = json_data['tickers']
+            for item in result:
+                if item['currencyPair'] in pairlist:
+                    market, bid, ask = str(item['currencyPair']), float(item['bid']), float(item['ask'])
+                    data = {'PairName': pair_fix(market), 'Tick': (bid + ask)/2,
+                            'TimeStamp': timezone.now(), 'Mod': False}
+                    gcstock.insert(data)
+                else:
+                    continue
     except():
-        logging.error(r'gatecoin ticker mistake')
+        logging.error(r'Gatecoin ticker mistake')

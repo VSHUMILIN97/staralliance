@@ -1,4 +1,4 @@
-# https://api.liqui.io/api/3/depth/ltc_btc?limit=1
+# https://api.liqui.io/api/3/depth/eth_btc-ltc_btc?limit=1&ignore_invalid=1
 import json
 import logging
 from django.utils import timezone
@@ -9,37 +9,34 @@ logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(a
                     level=logging.DEBUG)
 
 
+def pair_fix(pair_string):
+    return str(pair_string).upper().replace('_', '-')
+
+
 def liqui_ticker():
     global best_ask, best_bid
     logging.info(u'Liqui getticker started')
     #
     try:
-        ownpairlist = ['eth_btc', 'ltc_btc', 'dash_btc', 'ltc_eth']
+        pairlist = 'eth_btc-ltc_btc-dash_btc-ltc_eth'
         b = MongoDBConnection().start_db()
         db = b.PiedPiperStock
         release = db.LiquiTick
         #
-        for i in range(0, len(ownpairlist)):
-            api_request = requests.get("https://api.liqui.io" + "/api/3/depth/" + ownpairlist[i] + '?limit=1')
-            # Формируем JSON массив из данных с API
+
+        api_request = requests.get("https://api.liqui.io" + "/api/3/depth/" + pairlist + '?limit=1&ignore_invalid=1')
+        # Формируем JSON массив из данных с API
+        logging.info('Liqui API returned - ' + str(api_request.status_code))
+        if api_request.status_code == 200:
             json_data = json.loads(api_request.text)
             # Если все ок - парсим
-            root = json_data[ownpairlist[i]]
-            best_ask = root['asks'][0][0]
-            best_bid = root['bids'][0][0]
-            #
-            a = ''
-            if ownpairlist[i] == 'eth_btc':
-                a = "BTC-ETH"
-            elif ownpairlist[i] == 'ltc_btc':
-                a = "BTC-LTC"
-            elif ownpairlist[i] == 'dash_btc':
-                a = 'BTC-DASH'
-            else:
-                a = 'ETH-LTC'
-            data = {'PairName': a, 'Tick': (best_ask + best_bid) / 2,
-                    'TimeStamp': timezone.now(), 'Mod': False}
-            release.insert(data)
-        logging.info(u'Liqui getticker ended successfully')
+            for item in json_data:
+                best_ask = json_data[item]['asks'][0][0]
+                best_bid = json_data[item]['bids'][0][0]
+                #
+                data = {'PairName': pair_fix(item), 'Tick': (best_ask + best_bid) / 2,
+                        'TimeStamp': timezone.now(), 'Mod': False}
+                release.insert(data)
+            logging.info(u'Liqui getticker ended successfully')
     except():
         logging.error(u'Liqui parse mistake')

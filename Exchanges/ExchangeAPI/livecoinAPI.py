@@ -22,38 +22,38 @@ def pair_name_formater(current_name):
     return correct_name
 
 
+def pair_fix(pair_string):
+    return str(pair_string).replace('/', '-')
+
+
 def livecoin_ticker():
     logging.info(u'livecoin getticker started')
     #
+    ownpairlist = ['LTC/BTC', 'ETH/BTC', 'DASH/BTC']
+    #
     try:
-        ownpairlist = ['LTC/BTC', 'ETH/BTC', 'DASH/BTC']
         b = MongoDBConnection().start_db()
         db = b.PiedPiperStock
         test = db.LiveCoinTick
         #
         logging.info(u'livecoin getticker API was called')
-        #a = '/exchange/ticker?currencyPair=LTC/BTC'
-        for i in range(0, len(ownpairlist)):
-            api_request = requests.get("https://api.livecoin.net" + "/exchange/ticker?currencyPair=" + ownpairlist[i])
+        # a = '/exchange/ticker?currencyPair=LTC/BTC'
+        api_request = requests.get("https://api.livecoin.net" + "/exchange/ticker")
+        logging.info('Livecoin API returned - ' + str(api_request.status_code))
+        if api_request.status_code == 200:
             # Формируем JSON массив из данных с API
             json_data = json.loads(api_request.text)
             # Если все ок - парсим
-            # Назначаем объект 'result' корневым, для простоты обращения
-            root = json_data
-            best_bid, best_ask = float(root['best_bid']), float(root['best_ask'])
-            #
-            a = ''
-            if ownpairlist[i] == 'LTC/BTC':
-                a = "BTC-LTC"
-            elif ownpairlist[i] == 'ETH/BTC':
-                a = "BTC-ETH"
-            else:
-                a = 'BTC-DASH'
-            data = {'PairName': a, 'Tick': (best_ask + best_bid) / 2,
-                    'TimeStamp': timezone.now(), 'Mod': False}
-            test.insert(data)
-        logging.info(u'livecoin getticker ended successfully')
-    except:
+            for item in json_data:
+                if item['symbol'] in ownpairlist:
+                    # Назначаем объект 'result' корневым, для простоты обращения
+                    best_bid, best_ask = float(item['best_bid']), float(item['best_ask'])
+
+                    data = {'PairName': pair_fix(item['symbol']), 'Tick': (best_ask + best_bid) / 2,
+                            'TimeStamp': timezone.now(), 'Mod': False}
+                    test.insert(data)
+        logging.info(u'Livecoin getticker ended successfully')
+    except():
         logging.error(u'Livecoin parse mistake')
 
 

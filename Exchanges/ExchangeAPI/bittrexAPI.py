@@ -16,6 +16,17 @@ logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(a
 # Ну и разумеется настало время try: catch: блоков. А то ху-о работает пока что, на соплях
 pairlist = ['BTC-1ST', 'BTC-LTC', 'BTC-ETH', 'BTC-DASH', 'BTC-XRP', 'ETH-LTC']
 
+
+def pair_fix(pair_string):
+    if str(pair_string).split('-')[0] == 'BTC' or 'ETH':
+        a = str(pair_string).split('-')[0]
+        b = str(pair_string).split('-')[1]
+        c = b + "-" + a
+        return c
+    else:
+        return pair_string
+
+
 # Метод получается последние биржевые данные, парсит поля и выносит в модель необходимое.
 def api_get_getmarketsummaries():
     logging.info(u'Bittrex getsummaries started')
@@ -62,21 +73,22 @@ def api_get_getticker():
     db = b.PiedPiperStock
     test = db.BittrexTick
     #
-    logging.info(u'Bittrex getticker API was called')
+    api_request = requests.get("https://bittrex.com/api/v1.1/public/" + "getmarketsummaries")
     #
-    for i in range(0, len(pairlist)):
-        api_request = requests.get("https://bittrex.com/api/v1.1/public/" + "getticker?market=" + pairlist[i])
-        # Формируем JSON массив из данных с API
+    logging.info('Bittrex API returned - ' + str(api_request.status_code))
+    if api_request.status_code == 200:
         json_data = json.loads(api_request.text)
         # Если все ок - парсим
         if json_data['success']:
-
             # Назначаем объект 'result' корневым, для простоты обращения
             root = json_data['result']
-            bid, ask, last = float(root['Bid']), float(root['Ask']), str(root['Last'])
-            #
-            data = {'PairName': pairlist[i], 'Tick': (ask+bid)/2, 'TimeStamp': timezone.now(), 'Mod': False}
-            test.insert(data)
+            for item in root:
+                if item['MarketName'] in pairlist:
+                    bid, ask = float(item['Bid']), float(item['Ask'])
+                    #
+                    data = {'PairName': pair_fix(item['MarketName']), 'Tick': (ask+bid)/2,
+                            'TimeStamp': timezone.now(), 'Mod': False}
+                    test.insert(data)
     logging.info(u'Bittrex getticker ended')
 
 

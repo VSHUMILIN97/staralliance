@@ -237,10 +237,9 @@ def Tickaggregation(ServerTime):
                         #
                         pair_matcher = db[exchname].find({'PairName': secinner, 'Mod': False, 'TimeStamp':
                                                          {'$gte': startingtime, '$lt': endingtime}})
-                        if pair_matcher is None:
-                            logging.critical('ALERT. CURSOR IS FREAKING EMPTY')
-                        elif pair_matcher.count() == 0:
-                            logging.critical('MISSING DATA IN 231 TA.py')
+                        if pair_matcher.count() == 0:
+                            logging.critical('MISSING DATA IN - ' + exchname + ', ' + secinner)
+                        #
                         for trdinner in pair_matcher:
                             if trdinner['Tick'] >= tick:
                                 tick = trdinner['Tick']
