@@ -31,8 +31,8 @@ def OHLCaggregation(ServerTime):
         #
         for secinner in pairlist:
             # All Matches in DB
-            delayActivation = timedelta(minutes=5)
-            half_delay = timedelta(minutes=2, seconds=30)
+            delayActivation = timedelta(seconds=30)
+            half_delay = timedelta(seconds=15)
             microdelta = timedelta(milliseconds=1)
             # Starting time magic
             timer_at_first = db[exchname].find({'PairName': secinner, 'Mod': False}, {'TimeStamp': True}).limit(1)
@@ -123,8 +123,8 @@ def Volumeaggregation(ServerTime):
         #
         for secinner in pairlist:
             # All Matches in DB
-            delayActivation = timedelta(minutes=5)
-            half_delay = timedelta(minutes=2, seconds=30)
+            delayActivation = timedelta(seconds=30)
+            half_delay = timedelta(seconds=15)
             microdelta = timedelta(milliseconds=1)
             # Starting time magic
             timer_at_first = db[exchname].find({'PairName': secinner, 'Mod': False}, {'TimeStamp': True}).limit(1)

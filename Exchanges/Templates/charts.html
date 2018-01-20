@@ -37,7 +37,28 @@
 <div id="OHLCContainer" style="height: 600px; min-width: 310px"></div>
 <div id="tickContainer" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 
-<script>
+    <script>
+     var ws = new WebSocket("ws://127.0.0.1:8070/");
+     ws.onopen = function (event) {
+         ws.send(location.pathname);
+     };
+    var json_msg;
+    var ticks = [];
+     ws.onmessage = function (event) {
+         alert(event.data);
+         var art = JSON.parse(event.data);
+         var json_msg = JSON.parse(art['tick']);
+         for (var item in json_msg){
+        ticks.push([
+            new Date(json_msg[item]['TimeStamp']).getTime(),
+            json_msg[item]['Tick']
+        ]);
+    }
+    saver(ticks)
+     };
+function saver (obj){
+    ticks = obj;
+}
 $.getJSON('https://jsonplaceholder.typicode.com/posts', function (data) {
 //я В ДУШЕ не знаю ПОЧЕМУ он не работает без обращения за jsonом здесь, НО РАБОТАЕТ на фидле
 //(нет, я знаю, как заставить его работать и без обращения, но тогда падает цветовая схема)
@@ -45,7 +66,6 @@ $.getJSON('https://jsonplaceholder.typicode.com/posts', function (data) {
 //поэтому давайте дружно сделаем вид, что эта ссылка - временная и стоит здесь как укор совести для того, чтобы не забыть об этом
 //upd. теоретически, можно таскать данные и напрямую с бирж, если по пути избавиться от всего лишнего что они предоставляют
 //и выделить только нужное (у меня на это не хватает мозгов)
-
         var ohlc = [],
         volBuy = [],
         volSell = [],
@@ -218,19 +238,12 @@ $.getJSON('https://jsonplaceholder.typicode.com/posts', function (data) {
         }]
     });
 });
-</script>
 
-<script>
     $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=usdeur.json&callback=?', function (data) {
 
-    var ticks = [];
 
-    {% for item in ticks %}
-        ticks.push([
-            new Date('{{ item.TimeStamp|date:"d F Y T"}} {{ item.TimeStamp|time:"H:i:s"}}').getTime(),
-            {{ item.Tick|floatformat:8 }}
-        ]);
-    {% endfor %}
+
+
 
     Highcharts.stockChart('tickContainer', {
     		rangeSelector: {
@@ -314,6 +327,7 @@ $.getJSON('https://jsonplaceholder.typicode.com/posts', function (data) {
         }]
     });
 });
+
 </script>
 
 <script>
@@ -530,6 +544,7 @@ $('#okBtn').click( function() {
         $('.nothing').css('color', 'transparent');
         var redirect = $(location).attr('href').replace('{{ exchange }}/','').replace('{{ pair }}/','');
         window.location.href = redirect+$('#exchSelector').val()+'/'+$('#pairSelector').val();
+        ws.send($('#exchSelector').val()+' '+$('#pairSelector').val())
     }
     else
     {
