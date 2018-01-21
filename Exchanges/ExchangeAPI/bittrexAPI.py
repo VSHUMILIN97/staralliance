@@ -46,18 +46,14 @@ def api_get_getmarketsummaries():
         result = json_data['result']
 
         for item in result:
-            marketname, high, low, volume, last, basevolume, timestamp,\
-            bid, ask, openbuyorders, opensellorders, prevday = \
-             str(item['MarketName']), float('{:.10f}'.format(item['High'])), float('{:.10f}'.format(item['Low'])), \
-             float('{:.10f}'.format(item['Volume'])), float('{:.10f}'.format(item['Last'])),\
-             float('{:.10f}'.format(item['BaseVolume'])), \
-             iso8601.parse_date(item['TimeStamp']), float('{:.10f}'.format(item['Bid'])),\
-             float('{:.10f}'.format(item['Ask'])), str(item['OpenBuyOrders']),\
-             str(item['OpenSellOrders']), float('{:.10f}'.format(item['PrevDay']))
-            # Формируем словарь из значений
-            data = {'PairName': marketname, 'High': high, 'Low': low, 'Last': last,
-                    'PrevDay': prevday, 'TimeStamp': timestamp, 'Mod': False}
-            test.insert(data)
+            if item['MarketName'] in pairlist:
+                high, low, last, timestamp, prevday = \
+                 float(item['High']), float(item['Low']), float(item['Last']),\
+                 iso8601.parse_date(item['TimeStamp']),  float(item['PrevDay'])
+                # Формируем словарь из значений
+                data = {'PairName': pair_fix(item['MarketName']), 'High': high, 'Low': low, 'Last': last,
+                        'PrevDay': prevday, 'TimeStamp': timestamp, 'Mod': False}
+                test.insert(data)
     logging.info(u'Bittrex getsummaries ended')
 
 
@@ -116,7 +112,7 @@ def api_get_getmarkethistory():
                     float(item['Price']), float(item['Total']),\
                     str(item['FillType']), str(item['OrderType'])
                 #
-                data = {'PairName': pairlist[i], 'OrderID': iD, 'Quantity': quantity, 'Price': price, 'Total': total,
+                data = {'PairName': pair_fix(pairlist[i]), 'OrderID': iD, 'Quantity': quantity, 'Price': price, 'Total': total,
                         'FillType': filltype, 'OrderType': ordertype, 'TimeStamp': timestamp, 'Mod': False}
                 test.insert(data)
     logging.info(u'Bittrex getmarkethistory ended')

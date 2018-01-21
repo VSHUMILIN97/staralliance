@@ -7,8 +7,7 @@ from django.conf.urls import url
 from Exchanges import views
 from django.conf.urls.static import static
 from PiedPiper import settings
-from .tick_exchparser import ThreadingT, aggregation_trigger
-from threading import Thread
+from .tick_exchparser import ThreadingT, ThreadingAT
 from mongo_db_connection import MongoDBConnection
 import logging
 
@@ -47,8 +46,9 @@ db = connectme.start_db().PiedPiperStock
 # Необходимо для постоянного сбора данных. Вынесено в отдельный поток во избежания страданий основного из-за While(True)
 # Make daemonic(!) ПРОДУМАТЬ БЕЗОПАСНОСТЬ!
 logging.info(u'Server started')
-testingThreads = ThreadingT()
-t2 = Thread(target=aggregation_trigger)
+testing_threads = ThreadingT()
+agr_T_thread = ThreadingAT()
+
 
 # В качестве подпроцесса child выбираем скрипт websocketapp.py
 # В качестве аргументов для начала работы подпроцесса передаем команду execute и указываем на потомка
@@ -57,7 +57,17 @@ child = os.path.join(os.path.dirname(__file__), "../websocketapp.py")
 command = [sys.executable, child]
 pipe = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
 
+wscharts = os.path.join(os.path.dirname(__file__), "../websocketcharts.py")
+wscharts_command = [sys.executable, wscharts]
+wscharts_pipe = subprocess.Popen(wscharts_command, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+
+agtion_ohlc = os.path.join(os.path.dirname(__file__), "../aggregation_OHLC_Vol.py")
+agtion_command = [sys.executable, agtion_ohlc]
+agtion_pipe = subprocess.Popen(agtion_command, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+#
+agtion_pid = agtion_pipe.pid
 child_pid = pipe.pid
+wscharts_pid = wscharts_pipe.pid
 
 
 def child_kill():
@@ -65,12 +75,14 @@ def child_kill():
         pass
     else:
         os.kill(child_pid, signal.SIGTERM)
+        os.kill(wscharts_pid, signal.SIGTERM)
+        os.kill(agtion_pid, signal.SIGTERM)
         logging.info(u'WebSocket rundown')
 
 
 try:
-    testingThreads.start()
-    t2.start()
+    testing_threads.start()
+    agr_T_thread.start()
     logging.info(u'Threads"re successfully started')
 except():
     logging.critical(u'Threads were not started')

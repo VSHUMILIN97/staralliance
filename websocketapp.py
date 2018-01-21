@@ -35,6 +35,8 @@ try:
         asyncio.get_event_loop().close()
 except ():
     logging.info(u'non crit')
+
+logging.info(u'Arbitartion websocket started')
 # Отлавливаем наш While 1 event, т.е arbitration_socket и заставляем сокет слушать его бегать бесконечно.
 asyncio.get_event_loop().run_until_complete(websockets.serve(arbitration_socket, '127.0.0.1', 8080))
 asyncio.get_event_loop().run_forever()

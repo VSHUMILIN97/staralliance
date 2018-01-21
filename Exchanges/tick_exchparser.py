@@ -8,7 +8,7 @@ from .ExchangeAPI.livecoinAPI import livecoin_ticker, livecoin_ticker_all_info
 from .ExchangeAPI.bleutradeAPI import bleutrade_ticker
 from .ExchangeAPI.ExmoAPI import exmo_ticker
 import random
-from .TimeAggregator import OHLCaggregation, Volumeaggregation, Tickaggregation
+from .TimeAggregator import Tickaggregation
 import time
 from threading import Thread
 import logging
@@ -89,24 +89,22 @@ class ThreadingT(Thread):
                 logging.error('Threads bump')
 
 
-def aggregation_trigger():
-    time.sleep(30)
-    while 1:
-        logging.info(u'Aggregations started')
-        try:
-            # threadf = Thread(target=OHLCaggregation(datetime.datetime.utcnow()))
-            # thread2f = Thread(target=Volumeaggregation(datetime.datetime.utcnow()))
-            thread3f = Thread(target=Tickaggregation(datetime.datetime.utcnow()))
-            # threadf._stop()
-            # thread2f._stop()
-            thread3f._stop()
-            # threadf.setDaemon(True)
-            # thread2f.setDaemon(True)
-            thread3f.setDaemon(True)
-            # threadf.start()
-            # thread2f.start()
-            thread3f.start()
-        except():
-            logging.error(u'Aggregation had not been finished')
-        logging.info(u'Aggregation confirmed')
+class ThreadingAT(Thread):
+    def run(self):
+        logging.info(u'Aggregation of tick is requested')
+        self.aggregation_trigger()
+
+    def aggregation_trigger(self):
         time.sleep(30)
+        while 1:
+            logging.info(u'AggregationTick started')
+            try:
+                stime = datetime.datetime.utcnow()
+                td_tick = Thread(target=Tickaggregation(stime))
+                td_tick._stop()
+                td_tick.setDaemon(True)
+                td_tick.start()
+            except():
+                logging.error(u'AggregationTick had not been finished')
+            logging.info(u'AggregationTick confirmed')
+            time.sleep(30)
