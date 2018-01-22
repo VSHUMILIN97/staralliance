@@ -46,8 +46,13 @@ db = connectme.start_db().PiedPiperStock
 # Необходимо для постоянного сбора данных. Вынесено в отдельный поток во избежания страданий основного из-за While(True)
 # Make daemonic(!) ПРОДУМАТЬ БЕЗОПАСНОСТЬ!
 logging.info(u'Server started')
-testing_threads = ThreadingT()
+# testing_threads = ThreadingT()
 
+try:
+    # testing_threads.start()
+    logging.info(u'Threads"re successfully started')
+except():
+    logging.critical(u'Threads were not started')
 
 # В качестве подпроцесса child выбираем скрипт websocketapp.py
 # В качестве аргументов для начала работы подпроцесса передаем команду execute и указываем на потомка
@@ -60,6 +65,10 @@ wscharts = os.path.join(os.path.dirname(__file__), "../websocketcharts.py")
 wscharts_command = [sys.executable, wscharts]
 wscharts_pipe = subprocess.Popen(wscharts_command, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
 
+data_parse = os.path.join(os.path.dirname(__file__), "../data_parser.py")
+data_parse_command = [sys.executable, data_parse]
+data_parse_pipe = subprocess.Popen(data_parse_command, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+#
 agtion_ohlc = os.path.join(os.path.dirname(__file__), "../aggregation_OHLC_Vol.py")
 agtion_command = [sys.executable, agtion_ohlc]
 agtion_pipe = subprocess.Popen(agtion_command, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
@@ -68,10 +77,12 @@ agtion_tick = os.path.join(os.path.dirname(__file__), "../aggregation_Tick.py")
 agtion_tick_command = [sys.executable, agtion_tick]
 agtion_tick_pipe = subprocess.Popen(agtion_tick_command, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
 #
+data_parse_pid = data_parse_pipe.pid
 agtion_pid = agtion_pipe.pid
 child_pid = pipe.pid
 wscharts_pid = wscharts_pipe.pid
 agtion_tick_pid = agtion_tick_pipe.pid
+
 
 
 def child_kill():
@@ -82,13 +93,8 @@ def child_kill():
         os.kill(wscharts_pid, signal.SIGTERM)
         os.kill(agtion_pid, signal.SIGTERM)
         os.kill(agtion_tick_pid, signal.SIGTERM)
+        os.kill(data_parse_pid, signal.SIGTERM)
         logging.info(u'WebSocket rundown')
 
-
-try:
-    testing_threads.start()
-    logging.info(u'Threads"re successfully started')
-except():
-    logging.critical(u'Threads were not started')
 
 atexit.register(child_kill)

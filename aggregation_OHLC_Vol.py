@@ -62,16 +62,16 @@ def OHLCaggregation(ServerTime):
                         lowest_value = 9999999
                         endingtime = mergingtime
                         # Low Записываем значение из одномерного словаря (Это можно отрефакторить - WELCOME!)
-                        open_val_dict = db[exchname].find({'PairName': secinner, 'Mod': True, 'TimeStamp':
+                        open_val_dict = db[exchname].find({'PairName': secinner, 'Mod': False, 'TimeStamp':
                                                           {'$gte': startingtime, '$lt': endingtime}},
                                                           {'Price': True})\
-                            .sort('TimeStamp', pymongo.DESCENDING).limit(1)
+                            .sort('TimeStamp', pymongo.ASCENDING).limit(1)
 
                         # Last Пишем первый объект из коллекции. Так и не разобрались с полем.
                         # Поиск по паре, полю Mod - Modified/ TimeStamp в разрезе от startingtime до endingtime
                         close_val_dict = db[exchname].find({'PairName': secinner, 'Mod': False, 'TimeStamp':
-                                                          {'$gte': startingtime, '$lt': endingtime}},
-                                                          {'Price': True})\
+                                                           {'$gte': startingtime, '$lt': endingtime}},
+                                                           {'Price': True})\
                             .sort('TimeStamp', pymongo.DESCENDING).limit(1)
                         #
                         pair_matcher = db[exchname].find({'PairName': secinner, 'Mod': False, 'TimeStamp':
@@ -85,11 +85,14 @@ def OHLCaggregation(ServerTime):
                         #
                         if open_val_dict.count() == 0:
                             open_value = close_value
+                        print(str(open_value) + ' ' + str(open_val_dict.count()))
                         for trdinner in pair_matcher:
                             if trdinner['Price'] > highest_value:
                                 highest_value = trdinner['Price']
                             if trdinner['Price'] < lowest_value:
                                 lowest_value = trdinner['Price']
+                            if lowest_value == 9999999:
+                                lowest_value = close_value
                         tempdict = {'PairName': secinner, 'High': highest_value,
                                     'Low': lowest_value, 'TimeStamp': startingtime - half_delay, 'Close': close_value,
                                     'Open': open_value, 'Aggregated': True}
