@@ -3,9 +3,8 @@ import dateutil.parser
 from datetime import timedelta
 import logging
 import datetime
-import time
-import sys
 import asyncio
+import time
 
 logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
                     level=logging.DEBUG)
@@ -13,10 +12,8 @@ logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(a
 
 def OHLCaggregation(ServerTime):
     import pymongo
-    global highest_value, endingtime, startingtime
+    global highest_value, endingtime, startingtime, close_value, open_value
     global lowest_value
-    global LastValue
-    global PrevDayValue
     global TimeStamp
     global PairName
     logging.info(u'..OHLCAggregation started at..' + str(ServerTime))
@@ -62,39 +59,40 @@ def OHLCaggregation(ServerTime):
                     if mergingtime < ServerTime:
                         # High Работа с глобальными переменными. Переприсвоится дальше.
                         highest_value = 0
+                        lowest_value = 9999999
                         endingtime = mergingtime
                         # Low Записываем значение из одномерного словаря (Это можно отрефакторить - WELCOME!)
-                        low_val_dict = db[exchname].find({'PairName': secinner, 'Mod': False, 'TimeStamp':
-                                                         {'$gte': startingtime, '$lt': endingtime}},
-                                                         {'Low': True}).limit(1)
+                        open_val_dict = db[exchname].find({'PairName': secinner, 'Mod': True, 'TimeStamp':
+                                                          {'$gte': startingtime, '$lt': endingtime}},
+                                                          {'Price': True})\
+                            .sort('TimeStamp', pymongo.DESCENDING).limit(1)
+
                         # Last Пишем первый объект из коллекции. Так и не разобрались с полем.
                         # Поиск по паре, полю Mod - Modified/ TimeStamp в разрезе от startingtime до endingtime
-                        last_val_dict = db[exchname].find({'PairName': secinner, 'Mod': False, 'TimeStamp':
+                        close_val_dict = db[exchname].find({'PairName': secinner, 'Mod': False, 'TimeStamp':
                                                           {'$gte': startingtime, '$lt': endingtime}},
-                                                          {'Last': True}).limit(1)
+                                                          {'Price': True})\
+                            .sort('TimeStamp', pymongo.DESCENDING).limit(1)
                         #
                         pair_matcher = db[exchname].find({'PairName': secinner, 'Mod': False, 'TimeStamp':
                                                          {'$gte': startingtime, '$lt': endingtime}})
-                        #
-                        prev_day_dict = db[exchname].find({'PairName': secinner, 'Mod': False, 'TimeStamp':
-                                                          {'$gte': startingtime, '$lt': endingtime}}, {'PrevDay': True})
-                        for subinLow in low_val_dict:
-                            lowest_value = subinLow['Low']
                         # Last
-                        for subinLast in last_val_dict:
-                            LastValue = subinLast['Last']
+                        for subinLast in open_val_dict:
+                            open_value = subinLast['Price']
                         # PrevDay
-                        for subinPrevDay in prev_day_dict:
-                            PrevDayValue = subinPrevDay['PrevDay']
+                        for subinPrevDay in close_val_dict:
+                            close_value = subinPrevDay['Price']
                         #
+                        if open_val_dict.count() == 0:
+                            open_value = close_value
                         for trdinner in pair_matcher:
-                            if trdinner['High'] > highest_value:
-                                highest_value = trdinner['High']
-                            if trdinner['Low'] < lowest_value:
-                                lowest_value = trdinner['Low']
+                            if trdinner['Price'] > highest_value:
+                                highest_value = trdinner['Price']
+                            if trdinner['Price'] < lowest_value:
+                                lowest_value = trdinner['Price']
                         tempdict = {'PairName': secinner, 'High': highest_value,
-                                    'Low': lowest_value, 'TimeStamp': ServerTime - half_delay, 'Last': LastValue,
-                                    'PrevDay': PrevDayValue, 'Aggregated': True}
+                                    'Low': lowest_value, 'TimeStamp': startingtime - half_delay, 'Close': close_value,
+                                    'Open': open_value, 'Aggregated': True}
                         db[exchname].insert(tempdict)
                         db[exchname].update({'PairName': secinner, 'Mod': False, 'TimeStamp':
                                             {'$gte': startingtime, '$lt': endingtime}}, {'$set': {'Mod': True}},
@@ -105,7 +103,7 @@ def OHLCaggregation(ServerTime):
                         mergingtime = mergingtime + delayActivation
                     else:
                         break
-                except:
+                except():
                     logging.error(u'OHLCAgg')
         logging.info(u'Check' + exchname + u'collection')
 
@@ -170,10 +168,10 @@ def Volumeaggregation(ServerTime):
                                 bought_data += trdinner['Price']
                         temp_dict_sell = {'PairName': secinner, 'Quantity': sell_data,
                                           'OrderType': 'SELL', 'Price': sold_data,
-                                          'TimeStamp': ServerTime - half_delay, 'Aggregated': True}
+                                          'TimeStamp': startingtime - half_delay, 'Aggregated': True}
                         temp_dict_buy = {'PairName': secinner, 'Quantity': sell_data,
                                          'OrderType': 'BUY', 'Price': bought_data,
-                                         'TimeStamp': ServerTime - half_delay, 'Aggregated': True}
+                                         'TimeStamp': startingtime - half_delay, 'Aggregated': True}
                         db[exchname].insert(temp_dict_sell)
                         db[exchname].insert(temp_dict_buy)
                         db[exchname].update({'PairName': secinner, 'Mod': False, 'TimeStamp':

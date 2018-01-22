@@ -1,7 +1,10 @@
 import iso8601
+import pymongo
 import requests
 import json
+import dateutil.parser
 from django.utils import timezone
+from datetime import timedelta
 from mongo_db_connection import MongoDBConnection
 import logging
 
@@ -28,33 +31,50 @@ def pair_fix(pair_string):
 
 
 # Метод получается последние биржевые данные, парсит поля и выносит в модель необходимое.
+# https://bittrex.com/api/v1.1/public/getmarkethistory?market=BTC-LTC
 def api_get_getmarketsummaries():
+    global lurktime
     logging.info(u'Bittrex getsummaries started')
     b = MongoDBConnection().start_db()
     db = b.PiedPiperStock
     test = db.Bittrex
-    api_request = requests.get("https://bittrex.com/api/v1.1/public/" + "getmarketsummaries")
-    json_data = json.loads(api_request.text)
-    #
-    logging.info(u'Bittrex getsummaries API was called')
-    #
-    # Если полученный JSON массив из apiRequest несет в себе данные , а не разочарование , то , парсим по переменным
-    # и передаем все это в новый объект из models.py
-    # Для timestamp используем формат ISO8601, который DateTime модели без проблем распознает =)
+    for i in range(0, len(pairlist)):
+        api_request = requests.get("https://bittrex.com/api/v1.1/public/" + "getmarkethistory?market=" + pairlist[i])
+        json_data = json.loads(api_request.text)
+        #
+        logging.info(u'Bittrex getsummaries API was called')
+        #
+        lurktime = None
+        # Если полученный JSON массив из apiRequest несет в себе данные , а не разочарование , то , парсим по переменным
+        # и передаем все это в новый объект из models.py
+        # Для timestamp используем формат ISO8601, который DateTime модели без проблем распознает =)
+        time_after_aggregation = test.find({'PairName': pair_fix(pairlist[i]), 'Mod': False},
+                                           {'TimeStamp': True}).sort('TimeStamp', pymongo.DESCENDING).limit(1)
 
-    if json_data['success']:
-        result = json_data['result']
+        for subintosub in time_after_aggregation:
+            lurktime = dateutil.parser.parse(str(subintosub['TimeStamp']))
 
-        for item in result:
-            if item['MarketName'] in pairlist:
-                high, low, last, timestamp, prevday = \
-                 float(item['High']), float(item['Low']), float(item['Last']),\
-                 iso8601.parse_date(item['TimeStamp']),  float(item['PrevDay'])
-                # Формируем словарь из значений
-                data = {'PairName': pair_fix(item['MarketName']), 'High': high, 'Low': low, 'Last': last,
-                        'PrevDay': prevday, 'TimeStamp': timestamp, 'Mod': False}
-                test.insert(data)
-    logging.info(u'Bittrex getsummaries ended')
+        if json_data['success']:
+            result = json_data['result']
+
+            for item in result:
+                if lurktime is None:
+                    timestamp, price = \
+                        iso8601.parse_date(item['TimeStamp']), float(item['Price'])
+                    #
+                    data = {'PairName': pair_fix(pairlist[i]), 'Price': price, 'TimeStamp': timestamp,
+                            'Mod': False}
+                    test.insert(data)
+                elif lurktime < iso8601.parse_date(item['TimeStamp']).replace(tzinfo=None):
+                    timestamp, price = \
+                     iso8601.parse_date(item['TimeStamp']),  float(item['Price'])
+                    #
+                    data = {'PairName': pair_fix(pairlist[i]), 'Price': price, 'TimeStamp': timestamp,
+                            'Mod': False}
+                    test.insert(data)
+                else:
+                    continue
+        logging.info(u'Bittrex getsummaries ended')
 
 
 # По некоторым соображениям, самый работающий график на данный момент.

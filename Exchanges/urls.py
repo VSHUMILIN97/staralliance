@@ -7,7 +7,7 @@ from django.conf.urls import url
 from Exchanges import views
 from django.conf.urls.static import static
 from PiedPiper import settings
-from .tick_exchparser import ThreadingT, ThreadingAT
+from .tick_exchparser import ThreadingT
 from mongo_db_connection import MongoDBConnection
 import logging
 
@@ -47,7 +47,6 @@ db = connectme.start_db().PiedPiperStock
 # Make daemonic(!) ПРОДУМАТЬ БЕЗОПАСНОСТЬ!
 logging.info(u'Server started')
 testing_threads = ThreadingT()
-agr_T_thread = ThreadingAT()
 
 
 # В качестве подпроцесса child выбираем скрипт websocketapp.py
@@ -65,9 +64,14 @@ agtion_ohlc = os.path.join(os.path.dirname(__file__), "../aggregation_OHLC_Vol.p
 agtion_command = [sys.executable, agtion_ohlc]
 agtion_pipe = subprocess.Popen(agtion_command, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
 #
+agtion_tick = os.path.join(os.path.dirname(__file__), "../aggregation_Tick.py")
+agtion_tick_command = [sys.executable, agtion_tick]
+agtion_tick_pipe = subprocess.Popen(agtion_tick_command, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+#
 agtion_pid = agtion_pipe.pid
 child_pid = pipe.pid
 wscharts_pid = wscharts_pipe.pid
+agtion_tick_pid = agtion_tick_pipe.pid
 
 
 def child_kill():
@@ -77,12 +81,12 @@ def child_kill():
         os.kill(child_pid, signal.SIGTERM)
         os.kill(wscharts_pid, signal.SIGTERM)
         os.kill(agtion_pid, signal.SIGTERM)
+        os.kill(agtion_tick_pid, signal.SIGTERM)
         logging.info(u'WebSocket rundown')
 
 
 try:
     testing_threads.start()
-    agr_T_thread.start()
     logging.info(u'Threads"re successfully started')
 except():
     logging.critical(u'Threads were not started')

@@ -92,10 +92,10 @@ $.getJSON('https://jsonplaceholder.typicode.com/posts', function (data) {
     for (var oc in ohlcD){
         ohlc.push([
             ohlcD[oc]['TimeStamp']['$date'],
-            ohlcD[oc]['PrevDay'],
+            ohlcD[oc]['Open'],
             ohlcD[oc]['High'], // Ввести FIX'en помощь. См compare. Функция fix
             ohlcD[oc]['Low'],
-            ohlcD[oc]['Last']
+            ohlcD[oc]['Close']
         ]);
     }
 
