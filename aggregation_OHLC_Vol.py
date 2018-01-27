@@ -41,17 +41,17 @@ def OHLCaggregation(ServerTime):
                                                        {'TimeStamp': True})\
                 .sort('TimeStamp', pymongo.DESCENDING).limit(1)
             hammertime = ServerTime
-            for subintosub in time_after_aggregation:
-                hammertime = dateutil.parser.parse(str(subintosub['TimeStamp']))
+            try:
+                hammertime = dateutil.parser.parse(str(time_after_aggregation[0]['TimeStamp']))
+            except():
+                logging.info(u'missing hammertime at OHLC_VOL')
             if hammertime != ServerTime and hammertime + half_delay < ServerTime:
                 startingtime = ServerTime - delayActivation - microdelta
             elif enter_counter > 0:
-                for subintosub in time_after_aggregation:
-                    startingtime = dateutil.parser.parse(str(subintosub['TimeStamp']))
-                    startingtime = startingtime + half_delay
+                startingtime = dateutil.parser.parse(str(time_after_aggregation[0]['TimeStamp']))
+                startingtime = startingtime + half_delay
             else:
-                for subinto in timer_at_first:
-                     startingtime = dateutil.parser.parse(str(subinto['TimeStamp']))
+                startingtime = dateutil.parser.parse(str(timer_at_first[0]['TimeStamp']))
             #
             mergingtime = startingtime + delayActivation
             while 1:
@@ -77,15 +77,15 @@ def OHLCaggregation(ServerTime):
                         pair_matcher = db[exchname].find({'PairName': secinner, 'Mod': False, 'TimeStamp':
                                                          {'$gte': startingtime, '$lt': endingtime}})
                         # Last
-                        for subinLast in open_val_dict:
-                            open_value = subinLast['Price']
-                        # PrevDay
-                        for subinPrevDay in close_val_dict:
-                            close_value = subinPrevDay['Price']
-                        #
+                        try:
+                            open_value = open_val_dict[0]['Price']
+                            # PrevDay
+                            close_value = close_val_dict[0]['Price']
+                            #
+                        except():
+                            logging.critical(u'NO OPEN AND CLOSE DATA RECEIVED')
                         if open_val_dict.count() == 0:
                             open_value = close_value
-                        print(str(open_value) + ' ' + str(open_val_dict.count()))
                         for trdinner in pair_matcher:
                             if trdinner['Price'] > highest_value:
                                 highest_value = trdinner['Price']
@@ -137,17 +137,17 @@ def Volumeaggregation(ServerTime):
                                                        {'TimeStamp': True})\
                 .sort('TimeStamp', pymongo.DESCENDING).limit(1)
             hammertime = ServerTime
-            for subintosub in time_after_aggregation:
-                hammertime = dateutil.parser.parse(str(subintosub['TimeStamp']))
+            try:
+                hammertime = dateutil.parser.parse(str(time_after_aggregation[0]['TimeStamp']))
+            except():
+                logging.info(u'missing hammertime at OHLC_VOL')
             if hammertime != ServerTime and hammertime + half_delay < ServerTime:
                 startingtime = ServerTime - delayActivation - microdelta
             elif enter_counter > 0:
-                for subintosub in time_after_aggregation:
-                    startingtime = dateutil.parser.parse(str(subintosub['TimeStamp']))
-                    startingtime = startingtime + half_delay
+                startingtime = dateutil.parser.parse(str(time_after_aggregation[0]['TimeStamp']))
+                startingtime = startingtime + half_delay
             else:
-                for subinto in timer_at_first:
-                    startingtime = dateutil.parser.parse(str(subinto['TimeStamp']))
+                startingtime = dateutil.parser.parse(str(timer_at_first[0]['TimeStamp']))
             #
             mergingtime = startingtime + delayActivation
             while 1:
@@ -162,13 +162,13 @@ def Volumeaggregation(ServerTime):
                         sold_data = 0
                         buy_data = 0
                         bought_data = 0
-                        for trdinner in pair_matcher:
-                            if trdinner['OrderType'] == 'SELL':
-                                sell_data += trdinner['Quantity']
-                                sold_data += trdinner['Price']
+                        for item in range(0, pair_matcher.count()):
+                            if pair_matcher[item]['OrderType'] == 'SELL':
+                                sell_data += pair_matcher[item]['Quantity']
+                                sold_data += pair_matcher[item]['Price']
                             else:
-                                buy_data += trdinner['Quantity']
-                                bought_data += trdinner['Price']
+                                buy_data += pair_matcher[item]['Quantity']
+                                bought_data += pair_matcher[item]['Price']
                         temp_dict_sell = {'PairName': secinner, 'Quantity': sell_data,
                                           'OrderType': 'SELL', 'Price': sold_data,
                                           'TimeStamp': startingtime - half_delay, 'Aggregated': True}
@@ -194,10 +194,13 @@ async def loop_aggr_OHLC_Vol():
     while 1:
         srv_time = datetime.datetime.utcnow()
         logging.info(u'AggregationOHLCVol started')
+        sttime = time.time()
         OHLCaggregation(srv_time)
         Volumeaggregation(srv_time)
+        endtime = time.time()
+        mergetime = endtime - sttime
         logging.info(u'AggregationOHLCVol confirmed')
-        await asyncio.sleep(300)
+        await asyncio.sleep(300 - mergetime)
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(loop_aggr_OHLC_Vol())

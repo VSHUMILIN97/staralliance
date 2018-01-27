@@ -30,21 +30,15 @@ def arbitration_aggregate():
         for secinner in pairlist:
             slice = db[exchname].find({'PairName': secinner, 'Aggregated': True}) \
                 .sort('TimeStamp', pymongo.DESCENDING).limit(2)
-            i = 0
-            future_tick = 0
             for trdinner in slice:
-                if (i == 0):
-                    future_tick = trdinner['Tick']
-                elif (i == 1):
-                    ref = ((trdinner['Tick']-future_tick)/future_tick)*100
-                    if (ref > 0):
+                    ref = ((trdinner[1]['Tick'] - trdinner[0]['Tick']) / trdinner[0]['Tick']) * 100
+                    if ref > 0:
                         tdict = {'Exch': exchname.replace('Tick', ''), 'PairName': secinner,
-                                 'Tick': future_tick, 'Chg': 'D'}
-                    elif (ref < 0):
+                                 'Tick': trdinner[0]['Tick'], 'Chg': 'D'}
+                    elif ref < 0:
                         tdict = {'Exch': exchname.replace('Tick', ''), 'PairName': secinner,
-                                 'Tick': future_tick, 'Chg': 'U'}
+                                 'Tick': trdinner[0]['Tick'], 'Chg': 'U'}
                     else:
                         tdict = {'Exch': exchname.replace('Tick', ''), 'PairName': secinner,
-                                 'Tick': future_tick, 'Chg': 'N'}
+                                 'Tick': trdinner[0]['Tick'], 'Chg': 'N'}
                     db.temporaryTick.insert(tdict)
-                i = i + 1

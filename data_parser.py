@@ -21,6 +21,7 @@ async def data_parse():
     # питсон позволяет/ Безопасность из говна и палок, как и код. Доработать со временем!
     while 1:
         try:
+            sttime = time.time()
             # Частота опроса биржи по их Public API. Легкая защита от отключения данных
             # Lock стоит для графиков на время работы с арбитражом.
             # Значения можно менять
@@ -77,7 +78,9 @@ async def data_parse():
                 t11.start()
             except():
                 logging.error(u'Data were not recieved')
-            await asyncio.sleep(15)
+            endtime = time.time()
+            mergetime = endtime - sttime
+            await asyncio.sleep(15 - mergetime)
         except():
             logging.error('Threads bump')
 

@@ -3,6 +3,7 @@ import dateutil.parser
 from datetime import timedelta
 import logging
 import datetime
+import time
 import asyncio
 
 logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
@@ -35,20 +36,20 @@ def Tickaggregation(ServerTime):
                                                        {'TimeStamp': True})\
                 .sort('TimeStamp', pymongo.DESCENDING).limit(1)
             hammertime = ServerTime
-            for subintosub in time_after_aggregation:
-                hammertime = dateutil.parser.parse(str(subintosub['TimeStamp']))
+            #
+            try:
+                hammertime = dateutil.parser.parse(str(time_after_aggregation[0]['TimeStamp']))
+            except():
+                logging.info(u'Missing hammertime at OHLC_VOL')
             if hammertime != ServerTime and hammertime + half_delay < ServerTime:
                 startingtime = ServerTime - delayActivation - microdelta
             elif enter_counter > 0:
-                for subintosub in time_after_aggregation:
-                    startingtime = dateutil.parser.parse(str(subintosub['TimeStamp']))
-                    startingtime = startingtime + half_delay
+                startingtime = dateutil.parser.parse(str(time_after_aggregation[0]['TimeStamp']))
+                startingtime = startingtime + half_delay
             else:
-                for subinto in timer_at_first:
-                    startingtime = dateutil.parser.parse(str(subinto['TimeStamp']))
+                startingtime = dateutil.parser.parse(str(timer_at_first[0]['TimeStamp']))
             #
             mergingtime = startingtime + delayActivation
-
             while 1:
                 try:
                     if mergingtime < ServerTime:
@@ -89,9 +90,12 @@ async def loop_aggr_tick():
     while 1:
         srv_time = datetime.datetime.utcnow()
         logging.info(u'AggregationTick started')
+        sttime = time.time()
         Tickaggregation(srv_time)
         logging.info(u'AggregationTick confirmed')
-        await asyncio.sleep(30)
+        endtime = time.time()
+        mergetime = endtime - sttime
+        await asyncio.sleep(30 - mergetime)
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(loop_aggr_tick())
