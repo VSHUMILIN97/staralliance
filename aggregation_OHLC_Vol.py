@@ -42,7 +42,8 @@ def OHLCaggregation(ServerTime):
                 .sort('TimeStamp', pymongo.DESCENDING).limit(1)
             hammertime = ServerTime
             try:
-                hammertime = dateutil.parser.parse(str(time_after_aggregation[0]['TimeStamp']))
+                if time_after_aggregation.count() > 0:
+                    hammertime = dateutil.parser.parse(str(time_after_aggregation[0]['TimeStamp']))
             except():
                 logging.info(u'missing hammertime at OHLC_VOL')
             if hammertime != ServerTime and hammertime + half_delay < ServerTime:
@@ -78,14 +79,16 @@ def OHLCaggregation(ServerTime):
                                                          {'$gte': startingtime, '$lt': endingtime}})
                         # Last
                         try:
-                            open_value = open_val_dict[0]['Price']
+                            if open_val_dict.count() > 0:
+                                open_value = open_val_dict[0]['Price']
                             # PrevDay
-                            close_value = close_val_dict[0]['Price']
+                            if close_val_dict.count() > 0:
+                                close_value = close_val_dict[0]['Price']
                             #
                         except():
                             logging.critical(u'NO OPEN AND CLOSE DATA RECEIVED')
-                        if open_val_dict.count() == 0:
-                            open_value = close_value
+                        if open_val_dict.count() == 0 and close_val_dict.count() == 0 and pair_matcher.count() == 0:
+                            break
                         for trdinner in pair_matcher:
                             if trdinner['Price'] > highest_value:
                                 highest_value = trdinner['Price']
