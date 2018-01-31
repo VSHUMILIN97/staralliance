@@ -74,7 +74,11 @@
                         if ((json_msg[i]['PairName'] == (msg['rnames'])[r]) && (json_msg[i]['Exch'] == (msg['cnames'])[c])) {
                             var td = document.createElement('td');
                             var v = json_msg[i]['Tick'];
+                            if (v == 0){
+                                td.appendChild(document.createTextNode('NO DATA'));
+                            } else {
                             td.appendChild(document.createTextNode(fix(v)));
+                            }
                             if (json_msg[i]['Chg'] == 'U') {
                                 td.appendChild(document.createElement("up"));
                             } else if (json_msg[i]['Chg'] == 'D') {
@@ -112,7 +116,7 @@
                 if (parseFloat(cells[j].innerHTML, 10) < min) {
                     min = parseFloat(cells[j].innerHTML, 10);
                 }
-                if (cells[j].innerText == '—') {
+                if (cells[j].innerText == '—' || 'NO DATA') {
                     cells[j].classList.toggle("nope");
                 }
             }
