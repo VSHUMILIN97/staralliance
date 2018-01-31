@@ -3,29 +3,29 @@ import dateutil.parser
 from datetime import timedelta
 import logging
 import datetime
-import time
 import asyncio
+import time
 
 logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
                     level=logging.DEBUG)
 
 
-def Tickaggregation(ServerTime):
+def Volumeaggregation(ServerTime):
     import pymongo
-    logging.info(u'TickAggregation started at..' + str(ServerTime))
-    global tick, endingtime, startingtime, TimeStamp, PairName, hammertime
+    logging.info(u'..VolumeAggregation started at..' + str(ServerTime))
+    global sell_data, endingtime, startingtime, buy_data, TimeStamp, PairName, sold_data, bought_data
     b = MongoDBConnection().start_db()
     db = b.PiedPiperStock
-    exchlist = ['BittrexTick', 'LiveCoinTick', 'GatecoinTick', 'LiquiTick', 'BleutradeTick', 'PoloniexTick',
-                'BinanceTick', 'ExmoTick']
+    exchlist = ['BittrexMHist']
     for inner in range(0, len(exchlist)):
         exchname = exchlist[inner]
         pairlist = db[exchname].distinct('PairName')
+        logging.info(u'Going through..' + exchname)
         #
         for secinner in pairlist:
             # All Matches in DB
-            delayActivation = timedelta(seconds=30)
-            half_delay = timedelta(seconds=15)
+            delayActivation = timedelta(minutes=5)
+            half_delay = timedelta(minutes=2, seconds=30)
             microdelta = timedelta(milliseconds=1)
             # Starting time magic
             timer_at_first = db[exchname].find({'PairName': secinner, 'Mod': False}, {'TimeStamp': True}).limit(1)
@@ -36,14 +36,11 @@ def Tickaggregation(ServerTime):
                                                        {'TimeStamp': True})\
                 .sort('TimeStamp', pymongo.DESCENDING).limit(1)
             hammertime = ServerTime
-            #
             try:
                 if time_after_aggregation.count() > 0:
                     hammertime = dateutil.parser.parse(str(time_after_aggregation[0]['TimeStamp']))
-                else:
-                    logging.error(u'That was the fisrt call')
             except():
-                logging.info(u'Missing hammertime at OHLC_VOL')
+                logging.info(u'missing hammertime at OHLC_VOL')
             if hammertime != ServerTime and hammertime + half_delay < ServerTime:
                 startingtime = ServerTime - delayActivation - microdelta
             elif enter_counter > 0:
@@ -56,52 +53,55 @@ def Tickaggregation(ServerTime):
             while 1:
                 try:
                     if mergingtime < ServerTime:
-                        tick = 0  # 1
-                        #
+                        # High Работа с глобальными переменными. Переприсвоится дальше.
                         endingtime = startingtime + delayActivation
                         #
                         pair_matcher = db[exchname].find({'PairName': secinner, 'Mod': False, 'TimeStamp':
                                                          {'$gte': startingtime, '$lt': endingtime}})
-                        if pair_matcher.count() == 0:
-                            logging.critical('MISSING DATA IN - ' + exchname + ', ' + secinner)
-                        #
-                        for trdinner in pair_matcher:
-                            if trdinner['Tick'] >= tick:
-                                tick = trdinner['Tick']
-                        temp_dict = {'PairName': secinner, 'Tick': tick,
-                                     'TimeStamp': startingtime - half_delay, 'Aggregated': True}
-                        db[exchname].insert(temp_dict)
+                        sell_data = 0
+                        sold_data = 0
+                        buy_data = 0
+                        bought_data = 0
+                        for item in range(0, pair_matcher.count()):
+                            if pair_matcher[item]['OrderType'] == 'SELL':
+                                sell_data += pair_matcher[item]['Quantity']
+                                sold_data += pair_matcher[item]['Price']
+                            else:
+                                buy_data += pair_matcher[item]['Quantity']
+                                bought_data += pair_matcher[item]['Price']
+                        temp_dict_sell = {'PairName': secinner, 'Quantity': sell_data,
+                                          'OrderType': 'SELL', 'Price': sold_data,
+                                          'TimeStamp': startingtime - half_delay, 'Aggregated': True}
+                        temp_dict_buy = {'PairName': secinner, 'Quantity': sell_data,
+                                         'OrderType': 'BUY', 'Price': bought_data,
+                                         'TimeStamp': startingtime - half_delay, 'Aggregated': True}
+                        db[exchname].insert(temp_dict_sell)
+                        db[exchname].insert(temp_dict_buy)
                         db[exchname].update({'PairName': secinner, 'Mod': False, 'TimeStamp':
                                             {'$gte': startingtime, '$lt': endingtime}},
                                             {'$set': {'Mod': True}}, multi=True)
-                        # Конец работы с циклом, переход на следующие 30 секунд времени
+                        # Конец работы с циклом, переход на следующие 5 минут времени
                         startingtime = startingtime + delayActivation
                         mergingtime = mergingtime + delayActivation
-                        pair_matcher.close()
                     else:
-                        startingtime = startingtime + delayActivation
-                        mergingtime = mergingtime + delayActivation
                         break
                 except:
-                    logging.error(u'Tickagg')
-            timer_at_first.close()
-            time_after_aggregation.close()
+                    logging.error(u'VolumeAgg')
         logging.info(u'Check' + exchname + u'collection')
 
 
-async def loop_aggr_tick():
-    time.sleep(30)
+async def loop_aggr_Vol():
     while 1:
-        srv_time = datetime.datetime.utcnow()
-        logging.info(u'AggregationTick started')
         sttime = time.time()
-        Tickaggregation(srv_time)
-        logging.info(u'AggregationTick confirmed')
+        srv_time = datetime.datetime.utcnow()
+        logging.info(u'AggregationOHLCVol started')
+        Volumeaggregation(srv_time)
+        logging.info(u'AggregationOHLCVol confirmed')
         endtime = time.time()
         mergetime = endtime - sttime
         time.sleep(mergetime)
-        await asyncio.sleep(30)
+        await asyncio.sleep(300)
 
 loop = asyncio.get_event_loop()
-loop.run_until_complete(loop_aggr_tick())
+loop.run_until_complete(loop_aggr_Vol())
 loop.run_forever()

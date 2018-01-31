@@ -1,8 +1,3 @@
-import os
-import subprocess
-import sys
-import signal
-import atexit
 from django.conf.urls import url
 from Exchanges import views
 from django.conf.urls.static import static
@@ -10,7 +5,8 @@ from PiedPiper import settings
 from .tick_exchparser import ThreadingT
 from mongo_db_connection import MongoDBConnection
 import logging
-
+import atexit
+from process_manager import children_kill, proc_start
 
 # Здесь есть баг для некоторых пар, нужно фиксить.
 urlpatterns = [
@@ -51,50 +47,8 @@ logging.info(u'Server started')
 try:
     # testing_threads.start()
     logging.info(u'Threads"re successfully started')
+    proc_start()
 except():
     logging.critical(u'Threads were not started')
 
-# В качестве подпроцесса child выбираем скрипт websocketapp.py
-# В качестве аргументов для начала работы подпроцесса передаем команду execute и указываем на потомка
-# Далее открываем субпроцесс, в качестве "входа" используем PIPE.
-child = os.path.join(os.path.dirname(__file__), "../websocketapp.py")
-command = [sys.executable, child]
-pipe = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-
-wscharts = os.path.join(os.path.dirname(__file__), "../websocketcharts.py")
-wscharts_command = [sys.executable, wscharts]
-wscharts_pipe = subprocess.Popen(wscharts_command, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-
-data_parse = os.path.join(os.path.dirname(__file__), "../data_parser.py")
-data_parse_command = [sys.executable, data_parse]
-data_parse_pipe = subprocess.Popen(data_parse_command, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-#
-agtion_ohlc = os.path.join(os.path.dirname(__file__), "../aggregation_OHLC_Vol.py")
-agtion_command = [sys.executable, agtion_ohlc]
-agtion_pipe = subprocess.Popen(agtion_command, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-#
-agtion_tick = os.path.join(os.path.dirname(__file__), "../aggregation_Tick.py")
-agtion_tick_command = [sys.executable, agtion_tick]
-agtion_tick_pipe = subprocess.Popen(agtion_tick_command, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-#
-data_parse_pid = data_parse_pipe.pid
-agtion_pid = agtion_pipe.pid
-child_pid = pipe.pid
-wscharts_pid = wscharts_pipe.pid
-agtion_tick_pid = agtion_tick_pipe.pid
-
-
-
-def child_kill():
-    if child_pid is None:
-        pass
-    else:
-        os.kill(child_pid, signal.SIGTERM)
-        os.kill(wscharts_pid, signal.SIGTERM)
-        os.kill(agtion_pid, signal.SIGTERM)
-        os.kill(agtion_tick_pid, signal.SIGTERM)
-        os.kill(data_parse_pid, signal.SIGTERM)
-        logging.info(u'WebSocket rundown')
-
-
-atexit.register(child_kill)
+atexit.register(children_kill)
