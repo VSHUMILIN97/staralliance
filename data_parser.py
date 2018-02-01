@@ -5,7 +5,7 @@ from Exchanges.ExchangeAPI.binanceAPI import binance_ticker
 from Exchanges.ExchangeAPI.gatecoinAPI import gatecoin_ticker
 from Exchanges.ExchangeAPI.livecoinAPI import livecoin_ticker, livecoin_ticker_all_info
 from Exchanges.ExchangeAPI.bleutradeAPI import bleutrade_ticker
-from Exchanges.ExchangeAPI.ExmoAPI import exmo_ticker
+from Exchanges.ExchangeAPI.ExmoAPI import exmo_ticker, exmo_charts_data, exmo_volume_data
 import random
 import time
 import asyncio
@@ -38,13 +38,17 @@ async def data_parse():
                 t9 = Thread(target=poloniex_ticker)
                 t10 = Thread(target=binance_ticker)
                 t11 = Thread(target=exmo_ticker)
-                t1._stop()
-                t2._stop()
+                t12 = Thread(target=exmo_volume_data)
+                t13 = Thread(target=exmo_charts_data)
+
                 logging.info('t2 alive - ' + str(t2.is_alive()) +
                              ', t3 alive - ' + str(t3.is_alive()) + ', t4 alive - ' + str(t4.is_alive()) +
                              ', t6 alive - ' + str(t6.is_alive()) + ', t7 alive - ' + str(t7.is_alive()) +
                              ', t8 alive - ' + str(t8.is_alive()) + ', t9 alive - ' + str(t9.is_alive()) +
-                             ', t10 alive - ' + str(t10.is_alive()) + ', t11 alive -' + str(t11.is_alive()))
+                             ', t10 alive - ' + str(t10.is_alive()) + ', t11 alive - ' + str(t11.is_alive()) +
+                             ', t12 alive - ' + str(t12.is_alive()) + ', t13 alive - ' + str(t13.is_alive()))
+                t1._stop()
+                t2._stop()
                 t3._stop()
                 t4._stop()
                 # t5._stop()
@@ -54,6 +58,8 @@ async def data_parse():
                 t9._stop()
                 t10._stop()
                 t11._stop()
+                t12._stop()
+                t13._stop()
                 t1.setDaemon(True)
                 t2.setDaemon(True)
                 t3.setDaemon(True)
@@ -65,6 +71,8 @@ async def data_parse():
                 t9.setDaemon(True)
                 t10.setDaemon(True)
                 t11.setDaemon(True)
+                t12.setDaemon(True)
+                t13.setDaemon(True)
                 t1.start()
                 t2.start()
                 t3.start()
@@ -76,6 +84,8 @@ async def data_parse():
                 t9.start()
                 t10.start()
                 t11.start()
+                t12.start()
+                t13.start()
             except():
                 logging.error(u'Data were not recieved')
             endtime = time.time()

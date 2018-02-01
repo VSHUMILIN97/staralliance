@@ -33,7 +33,7 @@ class ChartsView(View):  # Класс для вывода графиков
                     'Binance', 'Exmo']  # пополняем вручную по мере поступления бирж
         for inner in range(0, len(exchlist)):
             exchname = exchlist[inner]
-            pairlist = db[exchname + 'Tick'].distinct('PairName')
+            pairlist = db[exchname].distinct('PairName')
             for secinner in pairlist:
                 tdict = {'Exch': exchname, 'Pair': secinner}
                 ins.insert(tdict)

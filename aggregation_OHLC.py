@@ -19,7 +19,7 @@ def OHLCaggregation(ServerTime):
     logging.info(u'..OHLCAggregation started at..' + str(ServerTime))
     b = MongoDBConnection().start_db()
     db = b.PiedPiperStock
-    exchlist = ['Bittrex']
+    exchlist = ['Bittrex', 'Exmo']
     for inner in range(0, len(exchlist)):
         exchname = exchlist[inner]
         pairlist = db[exchname].distinct('PairName')

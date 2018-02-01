@@ -16,11 +16,9 @@ def Volumeaggregation(ServerTime):
     global sell_data, endingtime, startingtime, buy_data, TimeStamp, PairName, sold_data, bought_data
     b = MongoDBConnection().start_db()
     db = b.PiedPiperStock
-    exchlist = ['BittrexMHist']
-    timeexch = ['Bittrex']
+    exchlist = ['BittrexMHist', 'ExmoMHist']
     for inner in range(0, len(exchlist)):
         exchname = exchlist[inner]
-        exchtime = timeexch[inner]
         pairlist = db[exchname].distinct('PairName')
         logging.info(u'Going through..' + exchname)
         #

@@ -18,9 +18,9 @@ async def echo(websocket, path):
         pair = str(message).split('/')[3]
         while 1:
             tick = db[exch + 'Tick'].find({'PairName': pair, 'Aggregated': True})
-            OHLC = db.Bittrex.find({'PairName': pair, 'Aggregated': True})
-            MHistSell = db.BittrexMHist.find({'PairName': pair, 'OrderType': 'SELL', 'Aggregated': True})
-            MHistBuy = db.BittrexMHist.find({'PairName': pair, 'OrderType': 'BUY', 'Aggregated': True})
+            OHLC = db[exch].find({'PairName': pair, 'Aggregated': True})
+            MHistSell = db[exch + 'MHist'].find({'PairName': pair, 'OrderType': 'SELL', 'Aggregated': True})
+            MHistBuy = db[exch + 'MHist'].find({'PairName': pair, 'OrderType': 'BUY', 'Aggregated': True})
             from bson.json_util import dumps as dss
             ws_charts = {'tick': dss(tick), 'exchange': exch, 'pair': pair, 'ohlc': dss(OHLC), 'hsell': dss(MHistSell),
                          'hbuy': dss(MHistBuy)}

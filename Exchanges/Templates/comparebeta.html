@@ -57,26 +57,39 @@
         for (var r in msg['rnames']) {
             maxv = -1;
             minv = 9999999;
+            var td = document.createElement('td');
+            td.setAttribute("class", "tooltips");
+            td.appendChild(document.createTextNode(msg['rnames'][r]));
+            td.appendChild(document.createElement("br"));
+            td.appendChild(document.createElement("br"));
+
             for (var c in msg['cnames']) {
                 for (var i in json_msg) {
-                    if ((json_msg[i]['PairName'] == msg['rnames'][r]) && (json_msg[i]['Exch'] == msg['cnames'][c])) {
+                    if ((json_msg[i]['PairName'] === msg['rnames'][r]) && (json_msg[i]['Exch'] === msg['cnames'][c])) {
                         var v = json_msg[i]['Tick'];
+                        if (v === 0){
+                            v = 'NO DATA'
+                        }
+                        else {
+                            v = fix(v)
+                        }
+                        td.appendChild(document.createTextNode(msg['cnames'][c]));
+                        td.appendChild(document.createTextNode(' - '));
+                        td.appendChild(document.createTextNode(v));
+                        td.appendChild(document.createElement("br"));
+                        td.appendChild(document.createElement("br"));
+
                         if (v > maxv) {
                             maxv = v;
                             maxvc = "" + msg['cnames'][c];
                         }
-                        if (v < minv) {
+                        if (v < minv && v !== 'NO DATA') {
                             minv = v;
                             minvc = "" + msg['cnames'][c];
                         }
                     }
                 }
             }
-            var td = document.createElement('td');
-            td.setAttribute("class", "tooltips");
-            td.appendChild(document.createTextNode(msg['rnames'][r]));
-            td.appendChild(document.createElement("br"));
-            td.appendChild(document.createTextNode(fix(maxv)));
             var tooltext = document.createElement("span");
             tooltext.appendChild(document.createTextNode(maxvc));
             tooltext.appendChild(document.createElement("br"));
@@ -100,7 +113,7 @@
             }
             tr.appendChild(td);
             j++;
-            if (j >= 10) {00
+            if (j >= 6) {
                 tableBody.appendChild(tr);
                 j = 0;
                 var tr = document.createElement('tr');
@@ -141,13 +154,17 @@ table {
   border-spacing: 1px;
   text-align: center;
 }
-
+tr {
+     overflow-y: hidden;
+}
 th,
 td {
   border: 1px solid #ccc;
   background: #ffffff;
   margin: 2px;
-  width: 115px;
+  width: 200px;
+    height:auto;
+    vertical-align: top;
 }
 
 tbody td:hover:not(.highlighted) {
@@ -223,10 +240,10 @@ table.hideUninteresting td.hid {
 
 .tooltips .tooltiptext {
 	width: 100px;
-    height: 28px;
+    height: 140px;
     top: 25px;
-    right: -40px;
-    margin: 6px -50px;
+    right: 0px;
+    margin: 6px 0px;
     visibility: hidden;
     background: rgba(230, 220, 204, .9);
     text-align: center;
@@ -253,21 +270,21 @@ table.hideUninteresting td.hid {
     visibility: visible;
     color: #222;
     font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
-  	font-size: 13px;
+  	font-size: 15px;
 	z-index:1000;
     opacity: 1;
     transition-delay:0.3s;
 }
 
 .tooltiptext:hover {
-    height: 103px;
+    height: 140px;
 }
 
 .timeHolder{
   text-align: center;
   color: #7f7f7f;
   font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
-  font-size: 13px;
+  font-size: 15px;
 }
 </style>
 {% endblock content %}
