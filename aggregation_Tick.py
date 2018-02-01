@@ -35,18 +35,8 @@ def Tickaggregation(ServerTime):
             time_after_aggregation = db[exchname].find({'PairName': secinner, 'Aggregated': True},
                                                        {'TimeStamp': True})\
                 .sort('TimeStamp', pymongo.DESCENDING).limit(1)
-            hammertime = ServerTime
             #
-            try:
-                if time_after_aggregation.count() > 0:
-                    hammertime = dateutil.parser.parse(str(time_after_aggregation[0]['TimeStamp']))
-                else:
-                    logging.error(u'That was the fisrt call')
-            except():
-                logging.info(u'Missing hammertime at OHLC_VOL')
-            if hammertime != ServerTime and hammertime + half_delay < ServerTime:
-                startingtime = ServerTime - delayActivation - microdelta
-            elif enter_counter > 0:
+            if enter_counter > 0:
                 startingtime = dateutil.parser.parse(str(time_after_aggregation[0]['TimeStamp']))
                 startingtime = startingtime + half_delay
             else:
@@ -58,18 +48,15 @@ def Tickaggregation(ServerTime):
                     if mergingtime < ServerTime:
                         tick = 0  # 1
                         #
-                        endingtime = startingtime + delayActivation
+                        endingtime = mergingtime
                         #
                         pair_matcher = db[exchname].find({'PairName': secinner, 'Mod': False, 'TimeStamp':
                                                          {'$gte': startingtime, '$lt': endingtime}})
-                        if pair_matcher.count() == 0:
-                            logging.critical('MISSING DATA IN - ' + exchname + ', ' + secinner)
-                        #
                         for trdinner in pair_matcher:
                             if trdinner['Tick'] >= tick:
                                 tick = trdinner['Tick']
                         temp_dict = {'PairName': secinner, 'Tick': tick,
-                                     'TimeStamp': startingtime - half_delay, 'Aggregated': True}
+                                     'TimeStamp': endingtime - half_delay, 'Aggregated': True}
                         db[exchname].insert(temp_dict)
                         db[exchname].update({'PairName': secinner, 'Mod': False, 'TimeStamp':
                                             {'$gte': startingtime, '$lt': endingtime}},
@@ -77,12 +64,9 @@ def Tickaggregation(ServerTime):
                         # Конец работы с циклом, переход на следующие 30 секунд времени
                         startingtime = startingtime + delayActivation
                         mergingtime = mergingtime + delayActivation
-                        pair_matcher.close()
                     else:
-                        startingtime = startingtime + delayActivation
-                        mergingtime = mergingtime + delayActivation
                         break
-                except:
+                except():
                     logging.error(u'Tickagg')
             timer_at_first.close()
             time_after_aggregation.close()
@@ -90,16 +74,11 @@ def Tickaggregation(ServerTime):
 
 
 async def loop_aggr_tick():
-    time.sleep(30)
     while 1:
         srv_time = datetime.datetime.utcnow()
         logging.info(u'AggregationTick started')
-        sttime = time.time()
         Tickaggregation(srv_time)
         logging.info(u'AggregationTick confirmed')
-        endtime = time.time()
-        mergetime = endtime - sttime
-        time.sleep(mergetime)
         await asyncio.sleep(30)
 
 loop = asyncio.get_event_loop()

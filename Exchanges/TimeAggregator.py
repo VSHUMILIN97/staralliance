@@ -31,12 +31,12 @@ def arbitration_aggregate():
             slice = db[exchname].find({'PairName': secinner, 'Aggregated': True}) \
                 .sort('TimeStamp', pymongo.DESCENDING).limit(2)
             if slice.count() >= 2:
-                if slice[1] < slice[0]:
-                    tdict = {'Exch': exchname.replace('Tick', ''), 'PairName': secinner,
-                             'Tick': slice[0]['Tick'], 'Chg': 'D'}
-                elif slice[1] > slice[0]:
+                if slice[1]['Tick'] < slice[0]['Tick']:
                     tdict = {'Exch': exchname.replace('Tick', ''), 'PairName': secinner,
                              'Tick': slice[0]['Tick'], 'Chg': 'U'}
+                elif slice[1]['Tick'] > slice[0]['Tick']:
+                    tdict = {'Exch': exchname.replace('Tick', ''), 'PairName': secinner,
+                             'Tick': slice[0]['Tick'], 'Chg': 'D'}
                 else:
                     tdict = {'Exch': exchname.replace('Tick', ''), 'PairName': secinner,
                              'Tick': slice[0]['Tick'], 'Chg': 'N'}

@@ -38,15 +38,7 @@ def OHLCaggregation(ServerTime):
             time_after_aggregation = db[exchname].find({'PairName': secinner, 'Aggregated': True},
                                                        {'TimeStamp': True})\
                 .sort('TimeStamp', pymongo.DESCENDING).limit(1)
-            hammertime = ServerTime
-            try:
-                if time_after_aggregation.count() > 0:
-                    hammertime = dateutil.parser.parse(str(time_after_aggregation[0]['TimeStamp']))
-            except():
-                logging.info(u'missing hammertime at OHLC_VOL')
-            #if hammertime != ServerTime and hammertime + delayActivation + half_delay< ServerTime:
-             #   startingtime = ServerTime - delayActivation - microdelta
-              #  logging.info(u'HAMMERTIME WORKED OUT')
+            #
             if time_after_aggregation.count() > 0:
                 startingtime = dateutil.parser.parse(str(time_after_aggregation[0]['TimeStamp']))
                 startingtime = startingtime + half_delay

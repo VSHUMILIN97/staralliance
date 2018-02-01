@@ -127,13 +127,12 @@ def api_get_getmarkethistory():
             result = json_data['result']
 
             for item in result:
-                iD, timestamp, quantity, price, total, filltype, ordertype = \
-                    int(item['Id']), iso8601.parse_date(item['TimeStamp']), float(item['Quantity']),\
-                    float(item['Price']), float(item['Total']),\
-                    str(item['FillType']), str(item['OrderType'])
+                timestamp, quantity, price, ordertype = \
+                    iso8601.parse_date(item['TimeStamp']), float(item['Quantity']),\
+                    float(item['Price']), str(item['OrderType'])
                 #
-                data = {'PairName': pair_fix(pairlist[i]), 'OrderID': iD, 'Quantity': quantity, 'Price': price, 'Total': total,
-                        'FillType': filltype, 'OrderType': ordertype, 'TimeStamp': timestamp, 'Mod': False}
+                data = {'PairName': pair_fix(pairlist[i]), 'Quantity': quantity, 'Price': price,
+                        'OrderType': ordertype, 'TimeStamp': timestamp, 'Mod': False}
                 test.insert(data)
     logging.info(u'Bittrex getmarkethistory ended')
 

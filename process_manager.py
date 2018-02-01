@@ -36,14 +36,14 @@ def proc_start():
     # Volume aggregation subprocess
     agtion_vol = os.path.join(os.path.dirname(__file__), "aggregation_Vol.py")
     agtion_vol_command = [sys.executable, agtion_vol]
-    #agtion_vol_pipe = subprocess.Popen(agtion_vol_command, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+    agtion_vol_pipe = subprocess.Popen(agtion_vol_command, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     # Process ID's
     data_parse_pid = data_parse_pipe.pid
     agtion_pid = agtion_ohlc_pipe.pid
     arbitartion_ws_pid = arbitartion_ws_pipe.pid
     ws_charts_pid = ws_charts_pipe.pid
     agtion_tick_pid = agtion_tick_pipe.pid
-    #agtion_vol_pid = agtion_vol_pipe.pid
+    agtion_vol_pid = agtion_vol_pipe.pid
 
 
 def children_kill():
@@ -55,5 +55,5 @@ def children_kill():
         os.kill(agtion_pid, signal.SIGTERM)
         os.kill(agtion_tick_pid, signal.SIGTERM)
         os.kill(data_parse_pid, signal.SIGTERM)
-        #os.kill(agtion_vol_pid, signal.SIGTERM)
+        os.kill(agtion_vol_pid, signal.SIGTERM)
         logging.info(u'WebSocket rundown')

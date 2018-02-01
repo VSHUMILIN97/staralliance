@@ -17,8 +17,10 @@ def Volumeaggregation(ServerTime):
     b = MongoDBConnection().start_db()
     db = b.PiedPiperStock
     exchlist = ['BittrexMHist']
+    timeexch = ['Bittrex']
     for inner in range(0, len(exchlist)):
         exchname = exchlist[inner]
+        exchtime = timeexch[inner]
         pairlist = db[exchname].distinct('PairName')
         logging.info(u'Going through..' + exchname)
         #
@@ -30,20 +32,11 @@ def Volumeaggregation(ServerTime):
             # Starting time magic
             timer_at_first = db[exchname].find({'PairName': secinner, 'Mod': False}, {'TimeStamp': True}).limit(1)
             #
-            enter_counter = db[exchname].find({'PairName': secinner, 'Aggregated': True},
-                                              {'TimeStamp': True}).count()
             time_after_aggregation = db[exchname].find({'PairName': secinner, 'Aggregated': True},
                                                        {'TimeStamp': True})\
                 .sort('TimeStamp', pymongo.DESCENDING).limit(1)
-            hammertime = ServerTime
-            try:
-                if time_after_aggregation.count() > 0:
-                    hammertime = dateutil.parser.parse(str(time_after_aggregation[0]['TimeStamp']))
-            except():
-                logging.info(u'missing hammertime at OHLC_VOL')
-            if hammertime != ServerTime and hammertime + half_delay < ServerTime:
-                startingtime = ServerTime - delayActivation - microdelta
-            elif enter_counter > 0:
+            #
+            if time_after_aggregation.count() > 0:
                 startingtime = dateutil.parser.parse(str(time_after_aggregation[0]['TimeStamp']))
                 startingtime = startingtime + half_delay
             else:
@@ -54,7 +47,7 @@ def Volumeaggregation(ServerTime):
                 try:
                     if mergingtime < ServerTime:
                         # High Работа с глобальными переменными. Переприсвоится дальше.
-                        endingtime = startingtime + delayActivation
+                        endingtime = mergingtime
                         #
                         pair_matcher = db[exchname].find({'PairName': secinner, 'Mod': False, 'TimeStamp':
                                                          {'$gte': startingtime, '$lt': endingtime}})
@@ -62,19 +55,16 @@ def Volumeaggregation(ServerTime):
                         sold_data = 0
                         buy_data = 0
                         bought_data = 0
-                        for item in range(0, pair_matcher.count()):
-                            if pair_matcher[item]['OrderType'] == 'SELL':
-                                sell_data += pair_matcher[item]['Quantity']
-                                sold_data += pair_matcher[item]['Price']
+                        for item in pair_matcher:
+                            if item['OrderType'] == 'SELL':
+                                sell_data += item['Quantity']
                             else:
-                                buy_data += pair_matcher[item]['Quantity']
-                                bought_data += pair_matcher[item]['Price']
+                                buy_data += item['Quantity']
+                        #
                         temp_dict_sell = {'PairName': secinner, 'Quantity': sell_data,
-                                          'OrderType': 'SELL', 'Price': sold_data,
-                                          'TimeStamp': startingtime - half_delay, 'Aggregated': True}
-                        temp_dict_buy = {'PairName': secinner, 'Quantity': sell_data,
-                                         'OrderType': 'BUY', 'Price': bought_data,
-                                         'TimeStamp': startingtime - half_delay, 'Aggregated': True}
+                                          'OrderType': 'SELL', 'TimeStamp': endingtime - half_delay, 'Aggregated': True}
+                        temp_dict_buy = {'PairName': secinner, 'Quantity': buy_data,
+                                         'OrderType': 'BUY', 'TimeStamp': endingtime - half_delay, 'Aggregated': True}
                         db[exchname].insert(temp_dict_sell)
                         db[exchname].insert(temp_dict_buy)
                         db[exchname].update({'PairName': secinner, 'Mod': False, 'TimeStamp':
@@ -85,21 +75,17 @@ def Volumeaggregation(ServerTime):
                         mergingtime = mergingtime + delayActivation
                     else:
                         break
-                except:
+                except():
                     logging.error(u'VolumeAgg')
         logging.info(u'Check' + exchname + u'collection')
 
 
 async def loop_aggr_Vol():
     while 1:
-        sttime = time.time()
         srv_time = datetime.datetime.utcnow()
         logging.info(u'AggregationOHLCVol started')
         Volumeaggregation(srv_time)
         logging.info(u'AggregationOHLCVol confirmed')
-        endtime = time.time()
-        mergetime = endtime - sttime
-        time.sleep(mergetime)
         await asyncio.sleep(300)
 
 loop = asyncio.get_event_loop()

@@ -101,14 +101,14 @@ $.getJSON('https://jsonplaceholder.typicode.com/posts', function (data) {
 
     for (var vb in hbuy){
         volBuy.push([
-            hbuy[vb]['TimeStamp']['$date'],
-            hbuy[vb]['Price']
+            ohlcD[vb]['TimeStamp']['$date'],
+            hbuy[vb]['Quantity']
         ]);
     }
     for (var vs in hsell){
         volSell.push([
-            hsell[vs]['TimeStamp']['$date'],
-            hsell[vs]['Price']
+            ohlcD[vs]['TimeStamp']['$date'],
+            hsell[vs]['Quantity']
         ]);
     }
 
