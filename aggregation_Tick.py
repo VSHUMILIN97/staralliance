@@ -43,6 +43,9 @@ def Tickaggregation(ServerTime):
                 startingtime = dateutil.parser.parse(str(timer_at_first[0]['TimeStamp']))
             #
             mergingtime = startingtime + delayActivation
+            if mergingtime + delayActivation*2 < ServerTime:
+                mergingtime = ServerTime - delayActivation - microdelta
+                logging.info(u'SOMETHING WENT WRONG SPONGEBOB')
             while 1:
                 try:
                     if mergingtime < ServerTime:
@@ -75,11 +78,13 @@ def Tickaggregation(ServerTime):
 
 async def loop_aggr_tick():
     while 1:
+        sttm = time.time()
         srv_time = datetime.datetime.utcnow()
         logging.info(u'AggregationTick started')
         Tickaggregation(srv_time)
         logging.info(u'AggregationTick confirmed')
-        await asyncio.sleep(30)
+        mttm = 30 - (time.time() - sttm)
+        await asyncio.sleep(mttm)
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(loop_aggr_tick())

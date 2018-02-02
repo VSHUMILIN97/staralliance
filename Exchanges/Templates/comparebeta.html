@@ -79,7 +79,7 @@
                         td.appendChild(document.createElement("br"));
                         td.appendChild(document.createElement("br"));
 
-                        if (v > maxv) {
+                        if (v > maxv && v !== 'NO DATA') {
                             maxv = v;
                             maxvc = "" + msg['cnames'][c];
                         }
@@ -90,36 +90,39 @@
                     }
                 }
             }
-            var tooltext = document.createElement("span");
-            tooltext.appendChild(document.createTextNode(maxvc));
-            tooltext.appendChild(document.createElement("br"));
-            tooltext.appendChild(document.createTextNode("has max value."));
-            tooltext.appendChild(document.createElement("br"));
-            tooltext.appendChild(document.createTextNode("Min value is"));
-            tooltext.appendChild(document.createElement("br"));
-            tooltext.appendChild(document.createTextNode(fix(minv)));
-            tooltext.appendChild(document.createElement("br"));
-            tooltext.appendChild(document.createTextNode("at " + minvc + "."));
-            tooltext.setAttribute("class", "tooltiptext");
-            var div = document.createElement("div");
-            div.classList.add("mask");
-            tooltext.appendChild(div);
-            td.appendChild(tooltext);
-            if (((maxv - minv) / maxv) * 100 > 3) {
-                td.classList.add("highlighted");
-            }
-            else {
-                td.classList.add("hid");
-            }
-            tr.appendChild(td);
-            j++;
-            if (j >= 6) {
-                tableBody.appendChild(tr);
-                j = 0;
-                var tr = document.createElement('tr');
-            }
+            if (minv !== 9999999)
+            {
+                var tooltext = document.createElement("span");
+                tooltext.appendChild(document.createTextNode(maxvc));
+                tooltext.appendChild(document.createElement("br"));
+                tooltext.appendChild(document.createTextNode("has max value."));
+                tooltext.appendChild(document.createElement("br"));
+                tooltext.appendChild(document.createTextNode("Min value is"));
+                tooltext.appendChild(document.createElement("br"));
+                tooltext.appendChild(document.createTextNode(fix(minv)));
+                tooltext.appendChild(document.createElement("br"));
+                tooltext.appendChild(document.createTextNode("at " + minvc + "."));
+                tooltext.setAttribute("class", "tooltiptext");
+                var div = document.createElement("div");
+                div.classList.add("mask");
+                tooltext.appendChild(div);
+                td.appendChild(tooltext);
+                if (((maxv - minv) / maxv) * 100 > 3) {
+                    td.classList.add("highlighted");
+                }
+                else {
+                    td.classList.add("hid");
+                }
+                tr.appendChild(td);
+                j++;
+                if (j >= 6) {
+                    tableBody.appendChild(tr);
+                    j = 0;
+                    var tr = document.createElement('tr');
+                }
 
-            tableBody.appendChild(tr);
+                tableBody.appendChild(tr);
+            }
         }
 
         var time = document.getElementById("timeStamp");

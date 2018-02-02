@@ -46,6 +46,10 @@ def OHLCaggregation(ServerTime):
                 startingtime = dateutil.parser.parse(str(timer_at_first[0]['TimeStamp']))
             #
             mergingtime = startingtime + delayActivation
+
+            if mergingtime + delayActivation*2 < ServerTime:
+                mergingtime = ServerTime - delayActivation - microdelta
+                logging.info(u'SOMETHING WENT WRONG SPONGEBOB')
             while 1:
                 try:
                     if mergingtime < ServerTime:
@@ -94,8 +98,10 @@ def OHLCaggregation(ServerTime):
                                 highest_value = trdinner['Price']
                             if trdinner['Price'] < lowest_value:
                                 lowest_value = trdinner['Price']
-                            if lowest_value == 9999999:
-                                lowest_value = close_value
+                        if lowest_value == 9999999 or highest_value == 0:
+                            startingtime = startingtime + delayActivation
+                            mergingtime = mergingtime + delayActivation
+                            continue
                         tempdict = {'PairName': secinner, 'High': highest_value,
                                     'Low': lowest_value, 'TimeStamp': endingtime - half_delay, 'Close': close_value,
                                     'Open': open_value, 'Aggregated': True}
@@ -116,11 +122,13 @@ def OHLCaggregation(ServerTime):
 
 async def loop_aggr_OHLC():
     while 1:
+        sttm = time.time()
         srv_time = datetime.datetime.utcnow()
         logging.info(u'AggregationOHLC started')
         OHLCaggregation(srv_time)
         logging.info(u'AggregationOHLC confirmed')
-        await asyncio.sleep(300)
+        mttm = 300 - (time.time() - sttm)
+        await asyncio.sleep(mttm)
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(loop_aggr_OHLC())

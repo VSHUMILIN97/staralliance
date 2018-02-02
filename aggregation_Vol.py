@@ -41,6 +41,9 @@ def Volumeaggregation(ServerTime):
                 startingtime = dateutil.parser.parse(str(timer_at_first[0]['TimeStamp']))
             #
             mergingtime = startingtime + delayActivation
+            if mergingtime + delayActivation*2 < ServerTime:
+                mergingtime = ServerTime - delayActivation - microdelta
+                logging.info(u'SOMETHING WENT WRONG SPONGEBOB')
             while 1:
                 try:
                     if mergingtime < ServerTime:
@@ -50,15 +53,17 @@ def Volumeaggregation(ServerTime):
                         pair_matcher = db[exchname].find({'PairName': secinner, 'Mod': False, 'TimeStamp':
                                                          {'$gte': startingtime, '$lt': endingtime}})
                         sell_data = 0
-                        sold_data = 0
                         buy_data = 0
-                        bought_data = 0
                         for item in pair_matcher:
                             if item['OrderType'] == 'SELL':
                                 sell_data += item['Quantity']
                             else:
                                 buy_data += item['Quantity']
                         #
+                        if sell_data and buy_data == 0:
+                            startingtime = startingtime + delayActivation
+                            mergingtime = mergingtime + delayActivation
+                            continue
                         temp_dict_sell = {'PairName': secinner, 'Quantity': sell_data,
                                           'OrderType': 'SELL', 'TimeStamp': endingtime - half_delay, 'Aggregated': True}
                         temp_dict_buy = {'PairName': secinner, 'Quantity': buy_data,
@@ -80,11 +85,13 @@ def Volumeaggregation(ServerTime):
 
 async def loop_aggr_Vol():
     while 1:
+        sttm = time.time()
         srv_time = datetime.datetime.utcnow()
         logging.info(u'AggregationOHLCVol started')
         Volumeaggregation(srv_time)
         logging.info(u'AggregationOHLCVol confirmed')
-        await asyncio.sleep(300)
+        mttm = 300 - (time.time() - sttm)
+        await asyncio.sleep(mttm)
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(loop_aggr_Vol())

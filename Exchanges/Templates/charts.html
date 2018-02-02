@@ -17,12 +17,12 @@
     <tr>
         <td class="headerText"><p class="textWrapper">Сменить биржу и пару: &nbsp;</p></td>
         <td class="exchDropdown">
-            <select class="selectpicker show-tick" id="exchSelector" data-live-search="true" data-size="3" title="Биржа" data-width="165px">
+            <select class="selectpicker show-tick" id="exchSelector" data-live-search="true" data-size="6" title="Биржа" data-width="220px">
             </select>
         </td>
         <td>&nbsp;</td>
         <td class="pairDropdown">
-            <select class="selectpicker show-tick" id="pairSelector" data-live-search="true" data-size="3" title="Пара" data-width="165px" disabled>
+            <select class="selectpicker show-tick" id="pairSelector" data-live-search="true" data-size="6" title="Пара" data-width="220px" disabled>
             </select>
         </td>
         <td>&nbsp;</td>
@@ -250,8 +250,12 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=usdeur.jso
     //var art = JSON.parse(event.data);
     //var json_msg = JSON.parse(art['tick']);
     for (var item in json_msg){
-        ticks.push([(json_msg[item]['TimeStamp']['$date']),
-       json_msg[item]['Tick']]);
+        if (json_msg[item]['Tick'] !== 0){
+            ticks.push([(json_msg[item]['TimeStamp']['$date']), json_msg[item]['Tick']]);
+        } else {
+            ticks.push([(json_msg[item]['TimeStamp']['$date']), null]);
+        }
+
     }
 
 
@@ -328,6 +332,7 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=usdeur.jso
             name: art['pair'],
             data: ticks,
             type: 'spline',
+            connectNulls: true,
             tooltip: {
                 valueDecimals: 8,
                 useHTML: true,
@@ -468,7 +473,7 @@ var update_pairs = function () {
         }
     {% endfor %}
     if (success == false) {
-      $('.nothing').css('color', 'rgb(54, 54, 54)');
+      $('.nothing').css('color', 'rgb(74, 54, 14)');
       $('.nothing').text('Похоже, для этой биржи ничего нет');
       $('#pairSelector').prop('disabled', true);
     }
