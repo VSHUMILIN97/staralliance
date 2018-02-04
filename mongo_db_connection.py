@@ -13,3 +13,6 @@ class MongoDBConnection:
         connect = MongoClient('localhost', 27017)
         logging.info(u'Connection to the MONGODB has been established')
         return connect
+
+    def stop_connect(self):
+        self.start_db().close()

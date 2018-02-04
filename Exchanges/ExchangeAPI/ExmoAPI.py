@@ -78,6 +78,7 @@ def exmo_charts_data():
                         test.insert(data)
             else:
                         continue
+    MongoDBConnection().stop_connect()
     logging.info(u'EXMO charts data aggregation ended')
 
 
@@ -108,6 +109,7 @@ def exmo_ticker():
                     #logging.info(str(item) + " : " + str(bid) + " - bid, " + str(ask) + " -  ask")
                     data = {'PairName': pair_fix(item), 'Tick': (ask+bid)/2, 'TimeStamp': timezone.now(), 'Mod': False}
                     test.insert(data)
+    MongoDBConnection().stop_connect()
     logging.info(u'Exmo getticker ended')
 
 
@@ -135,4 +137,5 @@ def exmo_volume_data():
                 data = {'PairName': pair_fix(pairlist[i]), 'Quantity': quantity, 'Price': price,
                         'OrderType': ordertype, 'TimeStamp': timestamp, 'Mod': False}
                 test.insert(data)
+    MongoDBConnection().stop_connect()
     logging.info(u'Exmo volume aggregation ended')

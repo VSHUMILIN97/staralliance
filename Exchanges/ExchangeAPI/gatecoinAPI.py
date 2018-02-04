@@ -41,5 +41,6 @@ def gatecoin_ticker():
                     gcstock.insert(data)
                 else:
                     continue
+        MongoDBConnection().stop_connect()
     except():
         logging.error(r'Gatecoin ticker mistake')

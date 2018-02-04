@@ -38,5 +38,6 @@ def liqui_ticker():
                         'TimeStamp': timezone.now(), 'Mod': False}
                 release.insert(data)
             logging.info(u'Liqui getticker ended successfully')
+        MongoDBConnection().stop_connect()
     except():
         logging.error(u'Liqui parse mistake')

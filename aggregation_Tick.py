@@ -13,7 +13,8 @@ logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(a
 def Tickaggregation(ServerTime):
     import pymongo
     logging.info(u'TickAggregation started at..' + str(ServerTime))
-    global tick, endingtime, startingtime, TimeStamp, PairName, hammertime
+    global tick, endingtime, startingtime, TimeStamp, PairName, hammertime,\
+        pair_matcher, timer_at_first, time_after_aggregation
     b = MongoDBConnection().start_db()
     db = b.PiedPiperStock
     exchlist = ['BittrexTick', 'LiveCoinTick', 'GatecoinTick', 'LiquiTick', 'BleutradeTick', 'PoloniexTick',
@@ -30,13 +31,11 @@ def Tickaggregation(ServerTime):
             # Starting time magic
             timer_at_first = db[exchname].find({'PairName': secinner, 'Mod': False}, {'TimeStamp': True}).limit(1)
             #
-            enter_counter = db[exchname].find({'PairName': secinner, 'Aggregated': True},
-                                              {'TimeStamp': True}).count()
             time_after_aggregation = db[exchname].find({'PairName': secinner, 'Aggregated': True},
                                                        {'TimeStamp': True})\
                 .sort('TimeStamp', pymongo.DESCENDING).limit(1)
             #
-            if enter_counter > 0:
+            if time_after_aggregation.count() > 0:
                 startingtime = dateutil.parser.parse(str(time_after_aggregation[0]['TimeStamp']))
                 startingtime = startingtime + half_delay
             else:
@@ -67,6 +66,7 @@ def Tickaggregation(ServerTime):
                         # Конец работы с циклом, переход на следующие 30 секунд времени
                         startingtime = startingtime + delayActivation
                         mergingtime = mergingtime + delayActivation
+                        pair_matcher.close()
                     else:
                         break
                 except():
@@ -74,9 +74,32 @@ def Tickaggregation(ServerTime):
             timer_at_first.close()
             time_after_aggregation.close()
         logging.info(u'Check' + exchname + u'collection')
+        #
+    MongoDBConnection().stop_connect()
+
+
+def indexator():
+    logging.info(u'IndexatorVol started')
+    global sell_data, endingtime, startingtime, buy_data, TimeStamp, PairName, sold_data,\
+        bought_data, pairlist, timer_at_first, time_after_aggregation, pair_matcher
+    b = MongoDBConnection().start_db()
+    db = b.PiedPiperStock
+    exchlist = ['BittrexTick', 'LiveCoinTick', 'GatecoinTick', 'LiquiTick', 'BleutradeTick', 'PoloniexTick',
+                'BinanceTick', 'ExmoTick']
+    indexes = ['TimeStamp', 'Mod', 'Aggregated']
+    from pymongo import IndexModel, ASCENDING
+    for inner in range(0, len(exchlist)):
+        exchname = exchlist[inner]
+        for secinner in range(0, len(indexes)):
+            index = IndexModel([(indexes[secinner], ASCENDING)])
+            db[exchname].create_indexes([index])
+    logging.info(u'Indexator completed his work')
+    MongoDBConnection().stop_connect()
 
 
 async def loop_aggr_tick():
+    indexator()
+    time.sleep(5)
     while 1:
         sttm = time.time()
         srv_time = datetime.datetime.utcnow()

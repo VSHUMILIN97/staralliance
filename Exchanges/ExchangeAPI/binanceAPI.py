@@ -40,5 +40,6 @@ def binance_ticker():
                 else:
                     continue
             logging.info(u'Binance getticker ended successfully')
+        MongoDBConnection().stop_connect()
     except():
         logging.error(u'Binance parse mistake')

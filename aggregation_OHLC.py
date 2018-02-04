@@ -12,7 +12,8 @@ logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(a
 
 def OHLCaggregation(ServerTime):
     import pymongo
-    global highest_value, endingtime, startingtime, close_value, open_value
+    global highest_value, endingtime, startingtime, close_value, open_value, pair_matcher, nxt_crsr, \
+        open_val_dict, close_val_dict, time_after_aggregation, pairlist, timer_at_first
     global lowest_value
     global TimeStamp
     global PairName
@@ -82,6 +83,7 @@ def OHLCaggregation(ServerTime):
                                     {'Price': True}) \
                                     .sort('TimeStamp', pymongo.ASCENDING).limit(1)
                                 open_value = nxt_crsr[0]['Price']
+                                nxt_crsr.close()
                             # PrevDay
                             if close_val_dict.count() > 0:
                                 close_value = close_val_dict[0]['Price']
@@ -92,6 +94,7 @@ def OHLCaggregation(ServerTime):
                             close_value
                         except NameError:
                             logging.critical(u'Aggregation cycle dropped!!!')
+
                             break
                         for trdinner in pair_matcher:
                             if trdinner['Price'] > highest_value:
@@ -113,14 +116,39 @@ def OHLCaggregation(ServerTime):
 
                         startingtime = startingtime + delayActivation
                         mergingtime = mergingtime + delayActivation
+                        pair_matcher.close()
+                        open_val_dict.close()
+                        close_val_dict.close()
                     else:
                         break
                 except():
                     logging.error(u'OHLCAgg')
+            timer_at_first.close()
+            time_after_aggregation.close()
         logging.info(u'Check' + exchname + u'collection')
+    MongoDBConnection().stop_connect()
+
+
+def indexator():
+    logging.info(u'IndexatorVol started')
+    global sell_data, endingtime, startingtime, buy_data, TimeStamp, PairName, sold_data, bought_data, pairlist, timer_at_first, time_after_aggregation, pair_matcher
+    b = MongoDBConnection().start_db()
+    db = b.PiedPiperStock
+    exchlist = ['Bittrex', 'Exmo']
+    indexes = ['TimeStamp', 'Mod', 'Aggregated']
+    from pymongo import IndexModel, ASCENDING
+    for inner in range(0, len(exchlist)):
+        exchname = exchlist[inner]
+        for secinner in range(0, len(indexes)):
+            index = IndexModel([(indexes[secinner], ASCENDING)])
+            db[exchname].create_indexes([index])
+    logging.info(u'Indexator completed his work')
+    MongoDBConnection().stop_connect()
 
 
 async def loop_aggr_OHLC():
+    indexator()
+    time.sleep(5)
     while 1:
         sttm = time.time()
         srv_time = datetime.datetime.utcnow()

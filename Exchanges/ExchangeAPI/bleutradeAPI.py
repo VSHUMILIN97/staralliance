@@ -37,6 +37,7 @@ def bleutrade_ticker():
                         'TimeStamp': timezone.now(), 'Mod': False}
                 test.insert(data)
                 index = index + 1
+        MongoDBConnection().stop_connect()
     except():
         logging.info(u'Bleutrade parse mistake')
     logging.info(u'Bleutrade getticker ended')

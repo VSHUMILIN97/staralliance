@@ -26,6 +26,13 @@ async def echo(websocket, path):
                          'hbuy': dss(MHistBuy)}
             ws_charts = json.dumps(ws_charts)
             await websocket.send(ws_charts)
+            try:
+                tick.close()
+                OHLC.close()
+                MHistBuy.close()
+                MHistSell.close()
+            except():
+                logging.error(u'No cursors to close at WSCharts')
             await asyncio.sleep(40)
 
 

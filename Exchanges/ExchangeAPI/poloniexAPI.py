@@ -39,4 +39,5 @@ def poloniex_ticker():
                 bid, ask = float(json_data[item]['highestBid']), float(json_data[item]['lowestAsk'])
                 data = {'PairName': pair_fix(item), 'Tick': (ask + bid) / 2, 'TimeStamp': timezone.now(), 'Mod': False}
                 test.insert(data)
+    MongoDBConnection().stop_connect()
     logging.info(u'Poloniex getticker ended')

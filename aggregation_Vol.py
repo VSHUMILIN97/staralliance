@@ -13,7 +13,8 @@ logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(a
 def Volumeaggregation(ServerTime):
     import pymongo
     logging.info(u'..VolumeAggregation started at..' + str(ServerTime))
-    global sell_data, endingtime, startingtime, buy_data, TimeStamp, PairName, sold_data, bought_data
+    global sell_data, endingtime, startingtime, buy_data, TimeStamp, PairName, sold_data,\
+        bought_data, pairlist, timer_at_first, time_after_aggregation, pair_matcher
     b = MongoDBConnection().start_db()
     db = b.PiedPiperStock
     exchlist = ['BittrexMHist', 'ExmoMHist']
@@ -63,6 +64,7 @@ def Volumeaggregation(ServerTime):
                         if sell_data and buy_data == 0:
                             startingtime = startingtime + delayActivation
                             mergingtime = mergingtime + delayActivation
+                            pair_matcher.close()
                             continue
                         temp_dict_sell = {'PairName': secinner, 'Quantity': sell_data,
                                           'OrderType': 'SELL', 'TimeStamp': endingtime - half_delay, 'Aggregated': True}
@@ -76,14 +78,37 @@ def Volumeaggregation(ServerTime):
                         # Конец работы с циклом, переход на следующие 5 минут времени
                         startingtime = startingtime + delayActivation
                         mergingtime = mergingtime + delayActivation
+                        pair_matcher.close()
                     else:
                         break
                 except():
                     logging.error(u'VolumeAgg')
+            time_after_aggregation.close()
+            timer_at_first.close()
         logging.info(u'Check' + exchname + u'collection')
+    MongoDBConnection().stop_connect()
+
+
+def indexator():
+    logging.info(u'IndexatorVol started')
+    global sell_data, endingtime, startingtime, buy_data, TimeStamp, PairName, sold_data, bought_data, pairlist, timer_at_first, time_after_aggregation, pair_matcher
+    b = MongoDBConnection().start_db()
+    db = b.PiedPiperStock
+    exchlist = ['BittrexMHist', 'ExmoMHist']
+    indexes = ['TimeStamp', 'Mod', 'Aggregated']
+    from pymongo import IndexModel, ASCENDING
+    for inner in range(0, len(exchlist)):
+        exchname = exchlist[inner]
+        for secinner in range(0, len(indexes)):
+            index = IndexModel([(indexes[secinner], ASCENDING)])
+            db[exchname].create_indexes([index])
+    logging.info(u'Indexator completed his work')
+    MongoDBConnection().stop_connect()
 
 
 async def loop_aggr_Vol():
+    indexator()
+    time.sleep(5)
     while 1:
         sttm = time.time()
         srv_time = datetime.datetime.utcnow()

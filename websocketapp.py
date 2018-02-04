@@ -19,7 +19,8 @@ async def arbitration_socket(websocket, path):
         # Довольно простая реализация через arbitration aggregate, собираем данные в JSON пакет и передаем на сервер.
         db.temporaryTick.drop()
         Exchanges.TimeAggregator.arbitration_aggregate()
-        ticks = list(db.temporaryTick.find())
+        ttc = db.temporaryTick.find()
+        ticks = list(ttc)
         cnames = db.temporaryTick.distinct('Exch')
         rnames = db.temporaryTick.distinct('PairName')
         from bson.json_util import dumps as dss
@@ -27,6 +28,7 @@ async def arbitration_socket(websocket, path):
                                  'rnames': sorted(rnames)}
         websocket_arbitration = json.dumps(websocket_arbitration)
         await websocket.send(websocket_arbitration)
+        ttc.close()
         await asyncio.sleep(30)
 
 # На данный момент блок кода ничего не отлавливает.

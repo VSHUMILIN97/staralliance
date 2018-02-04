@@ -75,6 +75,7 @@ def api_get_getmarketsummaries():
                 else:
                     continue
         logging.info(u'Bittrex getsummaries ended')
+    MongoDBConnection().stop_connect()
 
 
 # По некоторым соображениям, самый работающий график на данный момент.
@@ -106,6 +107,7 @@ def api_get_getticker():
                             'TimeStamp': timezone.now(), 'Mod': False}
                     test.insert(data)
     logging.info(u'Bittrex getticker ended')
+    MongoDBConnection().stop_connect()
 
 
 # Получаем все сделки за некоторое(б-гу известное) время.
@@ -135,4 +137,5 @@ def api_get_getmarkethistory():
                         'OrderType': ordertype, 'TimeStamp': timestamp, 'Mod': False}
                 test.insert(data)
     logging.info(u'Bittrex getmarkethistory ended')
+    MongoDBConnection().stop_connect()
 
