@@ -26,11 +26,11 @@ SECRET_KEY = 'tm3d(#yvvm^dz3*l908)w_#_!1r&f!5!5ep^rq@ghc*+rojo7u'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-	'localhost',
-	'127.0.0.1',
-	'192.168.2.140',
-	 'arbitr.tenguai.com' 
-    ]
+    'localhost',
+    '127.0.0.1',
+    '192.168.2.140',
+    'arbitr.tenguai.com'
+]
 
 
 # Application definition
