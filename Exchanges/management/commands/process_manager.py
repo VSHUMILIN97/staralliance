@@ -8,6 +8,7 @@ import os
 from process_manager import children_kill, proc_start
 
 
+# Here, I made my logs better
 class Command(BaseCommand):
     def handle(self, *args, **options):
         # Вызов экземпляра класс MongoDBConnection из файла mongo_db_connection
