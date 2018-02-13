@@ -5,9 +5,6 @@ from django.utils import timezone
 import requests
 from mongo_db_connection import MongoDBConnection
 
-logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
-                    level=logging.DEBUG)
-
 
 def pair_fix(pair_string):
     return str(pair_string).upper().replace('_', '-')

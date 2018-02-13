@@ -1,3 +1,4 @@
+# Log config for every exchange was set in BittrexAPI file
 from Exchanges.ExchangeAPI.bittrexAPI import api_get_getmarketsummaries, api_get_getmarkethistory, api_get_getticker
 from Exchanges.ExchangeAPI.liquiAPI import liqui_ticker
 from Exchanges.ExchangeAPI.poloniexAPI import poloniex_ticker
@@ -6,14 +7,10 @@ from Exchanges.ExchangeAPI.gatecoinAPI import gatecoin_ticker
 from Exchanges.ExchangeAPI.livecoinAPI import livecoin_ticker, livecoin_ticker_all_info
 from Exchanges.ExchangeAPI.bleutradeAPI import bleutrade_ticker
 from Exchanges.ExchangeAPI.ExmoAPI import exmo_ticker, exmo_charts_data, exmo_volume_data
-import random
 import time
 import asyncio
 from threading import Thread
 import logging
-
-logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
-                    level=logging.DEBUG)
 
 
 async def data_parse():
@@ -87,13 +84,12 @@ async def data_parse():
                 t12.start()
                 t13.start()
             except():
-                logging.error(u'Data were not recieved')
+                None
             endtime = time.time()
             mergetime = endtime - sttime
             await asyncio.sleep(15 - mergetime)
         except():
-            logging.error('Threads bump')
-
+                None
 loop = asyncio.get_event_loop()
 loop.run_until_complete(data_parse())
 loop.run_forever()

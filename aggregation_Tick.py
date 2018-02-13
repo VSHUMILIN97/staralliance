@@ -7,7 +7,7 @@ import time
 import asyncio
 
 logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
-                    level=logging.DEBUG)
+                    level=logging.DEBUG, filename='/var/log/cryptopiper/aggregation_Tick.log')
 
 
 def Tickaggregation(ServerTime):
@@ -44,7 +44,6 @@ def Tickaggregation(ServerTime):
             mergingtime = startingtime + delayActivation
             if mergingtime + delayActivation*2 < ServerTime:
                 mergingtime = ServerTime - delayActivation - microdelta
-                logging.info(u'SOMETHING WENT WRONG SPONGEBOB')
             while 1:
                 try:
                     if mergingtime < ServerTime:

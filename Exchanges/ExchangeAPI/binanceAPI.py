@@ -5,8 +5,7 @@ from django.utils import timezone
 import requests
 from mongo_db_connection import MongoDBConnection
 
-logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
-                    level=logging.DEBUG)
+
 pairlist = ['ETHBTC', 'LTCBTC', 'LTCETH', 'DASHBTC', 'XRPBTC']
 coins = ['ETH', 'BTC', 'LTC', 'DASH', 'XRP', '1ST']
 

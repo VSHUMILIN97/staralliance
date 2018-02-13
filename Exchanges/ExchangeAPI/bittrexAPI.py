@@ -9,7 +9,7 @@ from mongo_db_connection import MongoDBConnection
 import logging
 
 logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
-                    level=logging.DEBUG)
+                    level=logging.DEBUG, filename='/var/log/cryptopiper/DataParser.log')
 
 # Для чистоты кода используем переменные с названиями bit_obj_tick вместо bitObjTick
 # В_питоне_модно_с_граундами_писать , а не с АпперКейсомТипВотТак

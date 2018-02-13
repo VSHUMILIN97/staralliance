@@ -7,7 +7,7 @@ from django.utils import timezone, datetime_safe
 import logging
 
 logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
-                    level=logging.DEBUG)
+                    level=logging.DEBUG, filename='/var/log/cryptopiper/arbitrationWS.log')
 
 
 def arbitration_aggregate():

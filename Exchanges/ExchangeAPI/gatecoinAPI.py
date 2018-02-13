@@ -5,8 +5,7 @@ from django.utils import timezone
 import requests
 from mongo_db_connection import MongoDBConnection
 
-logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
-                    level=logging.DEBUG)
+
 
 
 # Боевая задачка - написать неунифицированные парсилки пар, чтобы все совпадало. Без хардкода.

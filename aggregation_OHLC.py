@@ -7,7 +7,7 @@ import asyncio
 import time
 
 logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
-                    level=logging.DEBUG)
+                    level=logging.DEBUG, filename='/var/log/cryptopiper/OHLC.log')
 
 
 def OHLCaggregation(ServerTime):
@@ -50,7 +50,6 @@ def OHLCaggregation(ServerTime):
 
             if mergingtime + delayActivation*2 < ServerTime:
                 mergingtime = ServerTime - delayActivation - microdelta
-                logging.info(u'SOMETHING WENT WRONG SPONGEBOB')
             while 1:
                 try:
                     if mergingtime < ServerTime:

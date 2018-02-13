@@ -1,13 +1,9 @@
 import asyncio
-import datetime
 import json
 import logging
 import websockets
 import Exchanges.TimeAggregator
 from mongo_db_connection import MongoDBConnection
-
-logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
-                    level=logging.DEBUG)
 
 
 # Метод, который осуществляет постоянный коннект с портом и IP

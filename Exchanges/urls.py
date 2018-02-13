@@ -29,8 +29,6 @@ urlpatterns = [
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 # STATIC_URL нужен для импорта css , img, js файлов из папки static
 
-logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
-                    level=logging.DEBUG)
 
 
 # # Вызов экземпляра класс MongoDBConnection из файла mongo_db_connection

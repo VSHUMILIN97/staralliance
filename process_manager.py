@@ -7,9 +7,6 @@ import sys
 import signal
 import logging
 
-logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
-                    level=logging.DEBUG)
-
 
 def proc_start():
     global data_parse_pid, agtion_pid, arbitartion_ws_pid, ws_charts_pid, agtion_tick_pid, agtion_vol_pid
@@ -56,4 +53,3 @@ def children_kill():
         os.kill(agtion_tick_pid, signal.SIGTERM)
         os.kill(data_parse_pid, signal.SIGTERM)
         os.kill(agtion_vol_pid, signal.SIGTERM)
-        logging.info(u'WebSocket rundown')

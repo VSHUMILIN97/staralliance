@@ -10,6 +10,7 @@ from django.utils import timezone
 from mongo_db_connection import MongoDBConnection
 import logging
 
+
 pairlist = ['DASH_BTC', 'LTC_BTC', 'ETH_BTC', 'XRP_BTC', 'ETH_LTC']
 
 
