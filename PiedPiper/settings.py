@@ -25,7 +25,12 @@ SECRET_KEY = 'tm3d(#yvvm^dz3*l908)w_#_!1r&f!5!5ep^rq@ghc*+rojo7u'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+	'localhost',
+	'127.0.0.1',
+	'192.168.2.140',
+	 'arbitr.tenguai.com' 
+    ]
 
 
 # Application definition
@@ -57,7 +62,7 @@ ROOT_URLCONF = 'PiedPiper.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [ BASE_DIR + '/Exchanges/Templates/' ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
