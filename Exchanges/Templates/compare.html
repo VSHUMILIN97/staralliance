@@ -11,7 +11,7 @@
 
 <script type="text/javascript">
 
- var ws = new WebSocket("ws://127.0.0.1:8080/");
+ var ws = new WebSocket("ws://" + window.location.hostname + ":8090/");
     function fix(value) {
        return Number(Math.round(value+'e8')+'e-8');
     }

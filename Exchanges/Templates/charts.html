@@ -38,7 +38,7 @@
 <div id="tickContainer" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 
 <script>
-var ws = new WebSocket("ws://127.0.0.1:8070/");
+var ws = new WebSocket("ws://" + window.location.hostname + ":8070/");
 
 ws.onopen = function (event) {
     ws.send(location.pathname);

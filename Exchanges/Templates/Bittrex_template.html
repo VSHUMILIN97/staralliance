@@ -4,7 +4,7 @@
  <div class="wrapper row2">
   <div id="container" class="clear">
   <script>
-      var ws = new WebSocket("ws://127.0.0.1:8070/");
+      var ws = new WebSocket("ws://" + window.location.hostname + ":8070/");
       ws.onopen = function (event) {
           alert('Opened');
           ws.send('500')
