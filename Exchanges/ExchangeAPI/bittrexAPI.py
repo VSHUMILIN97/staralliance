@@ -137,7 +137,7 @@ def api_get_getmarkethistory():
                     data = {'PairName': pair_fix(pairlist[i]), 'Quantity': quantity, 'Price': price,
                             'OrderType': ordertype, 'TimeStamp': timestamp, 'Mod': False}
                     test.insert(data)
-                    
+
     logging.info(u'Bittrex getmarkethistory ended')
     MongoDBConnection().stop_connect()
 

@@ -35,5 +35,5 @@ async def echo(websocket, path):
 
 
 logging.info(u'Charts websocket started')
-asyncio.get_event_loop().run_until_complete(websockets.serve(echo, '127.0.0.1', 8070))
+asyncio.get_event_loop().run_until_complete(websockets.serve(echo, '0.0.0.0', 8070))
 asyncio.get_event_loop().run_forever()
