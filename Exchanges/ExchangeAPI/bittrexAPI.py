@@ -128,14 +128,16 @@ def api_get_getmarkethistory():
         if json_data['success']:
             result = json_data['result']
 
-            for item in result:
-                timestamp, quantity, price, ordertype = \
-                    iso8601.parse_date(item['TimeStamp']), float(item['Quantity']),\
-                    float(item['Price']), str(item['OrderType'])
-                #
-                data = {'PairName': pair_fix(pairlist[i]), 'Quantity': quantity, 'Price': price,
-                        'OrderType': ordertype, 'TimeStamp': timestamp, 'Mod': False}
-                test.insert(data)
+            if result:
+                for item in result:
+                    timestamp, quantity, price, ordertype = \
+                        iso8601.parse_date(item['TimeStamp']), float(item['Quantity']),\
+                        float(item['Price']), str(item['OrderType'])
+                    #
+                    data = {'PairName': pair_fix(pairlist[i]), 'Quantity': quantity, 'Price': price,
+                            'OrderType': ordertype, 'TimeStamp': timestamp, 'Mod': False}
+                    test.insert(data)
+                    
     logging.info(u'Bittrex getmarkethistory ended')
     MongoDBConnection().stop_connect()
 
