@@ -5,6 +5,7 @@ import json
 import dateutil.parser
 from django.utils import timezone
 from datetime import timedelta
+from Exchanges.data_model import ExchangeModel
 from mongo_db_connection import MongoDBConnection
 import logging
 
@@ -100,12 +101,14 @@ def api_get_getticker():
             # Назначаем объект 'result' корневым, для простоты обращения
             root = json_data['result']
             for item in root:
+                S = ExchangeModel("Bittrex", item['MarketName'], float(item['Bid']), float(item['Ask']))
                 if item['MarketName'] in pairlist:
                     bid, ask = float(item['Bid']), float(item['Ask'])
                     #
                     data = {'PairName': pair_fix(item['MarketName']), 'Tick': (ask+bid)/2,
                             'TimeStamp': timezone.now(), 'Mod': False}
                     test.insert(data)
+    # logging.info(S.whole_data)
     logging.info(u'Bittrex getticker ended')
     MongoDBConnection().stop_connect()
 

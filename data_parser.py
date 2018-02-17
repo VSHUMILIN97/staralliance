@@ -6,8 +6,10 @@ from Exchanges.ExchangeAPI.gatecoinAPI import gatecoin_ticker
 from Exchanges.ExchangeAPI.livecoinAPI import livecoin_ticker, livecoin_ticker_all_info
 from Exchanges.ExchangeAPI.bleutradeAPI import bleutrade_ticker
 from Exchanges.ExchangeAPI.ExmoAPI import exmo_ticker, exmo_charts_data, exmo_volume_data
+from Exchanges.data_model import EMWrapper, ExchangeModel
 import random
 import time
+from mongo_db_connection import MongoDBConnection
 import asyncio
 from threading import Thread
 import logging
@@ -27,6 +29,17 @@ async def data_parse():
             # Значения можно менять
             #
             try:
+                if ExchangeModel.whole_data:
+                    b = MongoDBConnection().start_db()
+                    db = b.PiedPiperStock
+                    try:
+                        db.PoorArb.drop()
+                    except():
+                        None
+                    db.PoorArb.insert({'Value': ExchangeModel.whole_data})
+                    b.close()
+                    MongoDBConnection().stop_connect()
+                    ExchangeModel(0, 0, 0, 0).clear()
                 t1 = Thread(target=api_get_getmarketsummaries)
                 t2 = Thread(target=api_get_getmarkethistory)
                 t3 = Thread(target=api_get_getticker)
@@ -40,7 +53,6 @@ async def data_parse():
                 t11 = Thread(target=exmo_ticker)
                 t12 = Thread(target=exmo_volume_data)
                 t13 = Thread(target=exmo_charts_data)
-
                 logging.info('t2 alive - ' + str(t2.is_alive()) +
                              ', t3 alive - ' + str(t3.is_alive()) + ', t4 alive - ' + str(t4.is_alive()) +
                              ', t6 alive - ' + str(t6.is_alive()) + ', t7 alive - ' + str(t7.is_alive()) +

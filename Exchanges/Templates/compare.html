@@ -30,9 +30,11 @@
          alert('Ошибка - ' + error.data);
      };
     ws.onmessage = function (event) {
-
         var msg = JSON.parse(event.data);
         var json_msg = JSON.parse(msg['ticks']);
+
+
+
         var table = document.getElementById("tableID");
         while(table.firstChild) table.removeChild( table.firstChild ); // Удаляет все корневые элементы на старте и заполняет таблицу заново
         var tableHead = document.createElement('thead');
@@ -69,27 +71,31 @@
             tr.appendChild(th);
             for (var c in msg['cnames']) {
                 var success = false;
-                for (var i in json_msg) {
-                    {
-                        if ((json_msg[i]['PairName'] == (msg['rnames'])[r]) && (json_msg[i]['Exch'] == (msg['cnames'])[c])) {
-                            var td = document.createElement('td');
-                            var v = json_msg[i]['Tick'];
-                            if (v == 0){
-                                td.appendChild(document.createTextNode('NO DATA'));
-                            } else {
+                for (var iter = 0; iter < json_msg.length; iter++){
+                var io = json_msg[iter]['Value'];
+                for (var commendme in io) {
+                    //alert(io[commendme]['PairName']);
+
+
+                    if ((io[commendme]['PairName'] == (msg['rnames'])[r]) && (io[commendme]['Exchange'] == (msg['cnames'])[c])) {
+                        var td = document.createElement('td');
+                        var v = io[commendme]['Tick'];
+                        if (v == 0) {
+                            td.appendChild(document.createTextNode('NO DATA'));
+                        } else {
                             td.appendChild(document.createTextNode(fix(v)));
-                            }
-                            if (json_msg[i]['Chg'] == 'U') {
-                                td.appendChild(document.createElement("up"));
-                            } else if (json_msg[i]['Chg'] == 'D') {
-                                td.appendChild(document.createElement("down"));
-                            }
-                            td.setAttribute("id",(msg['rnames'])[r] + "_" + (msg['cnames'])[c]);
-                            tr.appendChild(td);
-                            //tr.replaceChild(td);
-                            success = true;
                         }
+                        /*if (json_msg[i]['Chg'] == 'U') {
+                            td.appendChild(document.createElement("up"));
+                        } else if (json_msg[i]['Chg'] == 'D') {
+                            td.appendChild(document.createElement("down"));
+                        }*/
+                        td.setAttribute("id", (msg['rnames'])[r] + "_" + (msg['cnames'])[c]);
+                        tr.appendChild(td);
+                        //tr.replaceChild(td);
+                        success = true;
                     }
+                }
                 }
                 if (success == false) {
                     var td = document.createElement('td');

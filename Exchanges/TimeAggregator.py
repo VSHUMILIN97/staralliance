@@ -1,9 +1,4 @@
-from datetime import datetime
-import time
 from mongo_db_connection import MongoDBConnection
-import dateutil.parser
-from datetime import datetime, tzinfo, timedelta
-from django.utils import timezone, datetime_safe
 import logging
 
 logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',

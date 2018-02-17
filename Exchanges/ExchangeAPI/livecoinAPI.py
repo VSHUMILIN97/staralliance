@@ -2,13 +2,17 @@ import json
 import logging
 from django.utils import timezone
 import requests
+from Exchanges.data_model import ExchangeModel
 from mongo_db_connection import MongoDBConnection
 
 logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
                     level=logging.DEBUG)
 
+
 def pair_fix(pair_string):
-    return str(pair_string).replace('/', '-')
+    fixer = pair_string.split('/')
+    pair_string = fixer[1] + '-' + fixer[0]
+    return pair_string
 
 
 def livecoin_ticker():
@@ -30,6 +34,7 @@ def livecoin_ticker():
             json_data = json.loads(api_request.text)
             # Если все ок - парсим
             for item in json_data:
+                ExchangeModel("LiveCoin", pair_fix(item['symbol']), float(item['best_bid']), float(item['best_ask']))
                 if item['symbol'] in ownpairlist:
                     # Назначаем объект 'result' корневым, для простоты обращения
                     best_bid, best_ask = float(item['best_bid']), float(item['best_ask'])

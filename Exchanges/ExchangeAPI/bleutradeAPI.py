@@ -3,13 +3,16 @@ import json
 import logging
 from django.utils import timezone
 import requests
+from Exchanges.data_model import ExchangeModel
 from mongo_db_connection import MongoDBConnection
 
 pairlist = 'ETH_BTC,LTC_BTC,LTC_ETH,DASH_BTC'
 
 
 def pair_fix(pair_string):
-    return str(pair_string).replace('_', '-')
+    fixer = pair_string.split('_')
+    pair_string = fixer[1] + '-' + fixer[0]
+    return pair_string
 
 
 def bleutrade_ticker():
@@ -31,6 +34,7 @@ def bleutrade_ticker():
             root = json_data['result']
             index = 0
             for item in root:
+                ExchangeModel("Bleutrade", pair_fix(pairlist.split(',')[index]), float(item['Bid']), float(item['Ask']))
                 bid, ask = float(item['Bid']), float(item['Ask'])
                 #
                 data = {'PairName': pair_fix(pairlist.split(',')[index]), 'Tick': (ask+bid)/2,

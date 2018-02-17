@@ -6,6 +6,7 @@ import websockets
 import Exchanges.TimeAggregator
 from mongo_db_connection import MongoDBConnection
 
+
 logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
                     level=logging.DEBUG)
 
@@ -17,19 +18,21 @@ async def arbitration_socket(websocket, path):
     db = b.PiedPiperStock
     while 1:
         # Довольно простая реализация через arbitration aggregate, собираем данные в JSON пакет и передаем на сервер.
-        db.temporaryTick.drop()
-        Exchanges.TimeAggregator.arbitration_aggregate()
-        ttc = db.temporaryTick.find()
-        ticks = list(ttc)
-        cnames = db.temporaryTick.distinct('Exch')
-        rnames = db.temporaryTick.distinct('PairName')
+        # db.temporaryTick.drop()
+        # Exchanges.TimeAggregator.arbitration_aggregate()
+        # ttc = db.temporaryTick.find()
+        # ticks = list(ttc)
+        cnames = db.PoorArb.distinct('Value.Exchange')
+        rnames = db.PoorArb.distinct('Value.PairName')
+        mir = db.PoorArb.find({}, {"_id": False})
         from bson.json_util import dumps as dss
-        websocket_arbitration = {'ticks': dss(ticks), 'cnames': sorted(cnames),
-                                 'rnames': sorted(rnames)}
+        # ExchangeModel.whole_data
+        websocket_arbitration = {'ticks': dss(mir), 'cnames': sorted(cnames),
+                                  'rnames': sorted(rnames)}
         websocket_arbitration = json.dumps(websocket_arbitration)
         await websocket.send(websocket_arbitration)
-        ttc.close()
-        await asyncio.sleep(30)
+        #ttc.close()
+        await asyncio.sleep(15)
 
 # На данный момент блок кода ничего не отлавливает.
 try:

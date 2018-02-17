@@ -1,6 +1,6 @@
 # https://api.exmo.com/v1/ticker/
 from datetime import datetime, time
-
+from Exchanges.data_model import ExchangeModel
 import dateutil.parser
 import iso8601
 import pymongo
@@ -14,7 +14,9 @@ pairlist = ['DASH_BTC', 'LTC_BTC', 'ETH_BTC', 'XRP_BTC', 'ETH_LTC']
 
 
 def pair_fix(pair_string):
-    return str(pair_string).replace('_', '-')
+    fixer = pair_string.split('_')
+    pair_string = fixer[1] + '-' + fixer[0]
+    return pair_string
 
 
 # проверка данных апи в консоли
@@ -102,13 +104,15 @@ def exmo_ticker():
         json_data = json.loads(api_request.text)
         # Если все ок - парсим
         for item in json_data:
-
+            ExchangeModel("Exmo", pair_fix(item), float(json_data[item]['buy_price']),
+                          float(json_data[item]['sell_price']))
             for st in pairlist:
                 if st == str(item):
                     bid, ask = float(json_data[item]['buy_price']), float(json_data[item]['sell_price'])
                     #logging.info(str(item) + " : " + str(bid) + " - bid, " + str(ask) + " -  ask")
                     data = {'PairName': pair_fix(item), 'Tick': (ask+bid)/2, 'TimeStamp': timezone.now(), 'Mod': False}
                     test.insert(data)
+    # logging.info(S.whole_data)
     MongoDBConnection().stop_connect()
     logging.info(u'Exmo getticker ended')
 
