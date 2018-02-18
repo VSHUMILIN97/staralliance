@@ -4,6 +4,7 @@ import json
 import logging
 import websockets
 import Exchanges.TimeAggregator
+from Exchanges.data_model import ExchangeModel
 from mongo_db_connection import MongoDBConnection
 
 
@@ -23,12 +24,12 @@ async def arbitration_socket(websocket, path):
         # ttc = db.temporaryTick.find()
         # ticks = list(ttc)
         cnames = db.PoorArb.distinct('Value.Exchange')
-        rnames = db.PoorArb.distinct('Value.PairName')
+        rnames = db.Arbnames.distinct('Value')
         mir = db.PoorArb.find({}, {"_id": False})
         from bson.json_util import dumps as dss
         # ExchangeModel.whole_data
         websocket_arbitration = {'ticks': dss(mir), 'cnames': sorted(cnames),
-                                  'rnames': sorted(rnames)}
+                                 'rnames': sorted(rnames)}
         websocket_arbitration = json.dumps(websocket_arbitration)
         await websocket.send(websocket_arbitration)
         #ttc.close()

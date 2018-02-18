@@ -32,9 +32,6 @@
     ws.onmessage = function (event) {
         var msg = JSON.parse(event.data);
         var json_msg = JSON.parse(msg['ticks']);
-
-
-
         var table = document.getElementById("tableID");
         while(table.firstChild) table.removeChild( table.firstChild ); // Удаляет все корневые элементы на старте и заполняет таблицу заново
         var tableHead = document.createElement('thead');
@@ -76,14 +73,13 @@
                 for (var commendme in io) {
                     //alert(io[commendme]['PairName']);
 
-
-                    if ((io[commendme]['PairName'] == (msg['rnames'])[r]) && (io[commendme]['Exchange'] == (msg['cnames'])[c])) {
+                    if ((io[commendme]['PairName'] === (msg['rnames'])[r]) && (io[commendme]['Exchange'] === (msg['cnames'])[c])) {
                         var td = document.createElement('td');
                         var v = io[commendme]['Tick'];
-                        if (v == 0) {
-                            td.appendChild(document.createTextNode('NO DATA'));
-                        } else {
+                        if (v !== 0) {
                             td.appendChild(document.createTextNode(fix(v)));
+                        } else {
+                            td.appendChild(document.createTextNode('—'));
                         }
                         /*if (json_msg[i]['Chg'] == 'U') {
                             td.appendChild(document.createElement("up"));
@@ -97,7 +93,7 @@
                     }
                 }
                 }
-                if (success == false) {
+                if (success === false) {
                     var td = document.createElement('td');
                     var v = '—';
                     td.appendChild(document.createTextNode(v));
@@ -122,16 +118,16 @@
                 if (parseFloat(cells[j].innerHTML, 10) < min) {
                     min = parseFloat(cells[j].innerHTML, 10);
                 }
-                if (cells[j].innerText == '—' || 'NO DATA') {
+                if (cells[j].innerText === '—') {
                     cells[j].classList.toggle("nope");
                 }
             }
             if (((max - min) / max) * 100 > 3) {
                 for (var j = 0, lent = cells.length; j < lent; j++) {
-                    if (parseFloat(cells[j].innerHTML, 10) == max) {
+                    if (parseFloat(cells[j].innerHTML, 10) === max) {
                         cells[j].classList.toggle("max");
                     }
-                    else if (parseFloat(cells[j].innerHTML, 10) == min) {
+                    else if (parseFloat(cells[j].innerHTML, 10) === min) {
                         cells[j].classList.toggle("min");
                     }
                 }

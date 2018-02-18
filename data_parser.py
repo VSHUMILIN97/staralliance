@@ -30,16 +30,21 @@ async def data_parse():
             #
             try:
                 if ExchangeModel.whole_data:
+                    ExchangeModel.pair_clearer()
                     b = MongoDBConnection().start_db()
                     db = b.PiedPiperStock
                     try:
                         db.PoorArb.drop()
+                        db.Arbnames.drop()
                     except():
                         None
                     db.PoorArb.insert({'Value': ExchangeModel.whole_data})
+                    db.Arbnames.insert({'Value': ExchangeModel.cleared_data})
                     b.close()
                     MongoDBConnection().stop_connect()
-                    ExchangeModel(0, 0, 0, 0).clear()
+                    ExchangeModel.cleared_data.clear()
+                    ExchangeModel.whole_data.clear()
+                    ExchangeModel.support_data.clear()
                 t1 = Thread(target=api_get_getmarketsummaries)
                 t2 = Thread(target=api_get_getmarkethistory)
                 t3 = Thread(target=api_get_getticker)
