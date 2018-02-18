@@ -25,8 +25,8 @@ def Tickaggregation(ServerTime):
         #
         for secinner in pairlist:
             # All Matches in DB
-            delayActivation = timedelta(seconds=30)
-            half_delay = timedelta(seconds=15)
+            delayActivation = timedelta(seconds=300)
+            half_delay = timedelta(seconds=150)
             microdelta = timedelta(milliseconds=1)
             # Starting time magic
             timer_at_first = db[exchname].find({'PairName': secinner, 'Mod': False}, {'TimeStamp': True}).limit(1)

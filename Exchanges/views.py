@@ -37,7 +37,8 @@ class ChartsView(View):  # Класс для вывода графиков
             for secinner in pairlist:
                 tdict = {'Exch': exchname, 'Pair': secinner}
                 ins.insert(tdict)
-        combinations = db.ExchsAndPairs.find()  # эту базу теперь можно еще где-нибудь поюзать
+                combinations = db.ExchsAndPairs.find().sort([('Exch', 1), ('Pair', 1)])
+                # эту базу теперь можно еще где-нибудь поюзать
 
         if (pair != "") and (exchange != ""):
             return render(request, 'charts.html', {'pair': pair, 'exchange': exchange, 'exchList': sorted(exchlist),

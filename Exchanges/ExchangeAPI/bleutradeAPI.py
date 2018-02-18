@@ -6,8 +6,6 @@ import requests
 from Exchanges.data_model import ExchangeModel
 from mongo_db_connection import MongoDBConnection
 
-pairlist = 'ETH_BTC,LTC_BTC,LTC_ETH,DASH_BTC'
-
 
 def pair_fix(pair_string):
     fixer = pair_string.split('_')
@@ -24,9 +22,18 @@ def bleutrade_ticker():
         db = b.PiedPiperStock
         test = db.BleutradeTick
         #
-        api_request = requests.get("https://bleutrade.com/api/v2/public/" + "getticker?market=" + pairlist)
+        info_request = requests.get("https://bleutrade.com/api/v2/public/getmarkets")
+        info_data = json.loads(info_request.text)
+        data = info_data['result']
+        pair_string = ""
+        for each_index in range(0, len(data)):
+            pair_string += data[each_index]['MarketName']
+            if each_index + 1 != len(data):
+                pair_string += ","
+        api_request = requests.get("https://bleutrade.com/api/v2/public/" + "getticker?market=" + pair_string)
         # Формируем JSON массив из данных с API. Проверяем код ответа.
         logging.info('Bleutrade API returned - ' + str(api_request.status_code))
+        pair_array = pair_string.split(',')
         if api_request.status_code == 200:
             json_data = json.loads(api_request.text)
             # Если все ок - парсим
@@ -34,10 +41,10 @@ def bleutrade_ticker():
             root = json_data['result']
             index = 0
             for item in root:
-                ExchangeModel("Bleutrade", pair_fix(pairlist.split(',')[index]), float(item['Bid']), float(item['Ask']))
+                ExchangeModel("Bleutrade", pair_fix(pair_array[index]), float(item['Bid']), float(item['Ask']))
                 bid, ask = float(item['Bid']), float(item['Ask'])
                 #
-                data = {'PairName': pair_fix(pairlist.split(',')[index]), 'Tick': (ask+bid)/2,
+                data = {'PairName': pair_fix(pair_array[index]), 'Tick': (ask+bid)/2,
                         'TimeStamp': timezone.now(), 'Mod': False}
                 test.insert(data)
                 index = index + 1

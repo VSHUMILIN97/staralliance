@@ -1,10 +1,8 @@
 import asyncio
-import datetime
+import time
 import json
 import logging
 import websockets
-import Exchanges.TimeAggregator
-from Exchanges.data_model import ExchangeModel
 from mongo_db_connection import MongoDBConnection
 
 
@@ -23,17 +21,22 @@ async def arbitration_socket(websocket, path):
         # Exchanges.TimeAggregator.arbitration_aggregate()
         # ttc = db.temporaryTick.find()
         # ticks = list(ttc)
+        sttime = time.time()
         cnames = db.PoorArb.distinct('Value.Exchange')
         rnames = db.Arbnames.distinct('Value')
-        mir = db.PoorArb.find({}, {"_id": False})
+        arbitary_data = db.PoorArb.find({}, {"_id": False}).limit(1)
+        if arbitary_data.count() == 0:
+            time.sleep(1)
+            arbitary_data = db.PoorArb.find({}, {"_id": False})
         from bson.json_util import dumps as dss
         # ExchangeModel.whole_data
-        websocket_arbitration = {'ticks': dss(mir), 'cnames': sorted(cnames),
+        websocket_arbitration = {'ticks': dss(arbitary_data), 'cnames': sorted(cnames),
                                  'rnames': sorted(rnames)}
         websocket_arbitration = json.dumps(websocket_arbitration)
         await websocket.send(websocket_arbitration)
-        #ttc.close()
-        await asyncio.sleep(15)
+        arbitary_data.close()
+        mttime = time.time() - sttime
+        await asyncio.sleep(15 - mttime)
 
 # На данный момент блок кода ничего не отлавливает.
 try:

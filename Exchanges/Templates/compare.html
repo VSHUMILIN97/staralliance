@@ -13,7 +13,12 @@
 
  var ws = new WebSocket("ws://" + window.location.hostname + ":8090/");
     function fix(value) {
-       return Number(Math.round(value+'e8')+'e-8');
+    if (value.toString().indexOf('e')) {
+    return value.toFixed(8);
+        }
+    else {
+    return Number(Math.round(value+'e8')+'e-8');
+     }
     }
 
     ws.onopen = function(event){
@@ -53,8 +58,8 @@
             th.style.width = "127px";
             tr.appendChild(th);
         }
-        var min = -10;
-        var max = 10;
+        var min = -999999999;
+        var max = 9999999999;
 
         var tableBody = document.createElement('tbody');
         table.appendChild(tableBody);
@@ -108,8 +113,8 @@
 
         for (var i = 0, len = trow.length; i < len; i++) {
             var cells = trow[i].getElementsByTagName('td');
-            var max = -11,
-                min = 11,
+            var max = -999999999,
+                min = 99999999999,
                 maxi, mini;
             for (var j = 0, lent = cells.length; j < lent; j++) {
                 if (parseFloat(cells[j].innerHTML, 10) > max) {

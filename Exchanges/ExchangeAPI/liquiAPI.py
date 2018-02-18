@@ -21,21 +21,26 @@ def liqui_ticker():
     logging.info(u'Liqui getticker started')
     #
     try:
-        pairlist = 'eth_btc-ltc_btc-dash_btc-ltc_eth'
         b = MongoDBConnection().start_db()
         db = b.PiedPiperStock
         release = db.LiquiTick
         #
-        api_request = requests.get("https://api.liqui.io" + "/api/3/depth/" + pairlist + '?limit=1&ignore_invalid=1')
+        info_request = requests.get("https://api.liqui.io/api/3/info")
+        info_data = json.loads(info_request.text)
+        pairs = info_data['pairs']
+        pair_string = ""
+        for each in pairs:
+            pair_string += each + '-'
+        api_request = requests.get("https://api.liqui.io" + "/api/3/ticker/" + pair_string + '?limit=1&ignore_invalid=1')
         # Формируем JSON массив из данных с API
         logging.info('Liqui API returned - ' + str(api_request.status_code))
         if api_request.status_code == 200:
             json_data = json.loads(api_request.text)
             # Если все ок - парсим
             for item in json_data:
-                ExchangeModel("Liqui", pair_fix(item), json_data[item]['bids'][0][0], json_data[item]['asks'][0][0])
-                best_ask = json_data[item]['asks'][0][0]
-                best_bid = json_data[item]['bids'][0][0]
+                ExchangeModel("Liqui", pair_fix(item), json_data[item]['buy'], json_data[item]['sell'])
+                best_ask = json_data[item]['buy']
+                best_bid = json_data[item]['sell']
                 #
                 data = {'PairName': pair_fix(item), 'Tick': (best_ask + best_bid) / 2,
                         'TimeStamp': timezone.now(), 'Mod': False}
