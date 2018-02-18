@@ -9,7 +9,7 @@ from mongo_db_connection import MongoDBConnection
 logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
                     level=logging.DEBUG)
 
-
+# Initial
 # Метод, который осуществляет постоянный коннект с портом и IP
 async def arbitration_socket(websocket, path):
     # Вмазанная часть коннекта и постоянной пары
