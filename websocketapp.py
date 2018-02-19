@@ -36,7 +36,7 @@ async def arbitration_socket(websocket, path):
         await websocket.send(websocket_arbitration)
         arbitary_data.close()
         mttime = time.time() - sttime
-        await asyncio.sleep(15 - mttime)
+        await asyncio.sleep(22 - mttime)
 
 # На данный момент блок кода ничего не отлавливает.
 try:

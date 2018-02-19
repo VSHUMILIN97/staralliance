@@ -24,7 +24,7 @@ SECRET_KEY = 'tm3d(#yvvm^dz3*l908)w_#_!1r&f!5!5ep^rq@ghc*+rojo7u'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
+COMPRESS_ENABLED = True
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
@@ -32,7 +32,15 @@ ALLOWED_HOSTS = [
     'arbitr.tenguai.com'
 ]
 
-
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    # other finders..
+    'compressor.finders.CompressorFinder',
+)
+STATICFILES_DIRS = (
+        #'c:/users/pc/pycharmprojects/djangopiper/static', #
+)
 # Application definition
 
 INSTALLED_APPS = [
@@ -45,6 +53,7 @@ INSTALLED_APPS = [
     'Exchanges',
     'rest_framework',
     'requests',
+    'compressor',
 ]
 
 MIDDLEWARE = [
@@ -145,6 +154,6 @@ USE_TZ = True
 
 STATIC_ROOT = 'static'  # пустая папка, сюда будет собирать статику collectstatic
 
-STATIC_URL = 'static/'  # URL для шаблонов
+STATIC_URL = '/static/'  # URL для шаблонов
 
 
