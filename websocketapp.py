@@ -9,6 +9,7 @@ from mongo_db_connection import MongoDBConnection
 logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
                     level=logging.DEBUG)
 
+
 # Initial
 # Метод, который осуществляет постоянный коннект с портом и IP
 async def arbitration_socket(websocket, path):
@@ -36,7 +37,7 @@ async def arbitration_socket(websocket, path):
         await websocket.send(websocket_arbitration)
         arbitary_data.close()
         mttime = time.time() - sttime
-        await asyncio.sleep(22 - mttime)
+        await asyncio.sleep(25 - mttime)
 
 # На данный момент блок кода ничего не отлавливает.
 try:

@@ -1,14 +1,25 @@
-# https://www.binance.com/api/v3/ticker/bookTicker
+"""
+[
+  // on trading pairs (ex. tBTCUSD)
+  [
+    SYMBOL,
+    BID,
+    BID_SIZE,
+    ASK,
+    ASK_SIZE,
+    DAILY_CHANGE,
+    DAILY_CHANGE_PERC,
+    LAST_PRICE,
+    VOLUME,
+    HIGH,
+    LOW
+  ]
+  """
 import json
-import logging
-from django.utils import timezone
-import requests
 from Exchanges.data_model import ExchangeModel
-from mongo_db_connection import MongoDBConnection
+import requests
+import logging
 
-logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
-                    level=logging.DEBUG)
-pairlist = ['ETHBTC', 'LTCBTC', 'LTCETH', 'DASHBTC', 'XRPBTC']
 coins = \
     ['ADX', 'ETH', 'BTC', 'LTC', 'DASH', 'XRP', '1ST', '123', 'POE', 'MANA', 'LSK', 'EVX', 'ICN', 'QAX', 'XVG', 'SNM',
          'IOTA', 'NEO', 'MTL', 'YOYO', 'BNB', 'BCC', 'ZEC', 'BTG', 'REQ', 'ADA', 'AE', 'AION', 'AMB', 'APPC', 'ARK',
@@ -24,6 +35,7 @@ coins = \
 
 
 def pair_fix(pair_string):
+    pair_string = pair_string.replace('t', '')
     for i in range(0, len(coins)):
         if str(pair_string).startswith(coins[i]) is True:
             test = pair_string.replace(coins[i], coins[i] + '-').split('-')
@@ -36,30 +48,24 @@ def pair_fix(pair_string):
                 return pair_string
 
 
-def binance_ticker():
-    logging.info(u'Binance getticker started')
-    #
+def bitfinex_ticker():
+    logging.info('Bitfinex API method started')
     try:
-        b = MongoDBConnection().start_db()
-        db = b.PiedPiperStock
-        release = db.BinanceTick
-        #
-        api_request = requests.get("https://www.binance.com/api/" + "v3/ticker/bookTicker")
-        # Формируем JSON массив из данных с API
-        logging.info('Binance API returned - ' + str(api_request.status_code))
-        if api_request.status_code == 200:
-            json_data = json.loads(api_request.text)
-            # Если все ок - парсим
-            for item in json_data:
-                ExchangeModel("Binance", pair_fix(item['symbol']), float(item['bidPrice']), float(item['askPrice']))
-                if item['symbol'] in pairlist:
-                    bid, ask = float(item['bidPrice']), float(item['askPrice'])
-                    data = {'PairName': pair_fix(item['symbol']), 'Tick': (ask + bid) / 2,
-                            'TimeStamp': timezone.now(), 'Mod': False}
-                    release.insert(data)
-                else:
-                    continue
-            logging.info(u'Binance getticker ended successfully')
-        MongoDBConnection().stop_connect()
+        proxies = {'http': '47.89.41.164:80',
+                   'https': '180.173.151.17:9797'}
+        info_request = requests.get("https://api.bitfinex.com/v1/symbols", proxies=proxies, timeout=5)
+        info_data = json.loads(info_request.text)
+        pair_string = ''
+        for name in range(0, len(info_data)):
+            pair_string += 't' + info_data[name].upper()
+            if name + 1 < len(info_data):
+                pair_string += ','
+
+        data_request = requests.get("https://api.bitfinex.com/v2/tickers?symbols=" + pair_string,
+                                    proxies=proxies, timeout=5)
+        full_data = json.loads(data_request.text)
+        for items in full_data:
+            ExchangeModel('Bitfinex', pair_fix(items[0]), float(items[1]), float(items[3]))
+        logging.info('Bitfinex API method ended')
     except():
-        logging.error(u'Binance parse mistake')
+        logging.error('Bitfinex API crashed')

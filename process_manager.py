@@ -29,10 +29,10 @@ def proc_start():
     agtion_ohlc = os.path.join(os.path.dirname(__file__), "aggregation_OHLC.py")
     agtion_ohlc_command = [sys.executable, agtion_ohlc]
     agtion_ohlc_pipe = subprocess.Popen(agtion_ohlc_command, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-    # Tick aggregation subprocess
-    agtion_tick = os.path.join(os.path.dirname(__file__), "aggregation_Tick.py")
-    agtion_tick_command = [sys.executable, agtion_tick]
-    agtion_tick_pipe = subprocess.Popen(agtion_tick_command, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+    # Tick aggregation subprocess  / Uncomment if needed
+    # agtion_tick = os.path.join(os.path.dirname(__file__), "aggregation_Tick.py")
+    # agtion_tick_command = [sys.executable, agtion_tick]
+    # agtion_tick_pipe = subprocess.Popen(agtion_tick_command, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     # Volume aggregation subprocess
     agtion_vol = os.path.join(os.path.dirname(__file__), "aggregation_Vol.py")
     agtion_vol_command = [sys.executable, agtion_vol]
@@ -42,7 +42,7 @@ def proc_start():
     agtion_pid = agtion_ohlc_pipe.pid
     arbitartion_ws_pid = arbitartion_ws_pipe.pid
     ws_charts_pid = ws_charts_pipe.pid
-    agtion_tick_pid = agtion_tick_pipe.pid
+    # agtion_tick_pid = agtion_tick_pipe.pid  # Uncomment if needed
     agtion_vol_pid = agtion_vol_pipe.pid
 
 
@@ -53,7 +53,7 @@ def children_kill():
         os.kill(arbitartion_ws_pid, signal.SIGTERM)
         os.kill(ws_charts_pid, signal.SIGTERM)
         os.kill(agtion_pid, signal.SIGTERM)
-        os.kill(agtion_tick_pid, signal.SIGTERM)
+        # os.kill(agtion_tick_pid, signal.SIGTERM)  # Uncomment if needed
         os.kill(data_parse_pid, signal.SIGTERM)
         os.kill(agtion_vol_pid, signal.SIGTERM)
         logging.info(u'WebSocket rundown')

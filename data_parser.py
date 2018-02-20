@@ -7,6 +7,9 @@ from Exchanges.ExchangeAPI.livecoinAPI import livecoin_ticker, livecoin_ticker_a
 from Exchanges.ExchangeAPI.bleutradeAPI import bleutrade_ticker
 from Exchanges.ExchangeAPI.ExmoAPI import exmo_ticker, exmo_charts_data, exmo_volume_data
 from Exchanges.ExchangeAPI.KucoinAPI import kucoin_ticker
+from Exchanges.ExchangeAPI.KrakenAPI import kraken_ticker
+from Exchanges.ExchangeAPI.BitfinexAPI import bitfinex_ticker
+from Exchanges.ExchangeAPI.HitBTC import hitbtc_ticker
 from Exchanges.data_model import EMWrapper, ExchangeModel
 import random
 import time
@@ -60,13 +63,17 @@ async def data_parse():
                 t12 = Thread(target=exmo_volume_data)
                 t13 = Thread(target=exmo_charts_data)
                 t14 = Thread(target=kucoin_ticker)
+                t15 = Thread(target=kraken_ticker)
+                t16 = Thread(target=bitfinex_ticker)
+                t17 = Thread(target=hitbtc_ticker)
                 """logging.info('t2 alive - ' + str(t2.is_alive()) +
                              ', t3 alive - ' + str(t3.is_alive()) + ', t4 alive - ' + str(t4.is_alive()) +
                              ', t6 alive - ' + str(t6.is_alive()) + ', t7 alive - ' + str(t7.is_alive()) +
                              ', t8 alive - ' + str(t8.is_alive()) + ', t9 alive - ' + str(t9.is_alive()) +
                              ', t10 alive - ' + str(t10.is_alive()) + ', t11 alive - ' + str(t11.is_alive()) +
                              ', t12 alive - ' + str(t12.is_alive()) + ', t13 alive - ' + str(t13.is_alive()) +
-                             ', t14 alive -' + str(t14.is_alive()))"""
+                             ', t14 alive - ' + str(t14.is_alive()) + ', t15 alive - ' + str(t15.is_alive()) +
+                             ', t16 alive - ' + str(t16.is_alive()) + ', t17 alive - ' + str(t17.is_alive()))"""
                 t1._stop()
                 t2._stop()
                 t3._stop()
@@ -81,6 +88,9 @@ async def data_parse():
                 t12._stop()
                 t13._stop()
                 t14._stop()
+                t15._stop()
+                t16._stop()
+                t17._stop()
                 t1.setDaemon(True)
                 t2.setDaemon(True)
                 t3.setDaemon(True)
@@ -95,6 +105,10 @@ async def data_parse():
                 t12.setDaemon(True)
                 t13.setDaemon(True)
                 t14.setDaemon(True)
+                t15.setDaemon(True)
+                t16.setDaemon(True)
+                t17.setDaemon(True)
+                t16.start()
                 t1.start()
                 t2.start()
                 t3.start()
@@ -109,11 +123,13 @@ async def data_parse():
                 t12.start()
                 t13.start()
                 t14.start()
+                t15.start()
+                t17.start()
             except():
                 logging.error(u'Data were not recieved')
             endtime = time.time()
             mergetime = endtime - sttime
-            await asyncio.sleep(22 - mergetime)
+            await asyncio.sleep(25 - mergetime)
         except():
             logging.error('Threads bump')
 
