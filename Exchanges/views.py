@@ -10,7 +10,7 @@ def index_view(request):
     return render(request, "index.html")
 
 
-# Создан исключительно для проверки и отладки работы с веб-страницами
+# DEBUG ONLY WEB-PAGE
 def Bittrex_view(request, market=""):
     b = MongoDBConnection().start_db()
     db = b.PiedPiperStock
@@ -23,7 +23,8 @@ def Bittrex_view(request, market=""):
     return render(request, "Bittrex_template.html",  {'temp': slice})  #
 
 
-class ChartsView(View):  # Класс для вывода графиков
+# CHARTS WEB-PAGE. NOT IN CURRENT USE. Still works.
+class ChartsView(View):  #
     def get(self, request, exchange="", pair="", *args, **kwargs):
         b = MongoDBConnection().start_db()
         db = b.PiedPiperStock
@@ -47,9 +48,10 @@ class ChartsView(View):  # Класс для вывода графиков
             return render(request, 'choose.html', {'exchList': sorted(exchlist), 'combinations': combinations})
 
 
+# We got two versions of our web-page. User is forced to USE the /old version.
 class Comparison(View):
-    def get(self, request, mode="",*args, **kwargs):
-        if (mode == 'new'):
+    def get(self, request, mode="", *args, **kwargs):
+        if mode == 'new':
             return render(request, 'comparebeta.html', {})  # установить compare для другого отображения арбитража
         else:
             return render(request, 'compare.html', {})  # установить compare для другого отображения арбитража

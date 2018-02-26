@@ -1,36 +1,47 @@
  var ws = new WebSocket("ws://" + window.location.hostname + ":8090/");
+
+    // Supportive function to fix float number from math representation to classic 0.0000320421
     function fix(value) {
-    if (value.toString().indexOf('e')) {
-    return value.toFixed(8);
+        if (value.toString().indexOf('e')) {
+            return value.toFixed(8);
         }
-    else {
-    return Number(Math.round(value+'e8')+'e-8');
-     }
+        else {
+            return Number(Math.round(value+'e8')+'e-8');
+        }
     }
-function isTrue(value) {
-    return value === true
-}
- var checkBoxState = [false, false, false, false, false, false, false, false, false, false, false, false, false];
-function getCheckedBoxes(chkboxName) {
-  var checkboxes = document.getElementsByName(chkboxName);
-  var checkboxesChecked = [];
-  // loop over them all
-  for (var i=0; i<checkboxes.length; i++) {
-     // And stick the checked ones onto an array...
-     if (checkboxes[i].checked) {
-        checkboxesChecked.push(true);
-     }
-     else{
-         checkboxesChecked.push(false);
-     }
+
+    //Supportive function. Used in array with .filter
+    function isTrue(value) {
+        return value === true
+    }
+
+ // Crutch for made it works.
+var checkBoxState = [false, false, false, false, false, false, false, false, false, false, false, false, false];
+    // Checking whether checkbox has false or true state.
+    function getCheckedBoxes(chkboxName) {
+        var checkboxes = document.getElementsByName(chkboxName);
+        var checkboxesChecked = [];
+        // loop over them all
+        for (var i=0; i<checkboxes.length; i++) {
+        // And stick the checked ones onto an array...
+        if (checkboxes[i].checked) {
+            checkboxesChecked.push(true);
+        }
+        else {
+            checkboxesChecked.push(false);
+        }
   }
   // Return the array if it is non-empty, or null
   return checkboxesChecked.length > 0 ? checkboxesChecked : null;
 }
-
+    // Initial on connection. Maybe it's better to check which transport is used by browser to pass data.
     ws.onopen = function(event){
-
+        // clear
     };
+
+    /* Works, when the server or client goes away.
+     * Better to release all the memory and so on there.
+     */
     ws.onclose = function (event) {
          if (event.wasClean){
              alert('Соединение закрыто');
@@ -38,40 +49,51 @@ function getCheckedBoxes(chkboxName) {
              alert('Соединение оборвано по причине: ' + event.reason + ' - код ошибки: '+ event.code );
          }
      };
+
+    // It's clear, I guess
     ws.onerror = function (error) {
          alert('Ошибка - ' + error.data);
      };
+
+    // Works, when server pass data to a client with a preferred transport.
     ws.onmessage = function (event) {
+        // Parsing JSON from websocket data.
         var msg = JSON.parse(event.data);
         var json_msg = JSON.parse(msg['ticks']);
+        // Setting table block from HTML to variable Table
         var table = document.getElementById("tableID");
-        while(table.firstChild) table.removeChild( table.firstChild ); // Удаляет все корневые элементы на старте и заполняет таблицу заново
+        // Deleting all the root and child Elements, such as: td, tr, th and so on.
+        while(table.firstChild) table.removeChild( table.firstChild );
+        // Setting table header block from HTML to variable tableHead
+        // The first row is 5px line. VFX.
         var tableHead = document.createElement('thead');
         table.appendChild(tableHead);
         var tr = document.createElement('tr');
         tr.style.minHeight = "5px";
         tableHead.appendChild(tr);
-
-        //var rows = msg['rows'],
-        // columns = msg['columns'];
-
+        // The real header with Exchanges 150px height.
         var th = document.createElement('th');
         th.style.width = "150px";
         tr.appendChild(th);
 
-        inner = 0;
-        for (var name in msg['cnames']) {
 
+        // Header cycle. Pushing Exchanges in table-header block. Also define onClick functions.
+        inner = 0; // Iteration variable
+        for (var name in msg['cnames']) {
             var th = document.createElement('th');
             th.appendChild(document.createTextNode((msg['cnames'])[name]));
             th.style.width = "110px";
             var checkbox = document.createElement("INPUT");
             checkbox.type = "checkbox";
             checkbox.name = 'chck';
+            //Saving the checkboxes state
             if (checkBoxState[inner] === true){
                 checkbox.checked = true;
             }
-
+            /*
+             *  On checkbox click function.
+             *  Getting all the checkboxes and changing its state in global array, when it was clicked by user.
+             */
             checkbox.onclick = function () {
                 var chk = getCheckedBoxes('chck');
                 for (var inty = 0; inty < chk.length; inty++){
@@ -85,36 +107,7 @@ function getCheckedBoxes(chkboxName) {
             };
             th.appendChild(checkbox);
             th.onclick = function () {
-            /*
-              var t = document.getElementById('tableID');
-              var tbody = table.getElementsByTagName('tbody')[0];
-              var trow = t.getElementsByTagName('tr');
-              var therow = tbody.getElementsByTagName('th');
-              var thead = document.getElementsByTagName('thead');
-              var theadrow = thead[0].getElementsByTagName('tr');
-              var theadr = theadrow[0].getElementsByTagName("th");
-              var gettercount;
-              for (var ink = 0; ink < theadr.length; ink++) {
-                  if (this.innerHTML === theadr[ink].innerHTML && theadr[ink] !== theadr[0]) {
-                      //theadr[ink].hidden = true;
-                      gettercount = ink
-                  }
-              }
-              for (var i = 0; i < trow.length; i++) {
-                  var cell = trow[i].getElementsByTagName("td");
-                  for (var int = 0; int < cell.length; int++) {
-                      if (this.cellIndex !== int + 1) {
-                          cell[int].style.visibility = 'hidden';
-                      } else {
-                          if (cell[int].innerHTML === '—') {
-                              trow[i].classList.add('pairhid');
-                          }
-                      }
-                  } // Идея. Воспользоваться - в полях и скрывать по ним. Нет значения, значит нет монеты.
-                         }// Идея говно
-
-                */
-            //t.classList.add('hideUninteresting');
+            // Cropped block. Supportive function to click exchange.
              };
 
             inner++;
@@ -126,7 +119,10 @@ function getCheckedBoxes(chkboxName) {
         var tableBody = document.createElement('tbody');
         table.appendChild(tableBody);
 
-
+        /* Massive loop-block. Pushes data from server JSON array to our table.
+         * Creates blocks, cells and rows dynamically.
+         * Throw - into the cell if there are no value for this Exchanger, but the pair exists.
+         */
         for (var r in msg['rnames']) {
             var tr = document.createElement('tr');
             var text = (msg['rnames'])[r];
@@ -138,8 +134,6 @@ function getCheckedBoxes(chkboxName) {
                 for (var iter = 0; iter < json_msg.length; iter++){
                 var io = json_msg[iter]['Value'];
                 for (var commendme in io) {
-                    //alert(io[commendme]['PairName']);
-
                     if ((io[commendme]['PairName'] === (msg['rnames'])[r]) && (io[commendme]['Exchange'] === (msg['cnames'])[c])) {
                         var td = document.createElement('td');
                         var v = io[commendme]['Tick'];
@@ -148,6 +142,8 @@ function getCheckedBoxes(chkboxName) {
                         } else {
                             td.appendChild(document.createTextNode('—'));
                         }
+                        //Unnecessary block for now
+                        //Toggles the UP Green arrow and the DOWN Red arrow
                         /*if (json_msg[i]['Chg'] == 'U') {
                             td.appendChild(document.createElement("up"));
                         } else if (json_msg[i]['Chg'] == 'D') {
@@ -170,6 +166,8 @@ function getCheckedBoxes(chkboxName) {
             tr.setAttribute("title", text);
             tableBody.appendChild(tr);
         }
+
+        //Supportive cycle for the first button. Finds Max&Min, also toggle NOPE color.
         var tbody = table.getElementsByTagName('tbody')[0];
         var trow = tbody.getElementsByTagName('tr');
 
@@ -204,6 +202,7 @@ function getCheckedBoxes(chkboxName) {
             }
         }
 
+        //Second button supportive hide cycle
         for (var secinter = 0; secinter < trow.length; secinter++){
                     var cells = trow[secinter].getElementsByTagName('td');
                     countingstarts = 0;
@@ -219,6 +218,7 @@ function getCheckedBoxes(chkboxName) {
                     }
                 }
 
+        // Loop, which is used to select style
         var elements = document.getElementsByTagName('tr');
         for (var i = 1; i < elements.length; i++) {
             (elements)[i].addEventListener("click", function () {
@@ -242,10 +242,12 @@ function getCheckedBoxes(chkboxName) {
             });
         }
 
+        //Div block scroller
         document.getElementById("scrdiv").addEventListener('scroll', function () {
             this.querySelector("thead").style.transform = "translate(0," + this.scrollTop + "px)";
         }, false);
 
+        //First button. Hides only non-Max&Min rows.
         var btn = document.getElementById("hidebt");
         if (!btn.hasAttribute("onclick")) {
             document.getElementById("hidebt").addEventListener('click', function () {
@@ -260,6 +262,7 @@ function getCheckedBoxes(chkboxName) {
             btn.setAttribute("onclick","true");
         }
 
+        //Second button. Provides Exchange and unimportant pairs hider
         var btn_pair = document.getElementById("pairhider");
         if (!btn_pair.hasAttribute("onclick")) {
             document.getElementById("pairhider").addEventListener('click', function () {

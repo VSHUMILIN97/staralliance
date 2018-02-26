@@ -11,7 +11,6 @@ from Exchanges.ExchangeAPI.KrakenAPI import kraken_ticker
 from Exchanges.ExchangeAPI.BitfinexAPI import bitfinex_ticker
 from Exchanges.ExchangeAPI.HitBTC import hitbtc_ticker
 from Exchanges.data_model import EMWrapper, ExchangeModel
-import random
 import time
 from mongo_db_connection import MongoDBConnection
 import asyncio
@@ -22,16 +21,14 @@ logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(a
                     level=logging.DEBUG)
 
 
+# Works with async to prevent interrupting main thread.
 async def data_parse():
-    # Методом проб и ошибок мы выяснили, что потоки нужно останавливать прямо внутри цикла, благо
-    # питсон позволяет/ Безопасность из говна и палок, как и код. Доработать со временем!
+    #
     while 1:
         try:
+            # Checking for the initial time
             sttime = time.time()
-            # Частота опроса биржи по их Public API. Легкая защита от отключения данных
-            # Lock стоит для графиков на время работы с арбитражом.
-            # Значения можно менять
-            #
+            # Supportive try-catch block. Focused on clearing python and MongoDB resources
             try:
                 if ExchangeModel.whole_data:
                     ExchangeModel.pair_clearer()
@@ -42,6 +39,7 @@ async def data_parse():
                         db.Arbnames.drop()
                     except():
                         None
+                    # Inserting data after dropping DB.
                     db.PoorArb.insert({'Value': ExchangeModel.whole_data})
                     db.Arbnames.insert({'Value': ExchangeModel.cleared_data})
                     b.close()
@@ -49,6 +47,7 @@ async def data_parse():
                     ExchangeModel.cleared_data.clear()
                     ExchangeModel.whole_data.clear()
                     ExchangeModel.support_data.clear()
+                # Multithreading ExchangeAPI.
                 t1 = Thread(target=api_get_getmarketsummaries)
                 t2 = Thread(target=api_get_getmarkethistory)
                 t3 = Thread(target=api_get_getticker)
@@ -66,6 +65,7 @@ async def data_parse():
                 t15 = Thread(target=kraken_ticker)
                 t16 = Thread(target=bitfinex_ticker)
                 t17 = Thread(target=hitbtc_ticker)
+                # Logging purposes.
                 """logging.info('t2 alive - ' + str(t2.is_alive()) +
                              ', t3 alive - ' + str(t3.is_alive()) + ', t4 alive - ' + str(t4.is_alive()) +
                              ', t6 alive - ' + str(t6.is_alive()) + ', t7 alive - ' + str(t7.is_alive()) +
@@ -127,12 +127,15 @@ async def data_parse():
                 t17.start()
             except():
                 logging.error(u'Data were not recieved')
+            # Checking for the ending time
             endtime = time.time()
             mergetime = endtime - sttime
+            # Creating a co-routine. Sending a subprocess to sleep.
             await asyncio.sleep(25 - mergetime)
         except():
             logging.error('Threads bump')
 
+# Initialise infinite data parse from public API.
 loop = asyncio.get_event_loop()
 loop.run_until_complete(data_parse())
 loop.run_forever()

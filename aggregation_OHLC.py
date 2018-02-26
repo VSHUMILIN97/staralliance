@@ -9,6 +9,14 @@ import time
 logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
                     level=logging.DEBUG)
 
+"""
+#
+#
+NOT IN WORK. CLOSE THIS SCRIPT
+#
+#
+"""
+
 
 def OHLCaggregation(ServerTime):
     import pymongo

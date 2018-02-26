@@ -2,11 +2,14 @@ import time
 import logging
 
 
+# Class wrapper for DATA from Exchanges
 class ExchangeModel:
+    # Supported arrays.
     whole_data = []
     cleared_data = []
     support_data = []
 
+    # Class initialise
     def __init__(self, exchange, pairname, bid, ask):
         self.ask = ask
         self.exchange = exchange
@@ -15,18 +18,28 @@ class ExchangeModel:
         data_merge = {"Exchange": exchange, "PairName": pairname, "Tick": (bid+ask)/2}
         self.whole_data.append(data_merge)
 
+    # Garbage collector
     def __del__(self):
         None
 
+    # Unnedeed func
     def pair_swapper(self):
         print(self.whole_data)
 
+    # Class model return
     def arbitration(self):
         return self.whole_data
 
     def clear(self):
         self.whole_data.clear()
 
+    """
+    This method crop full data to cleared small pieces, step by step:
+    1) PairName that supported by more than two Exchanges appended to support_data, creating cleared pair_list->
+    2) Appending data from full DATA list to cleared_data using cleared pair_list ->
+    3) Then cleaning the whole data, if it's not like clear_data.
+    IMPORTANT. WE DO NOT SEND CLEARED DATA, BECAUSE IT'S NOT FULL AND DOES NOT CONTAIN ALL THE INFORMATION
+    """
     @staticmethod
     def pair_clearer():
         if ExchangeModel.whole_data:
@@ -51,6 +64,7 @@ class ExchangeModel:
             logging.info(len(ExchangeModel.cleared_data))
 
 
+# Unsupported wrapper
 class EMWrapper(ExchangeModel):
 
     # data_safe = []

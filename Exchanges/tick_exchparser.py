@@ -6,13 +6,20 @@ from .ExchangeAPI.gatecoinAPI import gatecoin_ticker
 from .ExchangeAPI.livecoinAPI import livecoin_ticker, livecoin_ticker_all_info
 from .ExchangeAPI.bleutradeAPI import bleutrade_ticker
 from .ExchangeAPI.ExmoAPI import exmo_ticker
-import random
 import time
 from threading import Thread
 import logging
 
 logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
                     level=logging.DEBUG)
+
+"""
+#
+#
+NOT IN WORK. CLOSE THIS SCRIPT
+#
+#
+"""
 
 
 class ThreadingT(Thread):

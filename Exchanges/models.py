@@ -2,16 +2,20 @@ from django.db import models
 from django.utils import timezone
 # Create your models here.
 
-# Для чистоты кода используем переменные с названиями bit_obj_tick вместо bitObjTick
-# В_питоне_модно_с_граундами_писать , а не с АпперКейсомТипВотТак
-# Python != Java :'(((
-
 
 """class PublicAPI(Document):
     PairName = StringField(max_length=12)
     TimeStamp = DateTimeField(default=timezone.now, help_text='returned date')
     Tick = FloatField()
     Aggregated = BooleanField(default=False)"""
+
+"""
+#
+#
+NOT IN WORK. CLOSE THIS SCRIPT. WE DO NOT USE THE FULL ORM OPPORTUNITIES
+#
+#
+"""
 
 
 class BittrexOHLC(models.Model):

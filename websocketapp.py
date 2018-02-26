@@ -10,44 +10,40 @@ logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(a
                     level=logging.DEBUG)
 
 
-# Initial
-# Метод, который осуществляет постоянный коннект с портом и IP
+# Function, that provides connect between client and server.
+# Works with async to prevent interrupting main thread.
 async def arbitration_socket(websocket, path):
-    # Вмазанная часть коннекта и постоянной пары
+    # After the connect with client was established open connect to MongoDB
     b = MongoDBConnection().start_db()
     db = b.PiedPiperStock
     while 1:
-        # Довольно простая реализация через arbitration aggregate, собираем данные в JSON пакет и передаем на сервер.
-        # db.temporaryTick.drop()
-        # Exchanges.TimeAggregator.arbitration_aggregate()
-        # ttc = db.temporaryTick.find()
-        # ticks = list(ttc)
+        # Checking for the initial time
         sttime = time.time()
+        # Checking for the distinct Exchange and Pair names.
         cnames = db.PoorArb.distinct('Value.Exchange')
         rnames = db.Arbnames.distinct('Value')
-        arbitary_data = db.PoorArb.find({}, {"_id": False}).limit(1)
-        if arbitary_data.count() == 0:
+        arbitage_data = db.PoorArb.find({}, {"_id": False}).limit(1)
+        # Checking for the current data after it was inserted.
+        if arbitage_data.count() == 0:
             time.sleep(1)
-            arbitary_data = db.PoorArb.find({}, {"_id": False})
+            arbitage_data = db.PoorArb.find({}, {"_id": False})
+        # Importing library to transform data to JSON format
         from bson.json_util import dumps as dss
-        # ExchangeModel.whole_data
-        websocket_arbitration = {'ticks': dss(arbitary_data), 'cnames': sorted(cnames),
+        # Creating dict to pass it through socket transport
+        websocket_arbitration = {'ticks': dss(arbitage_data), 'cnames': sorted(cnames),
                                  'rnames': sorted(rnames)}
         websocket_arbitration = json.dumps(websocket_arbitration)
+        # Creating a co-routine for pass data
         await websocket.send(websocket_arbitration)
-        arbitary_data.close()
+        # Closing the cursor
+        arbitage_data.close()
+        # Checking for the ending time
         mttime = time.time() - sttime
+        # Creating a co-routine. Sending a subprocess to sleep.
         await asyncio.sleep(25 - mttime)
 
-# На данный момент блок кода ничего не отлавливает.
-try:
-    if asyncio.get_event_loop().is_running():
-        asyncio.get_event_loop().close()
-except ():
-    logging.info(u'non crit')
-
 logging.info(u'Arbitartion websocket started')
-# Отлавливаем наш While 1 event, т.е arbitration_socket и заставляем сокет слушать его бегать бесконечно.
+# Initialise websocket connection on host 127.0.0.1 and port 8090
 asyncio.get_event_loop().run_until_complete(websockets.serve(arbitration_socket, '127.0.0.1', 8090))
 asyncio.get_event_loop().run_forever()
 
