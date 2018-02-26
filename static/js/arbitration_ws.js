@@ -7,8 +7,10 @@
     return Number(Math.round(value+'e8')+'e-8');
      }
     }
-
- var checkBoxState = [];
+function isTrue(value) {
+    return value === true
+}
+ var checkBoxState = [false, false, false, false, false, false, false, false, false, false, false, false, false];
 function getCheckedBoxes(chkboxName) {
   var checkboxes = document.getElementsByName(chkboxName);
   var checkboxesChecked = [];
@@ -16,7 +18,10 @@ function getCheckedBoxes(chkboxName) {
   for (var i=0; i<checkboxes.length; i++) {
      // And stick the checked ones onto an array...
      if (checkboxes[i].checked) {
-        checkboxesChecked.push(checkboxes[i]);
+        checkboxesChecked.push(true);
+     }
+     else{
+         checkboxesChecked.push(false);
      }
   }
   // Return the array if it is non-empty, or null
@@ -54,16 +59,33 @@ function getCheckedBoxes(chkboxName) {
         th.style.width = "150px";
         tr.appendChild(th);
 
+        inner = 0;
         for (var name in msg['cnames']) {
+
             var th = document.createElement('th');
             th.appendChild(document.createTextNode((msg['cnames'])[name]));
             th.style.width = "110px";
             var checkbox = document.createElement("INPUT");
             checkbox.type = "checkbox";
-            th.appendChild(checkbox);
-             th.onclick = function () {
+            checkbox.name = 'chck';
+            if (checkBoxState[inner] === true){
+                checkbox.checked = true;
+            }
 
-              var checkedBoxes = getCheckedBoxes("mycheckboxes");
+            checkbox.onclick = function () {
+                var chk = getCheckedBoxes('chck');
+                for (var inty = 0; inty < chk.length; inty++){
+
+                if (chk[inty] === true){
+                    checkBoxState[inty] = true;
+                } else {
+                    checkBoxState[inty] = false;
+                }
+                }
+            };
+            th.appendChild(checkbox);
+            th.onclick = function () {
+            /*
               var t = document.getElementById('tableID');
               var tbody = table.getElementsByTagName('tbody')[0];
               var trow = t.getElementsByTagName('tr');
@@ -85,15 +107,17 @@ function getCheckedBoxes(chkboxName) {
                           cell[int].style.visibility = 'hidden';
                       } else {
                           if (cell[int].innerHTML === '—') {
-                              trow[i].classList.add('hid');
+                              trow[i].classList.add('pairhid');
                           }
                       }
                   } // Идея. Воспользоваться - в полях и скрывать по ним. Нет значения, значит нет монеты.
                          }// Идея говно
 
-
+                */
             //t.classList.add('hideUninteresting');
              };
+
+            inner++;
             tr.appendChild(th);
         }
 
@@ -180,6 +204,21 @@ function getCheckedBoxes(chkboxName) {
             }
         }
 
+        for (var secinter = 0; secinter < trow.length; secinter++){
+                    var cells = trow[secinter].getElementsByTagName('td');
+                    countingstarts = 0;
+                    for (var trdinter = 0; trdinter < cells.length; trdinter++){
+                        if (checkBoxState[trdinter] === false){
+                            cells[trdinter].classList.toggle('pairhid')
+                        } else if (cells[trdinter].innerText === '—'){
+                            countingstarts++;
+                        }
+                    }
+                    if (countingstarts === checkBoxState.filter(isTrue).length){
+                        trow[secinter].classList.toggle('hidpairrow')
+                    }
+                }
+
         var elements = document.getElementsByTagName('tr');
         for (var i = 1; i < elements.length; i++) {
             (elements)[i].addEventListener("click", function () {
@@ -219,5 +258,21 @@ function getCheckedBoxes(chkboxName) {
                 }
             }, false);
             btn.setAttribute("onclick","true");
+        }
+
+        var btn_pair = document.getElementById("pairhider");
+        if (!btn_pair.hasAttribute("onclick")) {
+            document.getElementById("pairhider").addEventListener('click', function () {
+                
+                table.classList.toggle("hidePair");
+
+                if (this.innerText === "Show Exchanges") {
+                    this.innerText = "Hide Exchanges";
+                }
+                else {
+                    this.innerText = "Show Exchanges";
+                }
+            }, false);
+            btn_pair.setAttribute("onclick","true");
         }
    };

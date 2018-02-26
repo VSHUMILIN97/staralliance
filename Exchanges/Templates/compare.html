@@ -6,7 +6,7 @@
   </table>
 </div>
 <div class="btnHolder">
-  <button class="hidbt" id="hidebt">Hide Useless</button>
+  <button class="hidbt" id="hidebt">Hide Useless</button> <button class="hidbt" id="pairhider">Hide Exchanges</button>
 </div>
 {% load compress static %}
 {% compress js %}
@@ -91,6 +91,12 @@ down {
 .hid {
   display: table-row;
 }
+.hidpairrow{
+    display: table-row;
+}
+.pairhid{
+    visibility: visible;
+}
 
 .hidbt {
   background-color: white;
@@ -99,7 +105,8 @@ down {
 	font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
   font-size: 16px;
 	font-weight: bold;
-  width: 100%;
+    position: relative;
+  width: 50%;
 	text-align: center;
 	outline: none;
 }
@@ -121,6 +128,12 @@ down {
 
 table.hideUninteresting tr.hid {
   display: none;
+}
+table.hidePair td.pairhid{
+    visibility: hidden;
+}
+table.hidePair tr.hidpairrow{
+    display: none;
 }
 </style>
 {% endblock content %}
