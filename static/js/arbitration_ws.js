@@ -8,6 +8,20 @@
      }
     }
 
+ var checkBoxState = [];
+function getCheckedBoxes(chkboxName) {
+  var checkboxes = document.getElementsByName(chkboxName);
+  var checkboxesChecked = [];
+  // loop over them all
+  for (var i=0; i<checkboxes.length; i++) {
+     // And stick the checked ones onto an array...
+     if (checkboxes[i].checked) {
+        checkboxesChecked.push(checkboxes[i]);
+     }
+  }
+  // Return the array if it is non-empty, or null
+  return checkboxesChecked.length > 0 ? checkboxesChecked : null;
+}
 
     ws.onopen = function(event){
 
@@ -37,35 +51,48 @@
         // columns = msg['columns'];
 
         var th = document.createElement('th');
-        th.style.width = "200px";
+        th.style.width = "150px";
         tr.appendChild(th);
-
 
         for (var name in msg['cnames']) {
             var th = document.createElement('th');
             th.appendChild(document.createTextNode((msg['cnames'])[name]));
             th.style.width = "110px";
+            var checkbox = document.createElement("INPUT");
+            checkbox.type = "checkbox";
+            th.appendChild(checkbox);
              th.onclick = function () {
-                 var t = document.getElementById('tableID');
-                 var tbody = table.getElementsByTagName('tbody')[0];
-                 var trow = t.getElementsByTagName('tr');
-                 var therow = tbody.getElementsByTagName('th');
-                 var thead = document.getElementsByTagName('thead');
-                 var theadrow = thead[0].getElementsByTagName('tr');
-                 var theadr = theadrow[0].getElementsByTagName("th");
-                 for (var ink = 0; ink < theadr.length; ink++){
-                     if (this.innerHTML !== theadr[ink].innerHTML && theadr[ink] !== theadr[0]){
-                         theadr[ink].className = 'hidden'
-                     }
-                 }
-                 for (var i = 0; i < trow.length; i++) {
-                     var cell = trow[i].getElementsByTagName("td");
-                     for (var int = 0; int < cell.length; int++){
-                     if (this.cellIndex !== int + 1 ) {
-                         cell[int].className = 'hidden';
-                     }
-                     } // Идея. Воспользоваться - в полях и скрывать по ним. Нет значения, значит нет монеты.
-                 }// Идея говно
+
+              var checkedBoxes = getCheckedBoxes("mycheckboxes");
+              var t = document.getElementById('tableID');
+              var tbody = table.getElementsByTagName('tbody')[0];
+              var trow = t.getElementsByTagName('tr');
+              var therow = tbody.getElementsByTagName('th');
+              var thead = document.getElementsByTagName('thead');
+              var theadrow = thead[0].getElementsByTagName('tr');
+              var theadr = theadrow[0].getElementsByTagName("th");
+              var gettercount;
+              for (var ink = 0; ink < theadr.length; ink++) {
+                  if (this.innerHTML === theadr[ink].innerHTML && theadr[ink] !== theadr[0]) {
+                      //theadr[ink].hidden = true;
+                      gettercount = ink
+                  }
+              }
+              for (var i = 0; i < trow.length; i++) {
+                  var cell = trow[i].getElementsByTagName("td");
+                  for (var int = 0; int < cell.length; int++) {
+                      if (this.cellIndex !== int + 1) {
+                          cell[int].style.visibility = 'hidden';
+                      } else {
+                          if (cell[int].innerHTML === '—') {
+                              trow[i].classList.add('hid');
+                          }
+                      }
+                  } // Идея. Воспользоваться - в полях и скрывать по ним. Нет значения, значит нет монеты.
+                         }// Идея говно
+
+
+            //t.classList.add('hideUninteresting');
              };
             tr.appendChild(th);
         }
