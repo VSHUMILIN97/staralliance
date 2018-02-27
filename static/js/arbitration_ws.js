@@ -213,7 +213,7 @@ var checkBoxState = [false, false, false, false, false, false, false, false, fal
                             countingstarts++;
                         }
                     }
-                    if (countingstarts === checkBoxState.filter(isTrue).length){
+                    if (countingstarts >= checkBoxState.filter(isTrue).length - 1){
                         trow[secinter].classList.toggle('hidpairrow')
                     }
                 }
