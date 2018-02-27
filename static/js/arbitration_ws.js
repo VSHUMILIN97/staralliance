@@ -1,5 +1,6 @@
  var ws = new WebSocket("ws://" + window.location.hostname + ":8090/");
 
+// Supportive function to provide search in the current table
 function searchFunc() {
   // Declare variables
   var input, filter, table, tr, td, i, ftable;
@@ -189,7 +190,11 @@ var checkBoxState = [false, false, false, false, false, false, false, false, fal
             tr.setAttribute("title", text);
             tableBody.appendChild(tr);
         }
-
+        var input = document.getElementById("exchInput");
+        var filter = input.value.toUpperCase();
+        if (filter !== ''){
+            searchFunc()
+        }
         //Supportive cycle for the first button. Finds Max&Min, also toggle NOPE color.
         var tbody = table.getElementsByTagName('tbody')[0];
         var trow = tbody.getElementsByTagName('tr');
