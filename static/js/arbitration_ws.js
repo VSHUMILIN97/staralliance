@@ -1,5 +1,28 @@
  var ws = new WebSocket("ws://" + window.location.hostname + ":8090/");
 
+function searchFunc() {
+  // Declare variables
+  var input, filter, table, tr, td, i, ftable;
+  input = document.getElementById("exchInput");
+  filter = input.value.toUpperCase();
+  ftable = document.getElementById("tableID");
+  table = ftable.getElementsByTagName("tbody")[0];
+  tr = table.getElementsByTagName("tr");
+
+  // Loop through all table rows, and hide those who don't match the search query
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0];
+    var h = tr[i].getElementsByTagName("th")[0];
+
+    if (h) {
+      if (h.innerHTML.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }
+  }
+}
     // Supportive function to fix float number from math representation to classic 0.0000320421
     function fix(value) {
         if (value.toString().indexOf('e')) {
