@@ -140,12 +140,20 @@ var checkBoxState = [false, false, false, false, false, false, false, false, fal
              */
             checkbox.onclick = function () {
                 var chk = getCheckedBoxes('chck');
+                var table = document.getElementById("tableID");
+                var tbody = table.getElementsByTagName('tbody')[0];
+                var trow = tbody.getElementsByTagName('tr');
                 for (var inty = 0; inty < chk.length; inty++){
 
                 if (chk[inty] === true){
                     checkBoxState[inty] = true;
                 } else {
                     checkBoxState[inty] = false;
+                    for (var hCells = 0; hCells < trow.length; hCells++){
+                       var td = trow[hCells].getElementsByTagName('td')[inty];
+                       td.classList.toggle('');
+                    }
+
                 }
                 }
             };
