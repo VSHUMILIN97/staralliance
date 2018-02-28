@@ -1,5 +1,25 @@
  var ws = new WebSocket("ws://" + window.location.hostname + ":8090/");
 
+//Second button supportive hide function
+function forceRefresh(){
+    var table = document.getElementById("tableID");
+    var tbody = table.getElementsByTagName('tbody')[0];
+    var trow = tbody.getElementsByTagName('tr');
+        for (var secinter = 0; secinter < trow.length; secinter++){
+                    var cells = trow[secinter].getElementsByTagName('td');
+                    countingstarts = 0;
+                    for (var trdinter = 0; trdinter < cells.length; trdinter++){
+                        if (checkBoxState[trdinter] === false){
+                            cells[trdinter].classList.toggle('pairhid')
+                        } else if (cells[trdinter].innerText === '—'){
+                            countingstarts++;
+                        }
+                    }
+                    if (countingstarts >= checkBoxState.filter(isTrue).length - 1){
+                        trow[secinter].classList.toggle('hidpairrow')
+                    }
+                }
+}
 // Supportive function to provide search in the current table
 function searchFunc() {
   // Declare variables
@@ -190,6 +210,8 @@ var checkBoxState = [false, false, false, false, false, false, false, false, fal
             tr.setAttribute("title", text);
             tableBody.appendChild(tr);
         }
+
+        //Search state crutch
         var input = document.getElementById("exchInput");
         var filter = input.value.toUpperCase();
         if (filter !== ''){
@@ -230,21 +252,16 @@ var checkBoxState = [false, false, false, false, false, false, false, false, fal
             }
         }
 
-        //Second button supportive hide cycle
-        for (var secinter = 0; secinter < trow.length; secinter++){
-                    var cells = trow[secinter].getElementsByTagName('td');
-                    countingstarts = 0;
-                    for (var trdinter = 0; trdinter < cells.length; trdinter++){
-                        if (checkBoxState[trdinter] === false){
-                            cells[trdinter].classList.toggle('pairhid')
-                        } else if (cells[trdinter].innerText === '—'){
-                            countingstarts++;
-                        }
-                    }
-                    if (countingstarts >= checkBoxState.filter(isTrue).length - 1){
-                        trow[secinter].classList.toggle('hidpairrow')
-                    }
-                }
+        //Exch changer state crutch
+        for (var checking = 0; checking < checkBoxState.length; checking++){
+            if (checkBoxState[checking] === false) {
+                continue
+            } else{
+                forceRefresh();
+                break;
+            }
+        }
+        //forceRefresh();
 
         // Loop, which is used to select style
         var elements = document.getElementsByTagName('tr');
@@ -294,9 +311,8 @@ var checkBoxState = [false, false, false, false, false, false, false, false, fal
         var btn_pair = document.getElementById("pairhider");
         if (!btn_pair.hasAttribute("onclick")) {
             document.getElementById("pairhider").addEventListener('click', function () {
-                
+                forceRefresh();
                 table.classList.toggle("hidePair");
-
                 if (this.innerText === "Show Exchanges") {
                     this.innerText = "Hide Exchanges";
                 }
