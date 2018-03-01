@@ -149,10 +149,10 @@ var checkBoxState = [false, false, false, false, false, false, false, false, fal
                     checkBoxState[inty] = true;
                 } else {
                     checkBoxState[inty] = false;
-                    for (var hCells = 0; hCells < trow.length; hCells++){
-                       var td = trow[hCells].getElementsByTagName('td')[inty];
-                       td.classList.toggle('');
-                    }
+                    //for (var hCells = 0; hCells < trow.length; hCells++){
+                      // var td = trow[hCells].getElementsByTagName('td')[inty];
+                     //  td.classList.toggle('');
+                    //}
 
                 }
                 }
