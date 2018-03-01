@@ -32,9 +32,13 @@ def pair_fix(pair_string):
 
 
 def hitbtc_ticker():
+    global data_request
     logging.info("HitbtcAPI method started")
     try:
-        data_request = requests.get("https://api.hitbtc.com/api/2/public/ticker")
+        try:
+            data_request = requests.get("https://api.hitbtc.com/api/2/public/ticker")
+        except ConnectionError:
+            logging.error(u'HitBTC API cannot be reached')
         full_data = json.loads(data_request.text)
         for item in full_data:
             try:
@@ -42,5 +46,5 @@ def hitbtc_ticker():
             except TypeError:
                 continue
         logging.info('HitbtcAPI method stopped')
-    except():
+    except OSError:
         logging.error('HitbtcAPI method crashed')

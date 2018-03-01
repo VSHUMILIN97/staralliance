@@ -30,10 +30,13 @@ def pair_fix(pair_string):
 
 
 def kraken_ticker():
-    global eu_name_index
+    global eu_name_index, info_request, data_request
     logging.info('Kraken API has started')
     try:
-        info_request = requests.get("https://api.kraken.com/0/public/AssetPairs")
+        try:
+            info_request = requests.get("https://api.kraken.com/0/public/AssetPairs")
+        except ConnectionError:
+            logging.error(u'Kraken info API cannot be reached')
         info_data = json.loads(info_request.text)
         info_name = info_data['result']
         pair_string = ''
@@ -50,7 +53,10 @@ def kraken_ticker():
         #
         alt_name = pair_string.split(',')
         alt_china_name = china_string.split(',')
-        data_request = requests.get("https://api.kraken.com/0/public/Ticker?pair=" + pair_string)
+        try:
+            data_request = requests.get("https://api.kraken.com/0/public/Ticker?pair=" + pair_string)
+        except ConnectionError:
+            logging.error(u'Kraken API cannot be reached')
         json_data = json.loads(data_request.text)
         data = json_data['result']
         iterable2 = 0
@@ -60,6 +66,5 @@ def kraken_ticker():
                 eu_name_index = alt_china_name.index(each_item)
             ExchangeModel('Kraken', pair_fix(alt_name[eu_name_index]), float(data_alt_var['b'][0]), float(data_alt_var['a'][0]))
             iterable2 += 1
-        logging.info('Kraken API executed')
-    except():
+    except OSError:
         logging.error('Kraken API was prevented from execution')

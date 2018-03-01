@@ -37,14 +37,18 @@ def pair_fix(pair_string):
 
 
 def binance_ticker():
+    global api_request
     logging.info(u'Binance getticker started')
     #
     try:
-        b = MongoDBConnection().start_db()
-        db = b.PiedPiperStock
-        release = db.BinanceTick
+        # b = MongoDBConnection().start_db()
+        # db = b.PiedPiperStock
+        # release = db.BinanceTick
         #
-        api_request = requests.get("https://www.binance.com/api/" + "v3/ticker/bookTicker")
+        try:
+            api_request = requests.get("https://www.binance.com/api/" + "v3/ticker/bookTicker")
+        except ConnectionError:
+            logging.error(u'Binance API cannot be reached')
         # Формируем JSON массив из данных с API
         logging.info('Binance API returned - ' + str(api_request.status_code))
         if api_request.status_code == 200:
@@ -52,14 +56,14 @@ def binance_ticker():
             # Если все ок - парсим
             for item in json_data:
                 ExchangeModel("Binance", pair_fix(item['symbol']), float(item['bidPrice']), float(item['askPrice']))
-                if item['symbol'] in pairlist:
-                    bid, ask = float(item['bidPrice']), float(item['askPrice'])
-                    data = {'PairName': pair_fix(item['symbol']), 'Tick': (ask + bid) / 2,
-                            'TimeStamp': timezone.now(), 'Mod': False}
-                    release.insert(data)
-                else:
-                    continue
-            logging.info(u'Binance getticker ended successfully')
-        MongoDBConnection().stop_connect()
-    except():
+
+                # if item['symbol'] in pairlist:
+                #     bid, ask = float(item['bidPrice']), float(item['askPrice'])
+                #     data = {'PairName': pair_fix(item['symbol']), 'Tick': (ask + bid) / 2,
+                #             'TimeStamp': timezone.now(), 'Mod': False}
+                #    #  release.insert(data)
+                # else:
+                #     continue
+        # MongoDBConnection().stop_connect()
+    except OSError:
         logging.error(u'Binance parse mistake')

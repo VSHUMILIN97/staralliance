@@ -17,14 +17,17 @@ def pair_fix(pair_string):
 
 
 def poloniex_ticker():
+    global api_request
     logging.info(u'Poloniex getticker started')
     #
-    b = MongoDBConnection().start_db()
-    db = b.PiedPiperStock
-    test = db.PoloniexTick
+    # b = MongoDBConnection().start_db()
+    # db = b.PiedPiperStock
+    # test = db.PoloniexTick
     #
-
-    api_request = requests.get("https://poloniex.com/public" + "?command=returnTicker")
+    try:
+        api_request = requests.get("https://poloniex.com/public" + "?command=returnTicker")
+    except ConnectionError:
+        logging.error(u'Poloniex API cannot be reached')
     #
     logging.info('Poloniex API returned - ' + str(api_request.status_code))
     if api_request.status_code == 200:
@@ -32,9 +35,8 @@ def poloniex_ticker():
         for item in json_data:
             ExchangeModel("Poloniex", pair_fix(item), float(json_data[item]['highestBid']),
                           float(json_data[item]['lowestAsk']))
-            if item in pairlist:
-                bid, ask = float(json_data[item]['highestBid']), float(json_data[item]['lowestAsk'])
-                data = {'PairName': pair_fix(item), 'Tick': (ask + bid) / 2, 'TimeStamp': timezone.now(), 'Mod': False}
-                test.insert(data)
-    MongoDBConnection().stop_connect()
-    logging.info(u'Poloniex getticker ended')
+            # if item in pairlist:
+            #     bid, ask = float(json_data[item]['highestBid']), float(json_data[item]['lowestAsk'])
+            #     data = {'PairName': pair_fix(item), 'Tick': (ask + bid) / 2, 'TimeStamp': timezone.now(), 'Mod': False}
+            #     test.insert(data)
+    # MongoDBConnection().stop_connect()

@@ -22,14 +22,6 @@ class ExchangeModel:
     def __del__(self):
         None
 
-    # Unnedeed func
-    def pair_swapper(self):
-        print(self.whole_data)
-
-    # Class model return
-    def arbitration(self):
-        return self.whole_data
-
     def clear(self):
         self.whole_data.clear()
 
@@ -62,21 +54,3 @@ class ExchangeModel:
             logging.info(len(ExchangeModel.support_data))
             logging.info(len(ExchangeModel.whole_data))
             logging.info(len(ExchangeModel.cleared_data))
-
-
-# Unsupported wrapper
-class EMWrapper(ExchangeModel):
-
-    # data_safe = []
-
-    @staticmethod
-    def carrier():
-        if ExchangeModel.whole_data:
-            return ExchangeModel.whole_data
-
-    # Used to clear the whole list
-    @staticmethod
-    def cleaar():
-        logging.info(ExchangeModel.whole_data)
-        ExchangeModel.whole_data.clear()
-

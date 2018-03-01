@@ -16,36 +16,34 @@ def pair_fix(pair_string):
 
 
 def livecoin_ticker():
+    global api_request
     logging.info(u'livecoin getticker started')
     #
     ownpairlist = ['LTC/BTC', 'ETH/BTC', 'DASH/BTC']
     #
     try:
-        b = MongoDBConnection().start_db()
-        db = b.PiedPiperStock
-        test = db.LiveCoinTick
+        # b = MongoDBConnection().start_db()
+        # db = b.PiedPiperStock
+        # test = db.LiveCoinTick
         #
-        logging.info(u'livecoin getticker API was called')
+        logging.info(u'Livecoin getticker API was called')
         # a = '/exchange/ticker?currencyPair=LTC/BTC'
-        api_request = requests.get("https://api.livecoin.net" + "/exchange/ticker")
-        logging.info('Livecoin API returned - ' + str(api_request.status_code))
+        try:
+            api_request = requests.get("https://api.livecoin.net" + "/exchange/ticker")
+        except ConnectionError:
+            logging.error(u'Livecoin API cannot be reached')
         if api_request.status_code == 200:
-            # Формируем JSON массив из данных с API
             json_data = json.loads(api_request.text)
-            # Если все ок - парсим
             for item in json_data:
                 ExchangeModel("LiveCoin", pair_fix(item['symbol']), float(item['best_bid']), float(item['best_ask']))
-                if item['symbol'] in ownpairlist:
-                    # Назначаем объект 'result' корневым, для простоты обращения
-                    best_bid, best_ask = float(item['best_bid']), float(item['best_ask'])
-
-                    data = {'PairName': pair_fix(item['symbol']), 'Tick': (best_ask + best_bid) / 2,
-                            'TimeStamp': timezone.now(), 'Mod': False}
-                    test.insert(data)
-        logging.info(u'Livecoin getticker ended successfully')
-        MongoDBConnection().stop_connect()
-    except():
-        logging.error(u'Livecoin parse mistake')
+                # if item['symbol'] in ownpairlist:
+                #     best_bid, best_ask = float(item['best_bid']), float(item['best_ask'])
+                #     data = {'PairName': pair_fix(item['symbol']), 'Tick': (best_ask + best_bid) / 2,
+                #             'TimeStamp': timezone.now(), 'Mod': False}
+                #     test.insert(data)
+        # MongoDBConnection().stop_connect()
+    except OSError:
+        logging.error(u'Livecoin parse crash')
 
 
 # Ну собсна вот метод для LiveCoin, собирает всю полезную инфу , которая там есть.

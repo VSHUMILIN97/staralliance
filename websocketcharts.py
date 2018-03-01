@@ -7,6 +7,7 @@ from mongo_db_connection import MongoDBConnection
 logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
                     level=logging.DEBUG)
 
+
 # Function, that provides connect between client and server.
 # Works with async to prevent interrupting main thread.
 async def echo(websocket, path):

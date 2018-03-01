@@ -17,35 +17,43 @@ def pair_fix(pair_string):
 
 
 def liqui_ticker():
-    global best_ask, best_bid
+    global best_ask, best_bid, info_request, api_request
     logging.info(u'Liqui getticker started')
     #
     try:
-        b = MongoDBConnection().start_db()
-        db = b.PiedPiperStock
-        release = db.LiquiTick
+        # b = MongoDBConnection().start_db()
+        # db = b.PiedPiperStock
+        # release = db.LiquiTick
         #
-        info_request = requests.get("https://api.liqui.io/api/3/info")
+        try:
+            info_request = requests.get("https://api.liqui.io/api/3/info")
+        except ConnectionError:
+            logging.error(u'Liqui info API cannot be reached')
         info_data = json.loads(info_request.text)
         pairs = info_data['pairs']
         pair_string = ""
         for each in pairs:
             pair_string += each + '-'
-        api_request = requests.get("https://api.liqui.io" + "/api/3/ticker/" + pair_string + '?limit=1&ignore_invalid=1')
+        try:
+            api_request = requests.get("https://api.liqui.io" + "/api/3/ticker/" + pair_string +
+                                       '?limit=1&ignore_invalid=1')
+        except ConnectionError:
+            logging.error(u'Liqui API cannot be reached')
         # Формируем JSON массив из данных с API
-        logging.info('Liqui API returned - ' + str(api_request.status_code))
         if api_request.status_code == 200:
             json_data = json.loads(api_request.text)
             # Если все ок - парсим
-            for item in json_data:
-                ExchangeModel("Liqui", pair_fix(item), json_data[item]['buy'], json_data[item]['sell'])
-                best_ask = json_data[item]['buy']
-                best_bid = json_data[item]['sell']
-                #
-                data = {'PairName': pair_fix(item), 'Tick': (best_ask + best_bid) / 2,
-                        'TimeStamp': timezone.now(), 'Mod': False}
-                release.insert(data)
-            logging.info(u'Liqui getticker ended successfully')
-        MongoDBConnection().stop_connect()
-    except():
+            try:
+                for item in json_data:
+                    ExchangeModel("Liqui", pair_fix(item), json_data[item]['buy'], json_data[item]['sell'])
+            except LookupError:
+                logging.critical(u'Liqui API returned 0 elements')
+                # best_ask = json_data[item]['buy']
+                # best_bid = json_data[item]['sell']
+                # #
+                # data = {'PairName': pair_fix(item), 'Tick': (best_ask + best_bid) / 2,
+                #         'TimeStamp': timezone.now(), 'Mod': False}
+                # release.insert(data)
+        # MongoDBConnection().stop_connect()
+    except OSError:
         logging.error(u'Liqui parse mistake')

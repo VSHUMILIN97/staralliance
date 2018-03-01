@@ -85,15 +85,18 @@ def api_get_getmarketsummaries():
 def api_get_getticker():
     # Данные собираются для каждой валютной пары из списка pairlist
     # Получаем данные с API битрикса по конкретной валютной паре (ex. localhost/bittrex/btc-eth)
+    global api_request
     logging.info(u'Bittrex getticker started')
     #
-    b = MongoDBConnection().start_db()
-    db = b.PiedPiperStock
-    test = db.BittrexTick
+    # b = MongoDBConnection().start_db()
+    # db = b.PiedPiperStock
+    # test = db.BittrexTick
     #
-    api_request = requests.get("https://bittrex.com/api/v1.1/public/" + "getmarketsummaries")
+    try:
+        api_request = requests.get("https://bittrex.com/api/v1.1/public/" + "getmarketsummaries")
+    except ConnectionError:
+        logging.error(u'Bittrex API cannot be reached')
     #
-    logging.info('Bittrex API returned - ' + str(api_request.status_code))
     if api_request.status_code == 200:
         json_data = json.loads(api_request.text)
         # Если все ок - парсим
@@ -101,16 +104,14 @@ def api_get_getticker():
             # Назначаем объект 'result' корневым, для простоты обращения
             root = json_data['result']
             for item in root:
-                S = ExchangeModel("Bittrex", item['MarketName'], float(item['Bid']), float(item['Ask']))
-                if item['MarketName'] in pairlist:
-                    bid, ask = float(item['Bid']), float(item['Ask'])
-                    #
-                    data = {'PairName': pair_fix(item['MarketName']), 'Tick': (ask+bid)/2,
-                            'TimeStamp': timezone.now(), 'Mod': False}
-                    test.insert(data)
-    # logging.info(S.whole_data)
-    logging.info(u'Bittrex getticker ended')
-    MongoDBConnection().stop_connect()
+                ExchangeModel("Bittrex", item['MarketName'], float(item['Bid']), float(item['Ask']))
+                # if item['MarketName'] in pairlist:
+                #     bid, ask = float(item['Bid']), float(item['Ask'])
+                #     #
+                #     data = {'PairName': pair_fix(item['MarketName']), 'Tick': (ask+bid)/2,
+                #             'TimeStamp': timezone.now(), 'Mod': False}
+                #     test.insert(data)
+    # MongoDBConnection().stop_connect()
 
 
 # Получаем все сделки за некоторое(б-гу известное) время.

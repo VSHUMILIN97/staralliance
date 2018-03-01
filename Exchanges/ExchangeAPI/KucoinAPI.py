@@ -15,14 +15,18 @@ def pair_fix(pair_string):
 
 def kucoin_ticker():
     # Данные собираются для каждой валютной пары из списка pairlist
-    logging.info(u'Bleutrade getticker started')
+    global info_request
+    logging.info(u'Kucoin getticker started')
     try:
         #
         b = MongoDBConnection().start_db()
         db = b.PiedPiperStock
         test = db.KucoinTick
         #
-        info_request = requests.get("https://api.kucoin.com/v1/open/tick")
+        try:
+            info_request = requests.get("https://api.kucoin.com/v1/open/tick")
+        except ConnectionError:
+            logging.error(u'Kucoin API cannot be reached')
         info_data = json.loads(info_request.text)
         if info_data['code'] == 'OK':
             data = info_data['data']
@@ -40,6 +44,5 @@ def kucoin_ticker():
                         'TimeStamp': timezone.now(), 'Mod': False}
                 test.insert(data)
             MongoDBConnection().stop_connect()
-    except():
-        logging.info(u'Bleutrade parse mistake')
-    logging.info(u'Bleutrade getticker ended')
+    except OSError:
+        logging.info(u'Kucoin parse crash')

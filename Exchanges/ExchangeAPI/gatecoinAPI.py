@@ -40,27 +40,30 @@ def pair_fix(pair_string):
 
 
 def gatecoin_ticker():
+    global api_request
     logging.info(u'Gatecoin collection of data in parse')
 
     try:
-        b = MongoDBConnection().start_db()
-        db = b.PiedPiperStock
-        gcstock = db.GatecoinTick
-        api_request = requests.get("https://api.gatecoin.com/Public/LiveTickers")
+        # b = MongoDBConnection().start_db()
+        # db = b.PiedPiperStock
+        # gcstock = db.GatecoinTick
+        try:
+            api_request = requests.get("https://api.gatecoin.com/Public/LiveTickers")
+        except ConnectionError:
+            logging.error(u'Gatecoin API cannot be reached')
         #
-        logging.info('Gatecoin API returned - ' + str(api_request.status_code))
         if api_request.status_code == 200:
             json_data = json.loads(api_request.text)
             result = json_data['tickers']
             for item in result:
                 ExchangeModel("Gatecoin", pair_fix(item['currencyPair']), float(item['bid']), float(item['ask']))
-                if item['currencyPair'] in pairlist:
-                    market, bid, ask = str(item['currencyPair']), float(item['bid']), float(item['ask'])
-                    data = {'PairName': pair_fix(market), 'Tick': (bid + ask)/2,
-                            'TimeStamp': timezone.now(), 'Mod': False}
-                    gcstock.insert(data)
-                else:
-                    continue
-        MongoDBConnection().stop_connect()
-    except():
+                # if item['currencyPair'] in pairlist:
+                #     market, bid, ask = str(item['currencyPair']), float(item['bid']), float(item['ask'])
+                #     data = {'PairName': pair_fix(market), 'Tick': (bid + ask)/2,
+                #             'TimeStamp': timezone.now(), 'Mod': False}
+                #     gcstock.insert(data)
+                # else:
+                #     continue
+        # MongoDBConnection().stop_connect()
+    except OSError:
         logging.error(r'Gatecoin ticker mistake')

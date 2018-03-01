@@ -15,14 +15,18 @@ def pair_fix(pair_string):
 
 def bleutrade_ticker():
     # Данные собираются для каждой валютной пары из списка pairlist
+    global info_request, api_request
     logging.info(u'Bleutrade getticker started')
     try:
         #
-        b = MongoDBConnection().start_db()
-        db = b.PiedPiperStock
-        test = db.BleutradeTick
+        # b = MongoDBConnection().start_db()
+        # db = b.PiedPiperStock
+        # test = db.BleutradeTick
         #
-        info_request = requests.get("https://bleutrade.com/api/v2/public/getmarkets")
+        try:
+            info_request = requests.get("https://bleutrade.com/api/v2/public/getmarkets")
+        except ConnectionError:
+            logging.error(u'Bleutrade info API cannot be reached')
         info_data = json.loads(info_request.text)
         data = info_data['result']
         pair_string = ""
@@ -30,9 +34,11 @@ def bleutrade_ticker():
             pair_string += data[each_index]['MarketName']
             if each_index + 1 != len(data):
                 pair_string += ","
-        api_request = requests.get("https://bleutrade.com/api/v2/public/" + "getticker?market=" + pair_string)
+        try:
+            api_request = requests.get("https://bleutrade.com/api/v2/public/" + "getticker?market=" + pair_string)
+        except ConnectionError:
+            logging.error(u'Bleutrade API cannot be reached')
         # Формируем JSON массив из данных с API. Проверяем код ответа.
-        logging.info('Bleutrade API returned - ' + str(api_request.status_code))
         pair_array = pair_string.split(',')
         if api_request.status_code == 200:
             json_data = json.loads(api_request.text)
@@ -42,13 +48,12 @@ def bleutrade_ticker():
             index = 0
             for item in root:
                 ExchangeModel("Bleutrade", pair_fix(pair_array[index]), float(item['Bid']), float(item['Ask']))
-                bid, ask = float(item['Bid']), float(item['Ask'])
-                #
-                data = {'PairName': pair_fix(pair_array[index]), 'Tick': (ask+bid)/2,
-                        'TimeStamp': timezone.now(), 'Mod': False}
-                test.insert(data)
+               # # bid, ask = float(item['Bid']), float(item['Ask'])
+               # #
+               # data = {'PairName': pair_fix(pair_array[index]), 'Tick': (ask+bid)/2,
+               #         'TimeStamp': timezone.now(), 'Mod': False}
+               # test.insert(data)
                 index = index + 1
-        MongoDBConnection().stop_connect()
-    except():
+        # MongoDBConnection().stop_connect()
+    except OSError:
         logging.info(u'Bleutrade parse mistake')
-    logging.info(u'Bleutrade getticker ended')

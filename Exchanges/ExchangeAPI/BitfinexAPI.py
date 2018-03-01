@@ -49,23 +49,28 @@ def pair_fix(pair_string):
 
 
 def bitfinex_ticker():
+    global info_request, data_request
     logging.info('Bitfinex API method started')
     try:
         proxies = {'http': '47.89.41.164:80',
                    'https': '180.173.151.17:9797'}
-        info_request = requests.get("https://api.bitfinex.com/v1/symbols", proxies=proxies, timeout=5)
+        try:
+            info_request = requests.get("https://api.bitfinex.com/v1/symbols", proxies=proxies, timeout=5)
+        except ConnectionError:
+            logging.error(u'Bitfinex info API cannot be reached')
         info_data = json.loads(info_request.text)
         pair_string = ''
         for name in range(0, len(info_data)):
             pair_string += 't' + info_data[name].upper()
             if name + 1 < len(info_data):
                 pair_string += ','
-
-        data_request = requests.get("https://api.bitfinex.com/v2/tickers?symbols=" + pair_string,
-                                    proxies=proxies, timeout=5)
+        try:
+            data_request = requests.get("https://api.bitfinex.com/v2/tickers?symbols=" + pair_string,
+                                        proxies=proxies, timeout=5)
+        except ConnectionError:
+            logging.error(u'Bitfinex API cannot be reached')
         full_data = json.loads(data_request.text)
         for items in full_data:
             ExchangeModel('Bitfinex', pair_fix(items[0]), float(items[1]), float(items[3]))
-        logging.info('Bitfinex API method ended')
-    except():
+    except OSError:
         logging.error('Bitfinex API crashed')

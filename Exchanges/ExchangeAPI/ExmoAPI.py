@@ -19,24 +19,6 @@ def pair_fix(pair_string):
     return pair_string
 
 
-# проверка данных апи в консоли
-'''
-for i in range(0, len(pairlist)):
-        api_request = requests.get("https://api.exmo.me/v1/trades/?pair=" + pairlist[i])
-        json_data = json.loads(api_request.text)
-
-        result = json_data[str(pairlist[i])]
-
-        for item in result:
-
-            dd = datetime.fromtimestamp(item['date']).isoformat()
-            logging.info(str(pairlist[i]) + " : price " + str(item['price']) +
-                         " /qty " + str(item['quantity']) +" /sum " +  str(item['amount']) + " type " + str(item['type']).upper() +
-                         " time " + dd)
-
-'''
-
-
 def exmo_charts_data():
     global lurktime_exmo
     b = MongoDBConnection().start_db()
@@ -53,8 +35,7 @@ def exmo_charts_data():
         # Для timestamp используем формат ISO8601, который DateTime модели без проблем распознает =)
         time_after_aggregation = test.find({'PairName': pair_fix(pairlist[i]), 'Mod': False},
                                            {'TimeStamp': True}).sort('TimeStamp', pymongo.DESCENDING).limit(1)
-        #price/qty/sum
-
+        #
         for subintosub in time_after_aggregation:
             lurktime_exmo = dateutil.parser.parse(str(subintosub['TimeStamp']))
 
@@ -87,18 +68,20 @@ def exmo_charts_data():
 def exmo_ticker():
     # Данные собираются для каждой валютной пары из списка pairlist
     # Получаем данные с API битрикса по конкретной валютной паре (ex. localhost/bittrex/btc-eth)
-    global data
+    global data, api_request
     logging.info(u'Exmo getticker started')
     #
-    b = MongoDBConnection().start_db()
-    db = b.PiedPiperStock
-    test = db.ExmoTick
+    # b = MongoDBConnection().start_db()
+    # db = b.PiedPiperStock
+    # test = db.ExmoTick
     #
     logging.info(u'Exmo getticker API was called')
     #
-    api_request = requests.get("https://api.exmo.me/v1/ticker/")
+    try:
+        api_request = requests.get("https://api.exmo.me/v1/ticker/")
+    except ConnectionError:
+        logging.error(u'Exmo API cannot be reached')
     # Проверяем ответ на вшивость. Если код не 200, то данные не записываем.
-    logging.info('Exmo API returned - ' + str(api_request.status_code))
     if api_request.status_code == 200:
         # Формируем JSON массив из данных с API
         json_data = json.loads(api_request.text)
@@ -106,15 +89,13 @@ def exmo_ticker():
         for item in json_data:
             ExchangeModel("Exmo", pair_fix(item), float(json_data[item]['buy_price']),
                           float(json_data[item]['sell_price']))
-            for st in pairlist:
-                if st == str(item):
-                    bid, ask = float(json_data[item]['buy_price']), float(json_data[item]['sell_price'])
-                    #logging.info(str(item) + " : " + str(bid) + " - bid, " + str(ask) + " -  ask")
-                    data = {'PairName': pair_fix(item), 'Tick': (ask+bid)/2, 'TimeStamp': timezone.now(), 'Mod': False}
-                    test.insert(data)
-    # logging.info(S.whole_data)
-    MongoDBConnection().stop_connect()
-    logging.info(u'Exmo getticker ended')
+            # for st in pairlist:
+            #     if st == str(item):
+            #         bid, ask = float(json_data[item]['buy_price']), float(json_data[item]['sell_price'])
+            #         #logging.info(str(item) + " : " + str(bid) + " - bid, " + str(ask) + " -  ask")
+            #        data = {'PairName': pair_fix(item), 'Tick': (ask+bid)/2, 'TimeStamp': timezone.now(), 'Mod': False}
+            #         test.insert(data)
+    # MongoDBConnection().stop_connect()
 
 
 def exmo_volume_data():

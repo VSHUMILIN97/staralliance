@@ -10,7 +10,7 @@ from Exchanges.ExchangeAPI.KucoinAPI import kucoin_ticker
 from Exchanges.ExchangeAPI.KrakenAPI import kraken_ticker
 from Exchanges.ExchangeAPI.BitfinexAPI import bitfinex_ticker
 from Exchanges.ExchangeAPI.HitBTC import hitbtc_ticker
-from Exchanges.data_model import EMWrapper, ExchangeModel
+from Exchanges.data_model import ExchangeModel
 import time
 from mongo_db_connection import MongoDBConnection
 import asyncio
@@ -37,8 +37,8 @@ async def data_parse():
                     try:
                         db.PoorArb.drop()
                         db.Arbnames.drop()
-                    except():
-                        None
+                    except OSError:
+                        logging.warning(u'No collections to drop\nBreakpoint skipped')
                     # Inserting data after dropping DB.
                     db.PoorArb.insert({'Value': ExchangeModel.whole_data})
                     db.Arbnames.insert({'Value': ExchangeModel.cleared_data})
@@ -125,15 +125,16 @@ async def data_parse():
                 t14.start()
                 t15.start()
                 t17.start()
-            except():
+            except ConnectionError:
                 logging.error(u'Data were not recieved')
+                continue
             # Checking for the ending time
             endtime = time.time()
             mergetime = endtime - sttime
             # Creating a co-routine. Sending a subprocess to sleep.
             await asyncio.sleep(25 - mergetime)
-        except():
-            logging.error('Threads bump')
+        except OSError:
+            logging.error(u'Async event failed to perform\nApp will be stopped by crash')
 
 # Initialise infinite data parse from public API.
 loop = asyncio.get_event_loop()
