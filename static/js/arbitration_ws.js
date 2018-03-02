@@ -139,12 +139,15 @@ var checkBoxState = [false, false, false, false, false, false, false, false, fal
              *  Getting all the checkboxes and changing its state in global array, when it was clicked by user.
              */
             checkbox.onclick = function () {
+                if (checkbox.disabled === true){
+                    alert('Sorry. You cannot choose, until you show all exchanges again.' +
+                        ' We are working on this problem')
+                }
                 var chk = getCheckedBoxes('chck');
                 var table = document.getElementById("tableID");
                 var tbody = table.getElementsByTagName('tbody')[0];
                 var trow = tbody.getElementsByTagName('tr');
                 for (var inty = 0; inty < chk.length; inty++){
-
                 if (chk[inty] === true){
                     checkBoxState[inty] = true;
                 } else {
@@ -321,11 +324,18 @@ var checkBoxState = [false, false, false, false, false, false, false, false, fal
             document.getElementById("pairhider").addEventListener('click', function () {
                 forceRefresh();
                 table.classList.toggle("hidePair");
+                var checkbox = document.getElementsByName("chck");
                 if (this.innerText === "Show Exchanges") {
                     this.innerText = "Hide Exchanges";
+                    for (var ch_state_block = 0; ch_state_block < checkbox.length; ch_state_block++){
+                        checkbox[ch_state_block].disabled = false;
+                    }
                 }
                 else {
                     this.innerText = "Show Exchanges";
+                    for (var ch_state2_block = 0; ch_state2_block < checkbox.length; ch_state2_block++){
+                        checkbox[ch_state2_block].disabled = true;
+                    }
                 }
             }, false);
             btn_pair.setAttribute("onclick","true");
