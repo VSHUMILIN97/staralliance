@@ -119,8 +119,7 @@ var checkBoxState = [false, false, false, false, false, false, false, false, fal
         var th = document.createElement('th');
         th.style.width = "150px";
         tr.appendChild(th);
-
-
+        
         // Header cycle. Pushing Exchanges in table-header block. Also define onClick functions.
         inner = 0; // Iteration variable
         for (var name in msg['cnames']) {
@@ -139,14 +138,11 @@ var checkBoxState = [false, false, false, false, false, false, false, false, fal
              *  Getting all the checkboxes and changing its state in global array, when it was clicked by user.
              */
             checkbox.onclick = function () {
-                if (checkbox.disabled === true){
-                    alert('Sorry. You cannot choose, until you show all exchanges again.' +
-                        ' We are working on this problem')
-                }
+
                 var chk = getCheckedBoxes('chck');
                 var table = document.getElementById("tableID");
                 var tbody = table.getElementsByTagName('tbody')[0];
-                var trow = tbody.getElementsByTagName('tr');
+                //var trow = tbody.getElementsByTagName('tr');
                 for (var inty = 0; inty < chk.length; inty++){
                 if (chk[inty] === true){
                     checkBoxState[inty] = true;
@@ -156,13 +152,16 @@ var checkBoxState = [false, false, false, false, false, false, false, false, fal
                       // var td = trow[hCells].getElementsByTagName('td')[inty];
                      //  td.classList.toggle('');
                     //}
-
                 }
                 }
             };
             th.appendChild(checkbox);
             th.onclick = function () {
             // Cropped block. Supportive function to click exchange.
+                if (checkbox.disabled === true){
+                    alert('Sorry. You cannot choose, until you show all exchanges again.' +
+                        ' We are working on this problem')
+                }
              };
 
             inner++;
