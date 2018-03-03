@@ -1,9 +1,8 @@
+import asyncio
 import json
 import logging
-from django.utils import timezone
 import requests
 from Exchanges.data_model import ExchangeModel
-from mongo_db_connection import MongoDBConnection
 
 logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
                     level=logging.DEBUG)
@@ -15,74 +14,28 @@ def pair_fix(pair_string):
     return pair_string
 
 
-def livecoin_ticker():
+async def livecoin_ticker():
     global api_request
     logging.info(u'livecoin getticker started')
     #
-    ownpairlist = ['LTC/BTC', 'ETH/BTC', 'DASH/BTC']
-    #
-    try:
-        # b = MongoDBConnection().start_db()
-        # db = b.PiedPiperStock
-        # test = db.LiveCoinTick
-        #
-        logging.info(u'Livecoin getticker API was called')
-        # a = '/exchange/ticker?currencyPair=LTC/BTC'
+    while 1:
         try:
-            api_request = requests.get("https://api.livecoin.net" + "/exchange/ticker")
-        except ConnectionError:
-            logging.error(u'Livecoin API cannot be reached')
-        if api_request.status_code == 200:
-            json_data = json.loads(api_request.text)
-            for item in json_data:
-                ExchangeModel("LiveCoin", pair_fix(item['symbol']), float(item['best_bid']), float(item['best_ask']))
-                # if item['symbol'] in ownpairlist:
-                #     best_bid, best_ask = float(item['best_bid']), float(item['best_ask'])
-                #     data = {'PairName': pair_fix(item['symbol']), 'Tick': (best_ask + best_bid) / 2,
-                #             'TimeStamp': timezone.now(), 'Mod': False}
-                #     test.insert(data)
-        # MongoDBConnection().stop_connect()
-    except OSError:
-        logging.error(u'Livecoin parse crash')
+            #
+            logging.info(u'Livecoin getticker API was called')
+            try:
+                api_request = requests.get("https://api.livecoin.net" + "/exchange/ticker")
+            except ConnectionError:
+                logging.error(u'Livecoin API cannot be reached')
+            if api_request.status_code == 200:
+                json_data = json.loads(api_request.text)
+                for item in json_data:
+                    ExchangeModel("LiveCoin", pair_fix(item['symbol']), float(item['best_bid']), float(item['best_ask']))
+            await asyncio.sleep(18.4)
+        except OSError:
+            logging.error(u'Livecoin parse crash')
+            continue
 
 
-# Ну собсна вот метод для LiveCoin, собирает всю полезную инфу , которая там есть.
-# Метод разбавлен приятными строчками для дебага
-# Вызывается в t5
-# Боже, как же я люблю парсить
-def livecoin_ticker_all_info():
-    logging.info(u'LiveCoin collect all data started')
-
-    try:
-        b = MongoDBConnection().start_db()
-        db = b.PiedPiperStock
-        test = db.LiveCoin
-        api_request = requests.get("https://api.livecoin.net/exchange/ticker")
-        # Формируем JSON массив из данных с API
-        json_data = json.loads(api_request.text)
-        # Если все ок - парсим
-        # Назначаем объект 'result' корневым, для простоты обращения
-
-        for item in json_data:
-
-                #logging.info("COUNT TEST " + item['symbol'] + " --- " + str(i))
-                marketname, high, low , volume , last = item['symbol'] , \
-                                                        float('{:.10f}'.format(item['high'])) ,\
-                                                        float('{:.10f}'.format(item['low'])),\
-                                                        float('{:.10f}'.format(item['volume'])),\
-                                                        float('{:.10f}'.format(item['last']))
-
-                #logging.info("LIVECOIN TEST: ___" + marketname + "  -  " + str(high) + "
-                # -  " + str(low)+ "  -  " + str(volume) + "  -  " + str(last) )
-                data = {'PairName': pair_fix(marketname), 'High': high, 'Low': low, 'Volume': volume,
-                       'Last': last, 'TimeStamp': timezone.now(), 'Mod': False}
-                #Пишем только пары с USD, потому что можем
-                if (data['PairName'].find("-USD", 0, len(data['PairName']))) != -1:
-                    test.insert(data)
-                    #logging.info("WRITTEN - " + data['PairName'])
-
-
-        logging.info(u'LiveCoin Data collected successfully')
-        MongoDBConnection().stop_connect()
-    except():
-        logging.info(u' LiveCoin collect all data Failed')
+loop = asyncio.get_event_loop()
+loop.run_until_complete(livecoin_ticker())
+loop.run_forever()

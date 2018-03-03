@@ -1,10 +1,9 @@
 # https://www.binance.com/api/v3/ticker/bookTicker
 import json
 import logging
-from django.utils import timezone
 import requests
 from Exchanges.data_model import ExchangeModel
-from mongo_db_connection import MongoDBConnection
+import asyncio
 
 logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
                     level=logging.DEBUG)
@@ -36,34 +35,29 @@ def pair_fix(pair_string):
                 return pair_string
 
 
-def binance_ticker():
+async def binance_ticker():
     global api_request
     logging.info(u'Binance getticker started')
     #
-    try:
-        # b = MongoDBConnection().start_db()
-        # db = b.PiedPiperStock
-        # release = db.BinanceTick
-        #
+    while 1:
         try:
-            api_request = requests.get("https://www.binance.com/api/" + "v3/ticker/bookTicker")
-        except ConnectionError:
-            logging.error(u'Binance API cannot be reached')
-        # Формируем JSON массив из данных с API
-        logging.info('Binance API returned - ' + str(api_request.status_code))
-        if api_request.status_code == 200:
-            json_data = json.loads(api_request.text)
-            # Если все ок - парсим
-            for item in json_data:
-                ExchangeModel("Binance", pair_fix(item['symbol']), float(item['bidPrice']), float(item['askPrice']))
+            try:
+                api_request = requests.get("https://www.binance.com/api/" + "v3/ticker/bookTicker")
+            except ConnectionError:
+                logging.error(u'Binance API cannot be reached')
+            # Формируем JSON массив из данных с API
+            if api_request.status_code == 200:
+                json_data = json.loads(api_request.text)
+                # Если все ок - парсим
+                for item in json_data:
+                    ExchangeModel("Binance", pair_fix(item['symbol']), float(item['bidPrice']), float(item['askPrice']))
+            #
+            await asyncio.sleep(20.5)
+        except OSError:
+            logging.error(u'Binance parse mistake')
+            continue
 
-                # if item['symbol'] in pairlist:
-                #     bid, ask = float(item['bidPrice']), float(item['askPrice'])
-                #     data = {'PairName': pair_fix(item['symbol']), 'Tick': (ask + bid) / 2,
-                #             'TimeStamp': timezone.now(), 'Mod': False}
-                #    #  release.insert(data)
-                # else:
-                #     continue
-        # MongoDBConnection().stop_connect()
-    except OSError:
-        logging.error(u'Binance parse mistake')
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(binance_ticker())
+loop.run_forever()

@@ -1,3 +1,4 @@
+import asyncio
 import json
 import logging
 import requests
@@ -31,20 +32,27 @@ def pair_fix(pair_string):
                 return pair_string
 
 
-def hitbtc_ticker():
+async def hitbtc_ticker():
     global data_request
     logging.info("HitbtcAPI method started")
-    try:
+    while 1:
         try:
-            data_request = requests.get("https://api.hitbtc.com/api/2/public/ticker")
-        except ConnectionError:
-            logging.error(u'HitBTC API cannot be reached')
-        full_data = json.loads(data_request.text)
-        for item in full_data:
             try:
-                ExchangeModel('Hitbtc', pair_fix(item['symbol']), float(item['bid']), float(item['ask']))
-            except TypeError:
-                continue
-        logging.info('HitbtcAPI method stopped')
-    except OSError:
-        logging.error('HitbtcAPI method crashed')
+                data_request = requests.get("https://api.hitbtc.com/api/2/public/ticker")
+            except ConnectionError:
+                logging.error(u'HitBTC API cannot be reached')
+            full_data = json.loads(data_request.text)
+            for item in full_data:
+                try:
+                    ExchangeModel('Hitbtc', pair_fix(item['symbol']), float(item['bid']), float(item['ask']))
+                except TypeError:
+                    continue
+            await asyncio.sleep(25.9)
+        except OSError:
+            logging.error('HitbtcAPI method crashed')
+            continue
+
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(hitbtc_ticker())
+loop.run_forever()

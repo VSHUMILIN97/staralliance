@@ -1,5 +1,6 @@
 # https://api.exmo.com/v1/ticker/
-from datetime import datetime, time
+import asyncio
+from datetime import datetime
 from Exchanges.data_model import ExchangeModel
 import dateutil.parser
 import iso8601
@@ -65,37 +66,25 @@ def exmo_charts_data():
     logging.info(u'EXMO charts data aggregation ended')
 
 
-def exmo_ticker():
+async def exmo_ticker():
     # Данные собираются для каждой валютной пары из списка pairlist
     # Получаем данные с API битрикса по конкретной валютной паре (ex. localhost/bittrex/btc-eth)
     global data, api_request
     logging.info(u'Exmo getticker started')
-    #
-    # b = MongoDBConnection().start_db()
-    # db = b.PiedPiperStock
-    # test = db.ExmoTick
-    #
-    logging.info(u'Exmo getticker API was called')
-    #
-    try:
-        api_request = requests.get("https://api.exmo.me/v1/ticker/")
-    except ConnectionError:
-        logging.error(u'Exmo API cannot be reached')
-    # Проверяем ответ на вшивость. Если код не 200, то данные не записываем.
-    if api_request.status_code == 200:
-        # Формируем JSON массив из данных с API
-        json_data = json.loads(api_request.text)
-        # Если все ок - парсим
-        for item in json_data:
-            ExchangeModel("Exmo", pair_fix(item), float(json_data[item]['buy_price']),
-                          float(json_data[item]['sell_price']))
-            # for st in pairlist:
-            #     if st == str(item):
-            #         bid, ask = float(json_data[item]['buy_price']), float(json_data[item]['sell_price'])
-            #         #logging.info(str(item) + " : " + str(bid) + " - bid, " + str(ask) + " -  ask")
-            #        data = {'PairName': pair_fix(item), 'Tick': (ask+bid)/2, 'TimeStamp': timezone.now(), 'Mod': False}
-            #         test.insert(data)
-    # MongoDBConnection().stop_connect()
+    while 1:
+        try:
+            api_request = requests.get("https://api.exmo.me/v1/ticker/")
+        except ConnectionError:
+            logging.error(u'Exmo API cannot be reached')
+        # Проверяем ответ на вшивость. Если код не 200, то данные не записываем.
+        if api_request.status_code == 200:
+            # Формируем JSON массив из данных с API
+            json_data = json.loads(api_request.text)
+            # Если все ок - парсим
+            for item in json_data:
+                ExchangeModel("Exmo", pair_fix(item), float(json_data[item]['buy_price']),
+                              float(json_data[item]['sell_price']))
+        await asyncio.sleep(18)
 
 
 def exmo_volume_data():
@@ -124,3 +113,8 @@ def exmo_volume_data():
                 test.insert(data)
     MongoDBConnection().stop_connect()
     logging.info(u'Exmo volume aggregation ended')
+
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(exmo_ticker())
+loop.run_forever()

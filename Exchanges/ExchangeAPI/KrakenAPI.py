@@ -1,3 +1,4 @@
+import asyncio
 import json
 from Exchanges.data_model import ExchangeModel
 import requests
@@ -29,42 +30,50 @@ def pair_fix(pair_string):
                 return pair_string
 
 
-def kraken_ticker():
+async def kraken_ticker():
     global eu_name_index, info_request, data_request
     logging.info('Kraken API has started')
-    try:
+    while 1:
         try:
-            info_request = requests.get("https://api.kraken.com/0/public/AssetPairs")
-        except ConnectionError:
-            logging.error(u'Kraken info API cannot be reached')
-        info_data = json.loads(info_request.text)
-        info_name = info_data['result']
-        pair_string = ''
-        china_string = ''
-        iterable1 = 0
-        for name in info_name:
-            name_alt_var = info_name[name]
-            china_string += name
-            pair_string += name_alt_var['altname']
-            if iterable1 + 1 < len(info_name):
-                pair_string += ','
-                china_string += ','
-            iterable1 += 1
-        #
-        alt_name = pair_string.split(',')
-        alt_china_name = china_string.split(',')
-        try:
-            data_request = requests.get("https://api.kraken.com/0/public/Ticker?pair=" + pair_string)
-        except ConnectionError:
-            logging.error(u'Kraken API cannot be reached')
-        json_data = json.loads(data_request.text)
-        data = json_data['result']
-        iterable2 = 0
-        for each_item in data:
-            data_alt_var = data[each_item]
-            if each_item in alt_china_name:
-                eu_name_index = alt_china_name.index(each_item)
-            ExchangeModel('Kraken', pair_fix(alt_name[eu_name_index]), float(data_alt_var['b'][0]), float(data_alt_var['a'][0]))
-            iterable2 += 1
-    except OSError:
-        logging.error('Kraken API was prevented from execution')
+            try:
+                info_request = requests.get("https://api.kraken.com/0/public/AssetPairs")
+            except ConnectionError:
+                logging.error(u'Kraken info API cannot be reached')
+            info_data = json.loads(info_request.text)
+            info_name = info_data['result']
+            pair_string = ''
+            china_string = ''
+            iterable1 = 0
+            for name in info_name:
+                name_alt_var = info_name[name]
+                china_string += name
+                pair_string += name_alt_var['altname']
+                if iterable1 + 1 < len(info_name):
+                    pair_string += ','
+                    china_string += ','
+                iterable1 += 1
+            #
+            alt_name = pair_string.split(',')
+            alt_china_name = china_string.split(',')
+            try:
+                data_request = requests.get("https://api.kraken.com/0/public/Ticker?pair=" + pair_string)
+            except ConnectionError:
+                logging.error(u'Kraken API cannot be reached')
+            json_data = json.loads(data_request.text)
+            data = json_data['result']
+            iterable2 = 0
+            for each_item in data:
+                data_alt_var = data[each_item]
+                if each_item in alt_china_name:
+                    eu_name_index = alt_china_name.index(each_item)
+                ExchangeModel('Kraken', pair_fix(alt_name[eu_name_index]), float(data_alt_var['b'][0]), float(data_alt_var['a'][0]))
+                iterable2 += 1
+            await asyncio.sleep(23.923)
+        except OSError:
+            logging.error('Kraken API was prevented from execution')
+            continue
+
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(kraken_ticker())
+loop.run_forever()

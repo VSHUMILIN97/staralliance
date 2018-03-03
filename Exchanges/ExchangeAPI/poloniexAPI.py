@@ -1,9 +1,8 @@
 # https://poloniex.com/public?command=returnTicker
+import asyncio
 import json
 import logging
-from django.utils import timezone
 import requests
-from mongo_db_connection import MongoDBConnection
 from Exchanges.data_model import ExchangeModel
 
 logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
@@ -16,27 +15,24 @@ def pair_fix(pair_string):
     return str(pair_string).replace('_', '-')
 
 
-def poloniex_ticker():
+async def poloniex_ticker():
     global api_request
     logging.info(u'Poloniex getticker started')
-    #
-    # b = MongoDBConnection().start_db()
-    # db = b.PiedPiperStock
-    # test = db.PoloniexTick
-    #
-    try:
-        api_request = requests.get("https://poloniex.com/public" + "?command=returnTicker")
-    except ConnectionError:
-        logging.error(u'Poloniex API cannot be reached')
-    #
-    logging.info('Poloniex API returned - ' + str(api_request.status_code))
-    if api_request.status_code == 200:
-        json_data = json.loads(api_request.text)
-        for item in json_data:
-            ExchangeModel("Poloniex", pair_fix(item), float(json_data[item]['highestBid']),
-                          float(json_data[item]['lowestAsk']))
-            # if item in pairlist:
-            #     bid, ask = float(json_data[item]['highestBid']), float(json_data[item]['lowestAsk'])
-            #     data = {'PairName': pair_fix(item), 'Tick': (ask + bid) / 2, 'TimeStamp': timezone.now(), 'Mod': False}
-            #     test.insert(data)
-    # MongoDBConnection().stop_connect()
+    while 1:
+        #
+        try:
+            api_request = requests.get("https://poloniex.com/public" + "?command=returnTicker")
+        except ConnectionError:
+            logging.error(u'Poloniex API cannot be reached')
+        #
+        if api_request.status_code == 200:
+            json_data = json.loads(api_request.text)
+            for item in json_data:
+                ExchangeModel("Poloniex", pair_fix(item), float(json_data[item]['highestBid']),
+                              float(json_data[item]['lowestAsk']))
+        await asyncio.sleep(16.9)
+
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(poloniex_ticker())
+loop.run_forever()

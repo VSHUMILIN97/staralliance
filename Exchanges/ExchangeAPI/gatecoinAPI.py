@@ -1,17 +1,14 @@
 # https://api.gatecoin.com/Public/LiveTickers
+import asyncio
 import json
 import logging
-from django.utils import timezone
 import requests
 from Exchanges.data_model import ExchangeModel
-from mongo_db_connection import MongoDBConnection
 
 logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
                     level=logging.DEBUG)
 
 
-# Боевая задачка - написать неунифицированные парсилки пар, чтобы все совпадало. Без хардкода.
-pairlist = ['ETHBTC', '1STBTC', 'LTCBTC', 'LTCETH']
 coins = \
     ['ADX', 'ETH', 'BTC', 'LTC', 'DASH', 'XRP', '1ST', '123', 'POE', 'MANA', 'LSK', 'EVX', 'ICN', 'QAX', 'XVG', 'SNM',
          'IOTA', 'NEO', 'MTL', 'YOYO', 'BNB', 'BCC', 'ZEC', 'BTG', 'REQ', 'ADA', 'AE', 'AION', 'AMB', 'APPC', 'ARK',
@@ -39,31 +36,28 @@ def pair_fix(pair_string):
                 return pair_string
 
 
-def gatecoin_ticker():
+async def gatecoin_ticker():
     global api_request
     logging.info(u'Gatecoin collection of data in parse')
-
-    try:
-        # b = MongoDBConnection().start_db()
-        # db = b.PiedPiperStock
-        # gcstock = db.GatecoinTick
+    while 1:
         try:
-            api_request = requests.get("https://api.gatecoin.com/Public/LiveTickers")
-        except ConnectionError:
-            logging.error(u'Gatecoin API cannot be reached')
-        #
-        if api_request.status_code == 200:
-            json_data = json.loads(api_request.text)
-            result = json_data['tickers']
-            for item in result:
-                ExchangeModel("Gatecoin", pair_fix(item['currencyPair']), float(item['bid']), float(item['ask']))
-                # if item['currencyPair'] in pairlist:
-                #     market, bid, ask = str(item['currencyPair']), float(item['bid']), float(item['ask'])
-                #     data = {'PairName': pair_fix(market), 'Tick': (bid + ask)/2,
-                #             'TimeStamp': timezone.now(), 'Mod': False}
-                #     gcstock.insert(data)
-                # else:
-                #     continue
-        # MongoDBConnection().stop_connect()
-    except OSError:
-        logging.error(r'Gatecoin ticker mistake')
+            try:
+                api_request = requests.get("https://api.gatecoin.com/Public/LiveTickers")
+            except ConnectionError:
+                logging.error(u'Gatecoin API cannot be reached')
+            #
+            if api_request.status_code == 200:
+                json_data = json.loads(api_request.text)
+                result = json_data['tickers']
+                for item in result:
+                    ExchangeModel("Gatecoin", pair_fix(item['currencyPair']), float(item['bid']), float(item['ask']))
+                #
+            await asyncio.sleep(19.7)
+        except OSError:
+            logging.error(r'Gatecoin ticker mistake')
+            continue
+
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(gatecoin_ticker())
+loop.run_forever()

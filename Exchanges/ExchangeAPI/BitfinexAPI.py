@@ -15,6 +15,7 @@
     LOW
   ]
   """
+import asyncio
 import json
 from Exchanges.data_model import ExchangeModel
 import requests
@@ -48,29 +49,37 @@ def pair_fix(pair_string):
                 return pair_string
 
 
-def bitfinex_ticker():
+async def bitfinex_ticker():
     global info_request, data_request
     logging.info('Bitfinex API method started')
-    try:
-        proxies = {'http': '47.89.41.164:80',
-                   'https': '180.173.151.17:9797'}
+    while 1:
         try:
-            info_request = requests.get("https://api.bitfinex.com/v1/symbols", proxies=proxies, timeout=5)
-        except ConnectionError:
-            logging.error(u'Bitfinex info API cannot be reached')
-        info_data = json.loads(info_request.text)
-        pair_string = ''
-        for name in range(0, len(info_data)):
-            pair_string += 't' + info_data[name].upper()
-            if name + 1 < len(info_data):
-                pair_string += ','
-        try:
-            data_request = requests.get("https://api.bitfinex.com/v2/tickers?symbols=" + pair_string,
-                                        proxies=proxies, timeout=5)
-        except ConnectionError:
-            logging.error(u'Bitfinex API cannot be reached')
-        full_data = json.loads(data_request.text)
-        for items in full_data:
-            ExchangeModel('Bitfinex', pair_fix(items[0]), float(items[1]), float(items[3]))
-    except OSError:
-        logging.error('Bitfinex API crashed')
+            proxies = {'http': '47.89.41.164:80',
+                       'https': '180.173.151.17:9797'}
+            try:
+                info_request = requests.get("https://api.bitfinex.com/v1/symbols", proxies=proxies, timeout=5)
+            except ConnectionError:
+                logging.error(u'Bitfinex info API cannot be reached')
+            info_data = json.loads(info_request.text)
+            pair_string = ''
+            for name in range(0, len(info_data)):
+                pair_string += 't' + info_data[name].upper()
+                if name + 1 < len(info_data):
+                    pair_string += ','
+            try:
+                data_request = requests.get("https://api.bitfinex.com/v2/tickers?symbols=" + pair_string,
+                                            proxies=proxies, timeout=5)
+            except ConnectionError:
+                logging.error(u'Bitfinex API cannot be reached')
+            full_data = json.loads(data_request.text)
+            for items in full_data:
+                ExchangeModel('Bitfinex', pair_fix(items[0]), float(items[1]), float(items[3]))
+            await asyncio.sleep(32)
+        except OSError:
+            logging.error('Bitfinex API crashed')
+            continue
+
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(bitfinex_ticker())
+loop.run_forever()

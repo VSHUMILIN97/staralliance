@@ -32,6 +32,8 @@ ALLOWED_HOSTS = [
     'arbitr.tenguai.com'
 ]
 
+REDIS_HOST = 'localhost'
+REDIS_PORT = 6379
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',

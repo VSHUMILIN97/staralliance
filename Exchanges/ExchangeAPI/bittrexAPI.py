@@ -3,8 +3,7 @@ import pymongo
 import requests
 import json
 import dateutil.parser
-from django.utils import timezone
-from datetime import timedelta
+import asyncio
 from Exchanges.data_model import ExchangeModel
 from mongo_db_connection import MongoDBConnection
 import logging
@@ -82,36 +81,27 @@ def api_get_getmarketsummaries():
 # По некоторым соображениям, самый работающий график на данный момент.
 # Получает данные на текущий момент. В models указан default для TimeStamp timezone.now
 # Указаний по TimeStamp НЕ ТРЕБУЕТСЯ
-def api_get_getticker():
+async def api_get_getticker():
     # Данные собираются для каждой валютной пары из списка pairlist
     # Получаем данные с API битрикса по конкретной валютной паре (ex. localhost/bittrex/btc-eth)
     global api_request
     logging.info(u'Bittrex getticker started')
-    #
-    # b = MongoDBConnection().start_db()
-    # db = b.PiedPiperStock
-    # test = db.BittrexTick
-    #
-    try:
-        api_request = requests.get("https://bittrex.com/api/v1.1/public/" + "getmarketsummaries")
-    except ConnectionError:
-        logging.error(u'Bittrex API cannot be reached')
-    #
-    if api_request.status_code == 200:
-        json_data = json.loads(api_request.text)
-        # Если все ок - парсим
-        if json_data['success']:
-            # Назначаем объект 'result' корневым, для простоты обращения
-            root = json_data['result']
-            for item in root:
-                ExchangeModel("Bittrex", item['MarketName'], float(item['Bid']), float(item['Ask']))
-                # if item['MarketName'] in pairlist:
-                #     bid, ask = float(item['Bid']), float(item['Ask'])
-                #     #
-                #     data = {'PairName': pair_fix(item['MarketName']), 'Tick': (ask+bid)/2,
-                #             'TimeStamp': timezone.now(), 'Mod': False}
-                #     test.insert(data)
-    # MongoDBConnection().stop_connect()
+    while 1:
+        try:
+            api_request = requests.get("https://bittrex.com/api/v1.1/public/" + "getmarketsummaries")
+        except ConnectionError:
+            logging.error(u'Bittrex API cannot be reached')
+        #
+        if api_request.status_code == 200:
+            json_data = json.loads(api_request.text)
+            # Если все ок - парсим
+            if json_data['success']:
+                # Назначаем объект 'result' корневым, для простоты обращения
+                root = json_data['result']
+                for item in root:
+                    ExchangeModel("Bittrex", item['MarketName'], float(item['Bid']), float(item['Ask']))
+        await asyncio.sleep(15)
+
 
 
 # Получаем все сделки за некоторое(б-гу известное) время.
@@ -143,3 +133,7 @@ def api_get_getmarkethistory():
     logging.info(u'Bittrex getmarkethistory ended')
     MongoDBConnection().stop_connect()
 
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(api_get_getticker())
+loop.run_forever()
