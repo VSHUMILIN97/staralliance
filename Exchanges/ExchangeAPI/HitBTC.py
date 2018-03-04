@@ -60,6 +60,7 @@ async def hitbtc_ticker():
                                                                                   float(item['ask']))/2:
                         r.set(file_name + '/Hitbtc/' + pair_fix(item['symbol']),
                               (float(item['bid']) + float(item['ask'])) / 2)
+                        r.publish('keychannel', file_name + '/Hitbtc/' + pair_fix(item['symbol']))
                     else:
                         continue
                 except TypeError:

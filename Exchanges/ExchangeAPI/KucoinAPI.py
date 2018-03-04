@@ -42,9 +42,8 @@ async def kucoin_ticker():
                                                                                   + float(item['sell']))/2:
                             r.set(file_name + '/Kucoin/' + pair_fix(item['symbol']),
                                   (float(item['buy']) + float(item['sell'])) / 2)
-                            logging.info('There was a change')
+                            r.publish('keychannel', file_name + '/Kucoin/' + pair_fix(item['symbol']))
                         else:
-                            logging.info('There were no changes at ' + file_name + '/Kucoin/' + pair_fix(item['symbol']))
                             continue
                     except KeyError:
                         continue

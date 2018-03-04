@@ -93,9 +93,9 @@ async def bitfinex_ticker():
                 if float(r.get(file_name + '/Bitfinex/' +
                                pair_fix(items[0])).decode('utf-8')) != (float(items[1]) + float(items[3]))/2:
                     r.set(file_name + '/Bitfinex/' + pair_fix(items[0]), (float(items[1]) + float(items[3])) / 2)
-                    logging.info('TWACH')
+                    r.publish('keychannel', file_name + '/Bitfinex/' + pair_fix(items[0]))
                 else:
-                    logging.info('NOCH at - ' + file_name + '/Bitfinex/' + pair_fix(items[0]))
+                    continue
             await asyncio.sleep(32)
         except OSError:
             logging.error('Bitfinex API crashed')

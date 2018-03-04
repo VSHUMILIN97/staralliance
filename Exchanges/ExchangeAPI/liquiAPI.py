@@ -54,9 +54,8 @@ async def liqui_ticker():
                                                                                                     ['sell']))/2:
                             r.set(file_name + '/Liqui/' + pair_fix(item), ((json_data[item]['buy'] + json_data[item]
                                                                             ['sell']))/2)
-                            logging.info('There was a change')
+                            r.publish('keychannel', file_name + '/Liqui/' + pair_fix(item))
                         else:
-                            logging.info('There are no changes at ' + file_name + '/Liqui/' + pair_fix(item))
                             continue
                 except LookupError:
                     logging.critical(u'Liqui API returned 0 elements')

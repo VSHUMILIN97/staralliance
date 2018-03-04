@@ -62,6 +62,7 @@ async def binance_ticker():
                                                                                   float(item['askPrice']))/2:
                         r.set(file_name + '/Binance/' + pair_fix(item['symbol']),
                               (float(item['bidPrice']) + float(item['askPrice'])) / 2)
+                        r.publish('keychannel', file_name + '/Binance/' + pair_fix(item['symbol']))
                     else:
                         continue
             #

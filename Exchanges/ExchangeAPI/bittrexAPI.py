@@ -104,6 +104,7 @@ async def api_get_getticker():
                                    item['MarketName']).decode('utf-8')) != (float(item['Bid']) + float(item['Ask']))/2:
                         r.set(file_name + '/Bittrex/' + item['MarketName'],
                               (float(item['Bid']) + float(item['Ask'])) / 2)
+                        r.publish('keychannel', file_name + '/Bittrex/' + item['MarketName'])
                     else:
                         continue
         await asyncio.sleep(15)

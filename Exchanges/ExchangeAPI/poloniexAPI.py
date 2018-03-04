@@ -39,10 +39,9 @@ async def poloniex_ticker():
                                                                                                    ['lowestAsk']))/2:
                     r.set(file_name + '/Poloniex/' + pair_fix(item), (float(json_data[item]['highestBid']) +
                           float(json_data[item]['lowestAsk']))/2)
+                    r.publish('keychannel', file_name + '/Poloniex/' + pair_fix(item))
                 else:
                     continue
-        # for key in r.scan_iter(): DEBUG ONLY
-            # logging.info(key)
         await asyncio.sleep(16.9)
 
 

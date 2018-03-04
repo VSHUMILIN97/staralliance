@@ -98,6 +98,8 @@ async def exmo_ticker():
                                                                     float(json_data[item]['sell_price']))/2:
                     r.set(file_name + '/Exmo/' + pair_fix(item),
                           (float(json_data[item]['buy_price']) + float(json_data[item]['sell_price'])) / 2)
+                    r.publish('keychannel', file_name + '/Exmo/' + pair_fix(item))
+
                 else:
                     continue
         await asyncio.sleep(18)

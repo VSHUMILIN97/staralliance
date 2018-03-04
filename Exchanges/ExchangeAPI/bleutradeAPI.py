@@ -57,6 +57,7 @@ async def bleutrade_ticker():
                                                                                      float(item['Ask']))/2:
                         r.set(file_name + '/Bleutrade/' + pair_fix(pair_array[index]),
                               (float(item['Bid']) + float(item['Ask'])) / 2)
+                        r.publish('keychannel', file_name + '/Bleutrade/' + pair_fix(pair_array[index]))
                     else:
                         continue
                     index += 1

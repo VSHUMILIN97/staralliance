@@ -62,6 +62,7 @@ async def gatecoin_ticker():
                                                                                         + float(item['ask']))/2:
                         r.set(file_name + '/Gatecoin/' + pair_fix(item['currencyPair']),
                               (float(item['bid']) + float(item['ask'])) / 2)
+                        r.publish('keychannel', file_name + '/Gatecoin/' + pair_fix(item['currencyPair']))
                     else:
                         continue
                         #

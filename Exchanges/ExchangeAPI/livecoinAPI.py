@@ -42,6 +42,7 @@ async def livecoin_ticker():
                                                                             + float(item['best_ask']))/2:
                         r.set(file_name + '/Livecoin/' + pair_fix(item['symbol']),
                               (float(item['best_bid']) + float(item['best_ask']))/2)
+                        r.publish('keychannel', file_name + '/Livecoin/' + pair_fix(item['symbol']))
                     else:
                         continue
             await asyncio.sleep(18.4)

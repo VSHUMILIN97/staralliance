@@ -83,6 +83,7 @@ async def kraken_ticker():
                                                                                        float(data_alt_var['a'][0]))/2:
                     r.set(file_name + '/Kraken/' + pair_fix(alt_name[eu_name_index]),
                           (float(data_alt_var['b'][0]) + float(data_alt_var['a'][0])) / 2)
+                    r.publish('keychannel', file_name + '/Kraken/' + pair_fix(alt_name[eu_name_index]))
                 else:
                     continue
                 iterable2 += 1
