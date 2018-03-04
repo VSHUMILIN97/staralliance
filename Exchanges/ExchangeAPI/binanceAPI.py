@@ -2,12 +2,17 @@
 import json
 import logging
 import requests
-from Exchanges.data_model import ExchangeModel
 import asyncio
+import redis
+import sys
+import os.path
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../../djangopiper'))
+from PiedPiper.settings import REDIS_HOST, REDIS_PORT
 
 logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
                     level=logging.DEBUG)
-pairlist = ['ETHBTC', 'LTCBTC', 'LTCETH', 'DASHBTC', 'XRPBTC']
+r = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=0)
+
 coins = \
     ['ADX', 'ETH', 'BTC', 'LTC', 'DASH', 'XRP', '1ST', '123', 'POE', 'MANA', 'LSK', 'EVX', 'ICN', 'QAX', 'XVG', 'SNM',
          'IOTA', 'NEO', 'MTL', 'YOYO', 'BNB', 'BCC', 'ZEC', 'BTG', 'REQ', 'ADA', 'AE', 'AION', 'AMB', 'APPC', 'ARK',
@@ -37,6 +42,8 @@ def pair_fix(pair_string):
 
 async def binance_ticker():
     global api_request
+    import os
+    file_name = os.path.basename(sys.argv[0])
     logging.info(u'Binance getticker started')
     #
     while 1:
@@ -50,7 +57,13 @@ async def binance_ticker():
                 json_data = json.loads(api_request.text)
                 # Если все ок - парсим
                 for item in json_data:
-                    ExchangeModel("Binance", pair_fix(item['symbol']), float(item['bidPrice']), float(item['askPrice']))
+                    if float(r.get(file_name + '/Binance/' +
+                                   pair_fix(item['symbol'])).decode('utf-8')) != (float(item['bidPrice']) +
+                                                                                  float(item['askPrice']))/2:
+                        r.set(file_name + '/Binance/' + pair_fix(item['symbol']),
+                              (float(item['bidPrice']) + float(item['askPrice'])) / 2)
+                    else:
+                        continue
             #
             await asyncio.sleep(20.5)
         except OSError:

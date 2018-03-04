@@ -1,8 +1,18 @@
 import asyncio
 import json
-from Exchanges.data_model import ExchangeModel
+import redis
 import requests
 import logging
+import sys
+import os.path
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../../djangopiper'))
+from PiedPiper.settings import REDIS_HOST, REDIS_PORT
+
+logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
+                    level=logging.DEBUG)
+r = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=0)
+
+
 coins = \
     ['ADX', 'ETH', 'BTC', 'LTC', 'DASH', 'XRP', '1ST', '123', 'POE', 'MANA', 'LSK', 'EVX', 'ICN', 'QAX', 'XVG', 'SNM',
          'IOTA', 'NEO', 'MTL', 'YOYO', 'BNB', 'BCC', 'ZEC', 'BTG', 'REQ', 'ADA', 'AE', 'AION', 'AMB', 'APPC', 'ARK',
@@ -32,6 +42,8 @@ def pair_fix(pair_string):
 
 async def kraken_ticker():
     global eu_name_index, info_request, data_request
+    import os
+    file_name = os.path.basename(sys.argv[0])
     logging.info('Kraken API has started')
     while 1:
         try:
@@ -66,7 +78,13 @@ async def kraken_ticker():
                 data_alt_var = data[each_item]
                 if each_item in alt_china_name:
                     eu_name_index = alt_china_name.index(each_item)
-                ExchangeModel('Kraken', pair_fix(alt_name[eu_name_index]), float(data_alt_var['b'][0]), float(data_alt_var['a'][0]))
+                if float(r.get(file_name + '/Kraken/' +
+                               pair_fix(alt_name[eu_name_index])).decode('utf-8')) != (float(data_alt_var['b'][0]) +
+                                                                                       float(data_alt_var['a'][0]))/2:
+                    r.set(file_name + '/Kraken/' + pair_fix(alt_name[eu_name_index]),
+                          (float(data_alt_var['b'][0]) + float(data_alt_var['a'][0])) / 2)
+                else:
+                    continue
                 iterable2 += 1
             await asyncio.sleep(23.923)
         except OSError:

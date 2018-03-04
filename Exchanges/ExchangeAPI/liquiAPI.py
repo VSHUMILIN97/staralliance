@@ -3,10 +3,15 @@ import asyncio
 import json
 import logging
 import requests
-from Exchanges.data_model import ExchangeModel
+import redis
+import sys
+import os.path
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../../djangopiper'))
+from PiedPiper.settings import REDIS_HOST, REDIS_PORT
 
 logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
                     level=logging.DEBUG)
+r = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=0)
 
 
 def pair_fix(pair_string):
@@ -17,6 +22,8 @@ def pair_fix(pair_string):
 
 async def liqui_ticker():
     global best_ask, best_bid, info_request, api_request
+    import os
+    file_name = os.path.basename(sys.argv[0])
     logging.info(u'Liqui getticker started')
     #
     while 1:
@@ -41,7 +48,16 @@ async def liqui_ticker():
                 # Если все ок - парсим
                 try:
                     for item in json_data:
-                        ExchangeModel("Liqui", pair_fix(item), json_data[item]['buy'], json_data[item]['sell'])
+                        if float(r.get(file_name + '/Liqui/' + pair_fix(item)).decode('utf-8')) != ((json_data[item]
+                                                                                                    ['buy'] +
+                                                                                                    json_data[item]
+                                                                                                    ['sell']))/2:
+                            r.set(file_name + '/Liqui/' + pair_fix(item), ((json_data[item]['buy'] + json_data[item]
+                                                                            ['sell']))/2)
+                            logging.info('There was a change')
+                        else:
+                            logging.info('There are no changes at ' + file_name + '/Liqui/' + pair_fix(item))
+                            continue
                 except LookupError:
                     logging.critical(u'Liqui API returned 0 elements')
             await asyncio.sleep(21.12)

@@ -4,19 +4,18 @@ import requests
 import json
 import dateutil.parser
 import asyncio
-from Exchanges.data_model import ExchangeModel
-from mongo_db_connection import MongoDBConnection
+import redis
 import logging
+import sys
+import os.path
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../../djangopiper'))
+from PiedPiper.settings import REDIS_HOST, REDIS_PORT
+from mongo_db_connection import MongoDBConnection
 
 logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
                     level=logging.DEBUG)
+r = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=0)
 
-# Для чистоты кода используем переменные с названиями bit_obj_tick вместо bitObjTick
-# В_питоне_модно_с_граундами_писать , а не с АпперКейсомТипВотТак
-# Python != Java :'(((
-
-# Вот эта беда должна быть огромных размеров, но девать нам её некуда особо, да и незачем. Надо собирать информацию.
-# Ну и разумеется настало время try: catch: блоков. А то ху-о работает пока что, на соплях
 pairlist = ['BTC-1ST', 'BTC-LTC', 'BTC-ETH', 'BTC-DASH', 'BTC-XRP', 'ETH-LTC']
 
 
@@ -85,6 +84,8 @@ async def api_get_getticker():
     # Данные собираются для каждой валютной пары из списка pairlist
     # Получаем данные с API битрикса по конкретной валютной паре (ex. localhost/bittrex/btc-eth)
     global api_request
+    import os
+    file_name = os.path.basename(sys.argv[0])
     logging.info(u'Bittrex getticker started')
     while 1:
         try:
@@ -99,7 +100,12 @@ async def api_get_getticker():
                 # Назначаем объект 'result' корневым, для простоты обращения
                 root = json_data['result']
                 for item in root:
-                    ExchangeModel("Bittrex", item['MarketName'], float(item['Bid']), float(item['Ask']))
+                    if float(r.get(file_name + '/Bittrex/' +
+                                   item['MarketName']).decode('utf-8')) != (float(item['Bid']) + float(item['Ask']))/2:
+                        r.set(file_name + '/Bittrex/' + item['MarketName'],
+                              (float(item['Bid']) + float(item['Ask'])) / 2)
+                    else:
+                        continue
         await asyncio.sleep(15)
 
 

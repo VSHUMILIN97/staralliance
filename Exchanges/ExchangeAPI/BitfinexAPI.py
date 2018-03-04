@@ -14,12 +14,26 @@
     HIGH,
     LOW
   ]
+
+
+  НА ЭТОЙ БИРЖЕ:
+  1)КАПЧА
+  2)ДОСТУП ТОЛЬКО ИЗ КИТАЯ
+  3)ВРЕМЕННОЙ БЛОК
   """
 import asyncio
 import json
-from Exchanges.data_model import ExchangeModel
 import requests
 import logging
+import redis
+import sys
+import os.path
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../../djangopiper'))
+from PiedPiper.settings import REDIS_HOST, REDIS_PORT
+
+logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
+                    level=logging.DEBUG)
+r = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=0)
 
 coins = \
     ['ADX', 'ETH', 'BTC', 'LTC', 'DASH', 'XRP', '1ST', '123', 'POE', 'MANA', 'LSK', 'EVX', 'ICN', 'QAX', 'XVG', 'SNM',
@@ -51,11 +65,13 @@ def pair_fix(pair_string):
 
 async def bitfinex_ticker():
     global info_request, data_request
+    import os
+    file_name = os.path.basename(sys.argv[0])
     logging.info('Bitfinex API method started')
     while 1:
         try:
-            proxies = {'http': '47.89.41.164:80',
-                       'https': '180.173.151.17:9797'}
+            proxies = {'http': '219.223.251.173:3128',
+                       'https': '219.223.251.173:3128'}
             try:
                 info_request = requests.get("https://api.bitfinex.com/v1/symbols", proxies=proxies, timeout=5)
             except ConnectionError:
@@ -73,7 +89,13 @@ async def bitfinex_ticker():
                 logging.error(u'Bitfinex API cannot be reached')
             full_data = json.loads(data_request.text)
             for items in full_data:
-                ExchangeModel('Bitfinex', pair_fix(items[0]), float(items[1]), float(items[3]))
+                r.set(file_name + '/Bitfinex/' + pair_fix(items[0]), (float(items[1]) + float(items[3]))/2)
+                if float(r.get(file_name + '/Bitfinex/' +
+                               pair_fix(items[0])).decode('utf-8')) != (float(items[1]) + float(items[3]))/2:
+                    r.set(file_name + '/Bitfinex/' + pair_fix(items[0]), (float(items[1]) + float(items[3])) / 2)
+                    logging.info('TWACH')
+                else:
+                    logging.info('NOCH at - ' + file_name + '/Bitfinex/' + pair_fix(items[0]))
             await asyncio.sleep(32)
         except OSError:
             logging.error('Bitfinex API crashed')

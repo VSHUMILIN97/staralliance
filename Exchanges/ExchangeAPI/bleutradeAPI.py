@@ -3,7 +3,15 @@ import json
 import logging
 import asyncio
 import requests
-from Exchanges.data_model import ExchangeModel
+import redis
+import sys
+import os.path
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../../djangopiper'))
+from PiedPiper.settings import REDIS_HOST, REDIS_PORT
+
+logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
+                    level=logging.DEBUG)
+r = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=0)
 
 
 def pair_fix(pair_string):
@@ -15,6 +23,8 @@ def pair_fix(pair_string):
 async def bleutrade_ticker():
     # Данные собираются для каждой валютной пары из списка pairlist
     global info_request, api_request
+    import os
+    file_name = os.path.basename(sys.argv[0])
     logging.info(u'Bleutrade getticker started')
     while 1:
         try:
@@ -42,7 +52,13 @@ async def bleutrade_ticker():
                 root = json_data['result']
                 index = 0
                 for item in root:
-                    ExchangeModel("Bleutrade", pair_fix(pair_array[index]), float(item['Bid']), float(item['Ask']))
+                    if float(r.get(file_name + '/Bleutrade/' +
+                                   pair_fix(pair_array[index])).decode('utf-8')) != (float(item['Bid']) +
+                                                                                     float(item['Ask']))/2:
+                        r.set(file_name + '/Bleutrade/' + pair_fix(pair_array[index]),
+                              (float(item['Bid']) + float(item['Ask'])) / 2)
+                    else:
+                        continue
                     index += 1
             await asyncio.sleep(13.8)
         except OSError:

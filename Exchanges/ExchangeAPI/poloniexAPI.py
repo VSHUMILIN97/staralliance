@@ -3,12 +3,15 @@ import asyncio
 import json
 import logging
 import requests
-from Exchanges.data_model import ExchangeModel
+import redis
+import sys
+import os.path
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../../djangopiper'))
+from PiedPiper.settings import REDIS_HOST, REDIS_PORT
 
 logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
                     level=logging.DEBUG)
-
-pairlist = ['BTC_ETH', 'BTC_LTC', 'BTC_DASH', 'BTC_XRP']
+r = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=0)
 
 
 def pair_fix(pair_string):
@@ -17,6 +20,8 @@ def pair_fix(pair_string):
 
 async def poloniex_ticker():
     global api_request
+    import os
+    file_name = os.path.basename(sys.argv[0])
     logging.info(u'Poloniex getticker started')
     while 1:
         #
@@ -28,8 +33,16 @@ async def poloniex_ticker():
         if api_request.status_code == 200:
             json_data = json.loads(api_request.text)
             for item in json_data:
-                ExchangeModel("Poloniex", pair_fix(item), float(json_data[item]['highestBid']),
-                              float(json_data[item]['lowestAsk']))
+                if float(r.get(file_name+'/Poloniex/' + pair_fix(item)).decode('utf-8')) != (float(json_data[item]
+                                                                                                   ['highestBid']) +
+                                                                                             float(json_data[item]
+                                                                                                   ['lowestAsk']))/2:
+                    r.set(file_name + '/Poloniex/' + pair_fix(item), (float(json_data[item]['highestBid']) +
+                          float(json_data[item]['lowestAsk']))/2)
+                else:
+                    continue
+        # for key in r.scan_iter(): DEBUG ONLY
+            # logging.info(key)
         await asyncio.sleep(16.9)
 
 

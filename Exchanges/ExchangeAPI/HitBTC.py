@@ -2,7 +2,16 @@ import asyncio
 import json
 import logging
 import requests
-from Exchanges.data_model import ExchangeModel
+import redis
+import sys
+import os.path
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../../djangopiper'))
+from PiedPiper.settings import REDIS_HOST, REDIS_PORT
+
+logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
+                    level=logging.DEBUG)
+
+r = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=0)
 
 coins = \
     ['ADX', 'ETH', 'BTC', 'LTC', 'DASH', 'XRP', '1ST', '123', 'POE', 'MANA', 'LSK', 'EVX', 'ICN', 'QAX', 'XVG', 'SNM',
@@ -34,6 +43,8 @@ def pair_fix(pair_string):
 
 async def hitbtc_ticker():
     global data_request
+    import os
+    file_name = os.path.basename(sys.argv[0])
     logging.info("HitbtcAPI method started")
     while 1:
         try:
@@ -44,8 +55,19 @@ async def hitbtc_ticker():
             full_data = json.loads(data_request.text)
             for item in full_data:
                 try:
-                    ExchangeModel('Hitbtc', pair_fix(item['symbol']), float(item['bid']), float(item['ask']))
+                    if float(r.get(file_name + '/Hitbtc/' +
+                                   pair_fix(item['symbol'])).decode('utf-8')) != (float(item['bid']) +
+                                                                                  float(item['ask']))/2:
+                        r.set(file_name + '/Hitbtc/' + pair_fix(item['symbol']),
+                              (float(item['bid']) + float(item['ask'])) / 2)
+                    else:
+                        continue
                 except TypeError:
+                    logging.info('null in data parsing at ' + pair_fix(item['symbol']))
+                    continue
+                except AttributeError:
+                    logging.info('NoneType at redis DB, pair - ' + pair_fix(item['symbol']))
+                    # Add if/else statement that'll check, whether pair is null now or not, if not it'll add it to redis
                     continue
             await asyncio.sleep(25.9)
         except OSError:

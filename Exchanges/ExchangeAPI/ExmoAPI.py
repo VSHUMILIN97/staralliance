@@ -1,15 +1,24 @@
 # https://api.exmo.com/v1/ticker/
 import asyncio
 from datetime import datetime
-from Exchanges.data_model import ExchangeModel
 import dateutil.parser
 import iso8601
 import pymongo
 import requests
 import json
+import sys
+import os.path
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../../djangopiper'))
+from PiedPiper.settings import REDIS_HOST, REDIS_PORT
 from django.utils import timezone
 from mongo_db_connection import MongoDBConnection
 import logging
+import redis
+
+
+logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
+                    level=logging.DEBUG)
+r = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=0)
 
 pairlist = ['DASH_BTC', 'LTC_BTC', 'ETH_BTC', 'XRP_BTC', 'ETH_LTC']
 
@@ -70,6 +79,8 @@ async def exmo_ticker():
     # Данные собираются для каждой валютной пары из списка pairlist
     # Получаем данные с API битрикса по конкретной валютной паре (ex. localhost/bittrex/btc-eth)
     global data, api_request
+    import os
+    file_name = os.path.basename(sys.argv[0])
     logging.info(u'Exmo getticker started')
     while 1:
         try:
@@ -82,8 +93,13 @@ async def exmo_ticker():
             json_data = json.loads(api_request.text)
             # Если все ок - парсим
             for item in json_data:
-                ExchangeModel("Exmo", pair_fix(item), float(json_data[item]['buy_price']),
-                              float(json_data[item]['sell_price']))
+                if float(r.get(file_name + '/Exmo/' +
+                               pair_fix(item)).decode('utf-8')) != (float(json_data[item]['buy_price']) +
+                                                                    float(json_data[item]['sell_price']))/2:
+                    r.set(file_name + '/Exmo/' + pair_fix(item),
+                          (float(json_data[item]['buy_price']) + float(json_data[item]['sell_price'])) / 2)
+                else:
+                    continue
         await asyncio.sleep(18)
 
 

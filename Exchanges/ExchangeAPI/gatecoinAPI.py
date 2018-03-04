@@ -3,10 +3,15 @@ import asyncio
 import json
 import logging
 import requests
-from Exchanges.data_model import ExchangeModel
+import redis
+import sys
+import os.path
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../../djangopiper'))
+from PiedPiper.settings import REDIS_HOST, REDIS_PORT
 
 logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
                     level=logging.DEBUG)
+r = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=0)
 
 
 coins = \
@@ -38,6 +43,8 @@ def pair_fix(pair_string):
 
 async def gatecoin_ticker():
     global api_request
+    import os
+    file_name = os.path.basename(sys.argv[0])
     logging.info(u'Gatecoin collection of data in parse')
     while 1:
         try:
@@ -50,8 +57,14 @@ async def gatecoin_ticker():
                 json_data = json.loads(api_request.text)
                 result = json_data['tickers']
                 for item in result:
-                    ExchangeModel("Gatecoin", pair_fix(item['currencyPair']), float(item['bid']), float(item['ask']))
-                #
+                    if float(r.get(file_name + '/Gatecoin/' +
+                                   pair_fix(item['currencyPair'])).decode('utf-8')) != (float(item['bid'])
+                                                                                        + float(item['ask']))/2:
+                        r.set(file_name + '/Gatecoin/' + pair_fix(item['currencyPair']),
+                              (float(item['bid']) + float(item['ask'])) / 2)
+                    else:
+                        continue
+                        #
             await asyncio.sleep(19.7)
         except OSError:
             logging.error(r'Gatecoin ticker mistake')
