@@ -1,83 +1,35 @@
  var ws = new WebSocket("ws://" + window.location.hostname + ":8090/");
-
 //Second button supportive hide function
-function forceRefresh(){
-    var table = document.getElementById("tableID");
-    var tbody = table.getElementsByTagName('tbody')[0];
-    var trow = tbody.getElementsByTagName('tr');
-        for (var secinter = 0; secinter < trow.length; secinter++){
-                    var cells = trow[secinter].getElementsByTagName('td');
-                    countingstarts = 0;
-                    for (var trdinter = 0; trdinter < cells.length; trdinter++){
-                        if (checkBoxState[trdinter] === false){
-                            cells[trdinter].classList.toggle('pairhid')
-                        } else if (cells[trdinter].innerText === '—'){
-                            countingstarts++;
-                        }
-                    }
-                    if (countingstarts >= checkBoxState.filter(isTrue).length - 1){
-                        trow[secinter].classList.toggle('hidpairrow')
-                    }
-                }
-}
-// Supportive function to provide search in the current table
-function searchFunc() {
-  // Declare variables
-  var input, filter, table, tr, td, i, ftable;
-  input = document.getElementById("exchInput");
-  filter = input.value.toUpperCase();
-  ftable = document.getElementById("tableID");
-  table = ftable.getElementsByTagName("tbody")[0];
-  tr = table.getElementsByTagName("tr");
+ var myexchs = document.getElementById("myexchs").value;
+ var mypairs = document.getElementById("mypairs").value;
+ var notarray = myexchs + '';
+ var truly_array = notarray.replace('[', '').replace(']', '').split(',');
 
-  // Loop through all table rows, and hide those who don't match the search query
-  for (i = 0; i < tr.length; i++) {
-    td = tr[i].getElementsByTagName("td")[0];
-    var h = tr[i].getElementsByTagName("th")[0];
+ var table = document.getElementById("tableID");
+ var tableHead = document.createElement('thead');
+ table.appendChild(tableHead);
+ var tr = document.createElement('tr');
+ tr.style.minHeight = "5px";
+ tableHead.appendChild(tr);
+ // The real header with Exchanges 150px height.
+ var th = document.createElement('th');
+ th.style.width = "150px";
+ tr.appendChild(th);
 
-    if (h) {
-      if (h.innerHTML.toUpperCase().indexOf(filter) > -1) {
-        tr[i].style.display = "";
-      } else {
-        tr[i].style.display = "none";
-      }
-    }
-  }
-}
-    // Supportive function to fix float number from math representation to classic 0.0000320421
-    function fix(value) {
-        if (value.toString().indexOf('e')) {
-            return value.toFixed(8);
-        }
-        else {
-            return Number(Math.round(value+'e8')+'e-8');
-        }
-    }
+ for (var inter = 0; inter < truly_array.length; inter++) {
+            var th = document.createElement('th');
+            th.appendChild(document.createTextNode(truly_array[inter]));
+            th.style.width = "110px";
+            var checkbox = document.createElement("INPUT");
+            checkbox.type = "checkbox";
+            checkbox.name = 'chck';
+            th.appendChild(checkbox);
+      tr.appendChild(th);
+ }
 
-    //Supportive function. Used in array with .filter
-    function isTrue(value) {
-        return value === true
-    }
 
- // Crutch for made it works.
-var checkBoxState = [false, false, false, false, false, false, false, false, false, false, false, false, false];
-    // Checking whether checkbox has false or true state.
-    function getCheckedBoxes(chkboxName) {
-        var checkboxes = document.getElementsByName(chkboxName);
-        var checkboxesChecked = [];
-        // loop over them all
-        for (var i=0; i<checkboxes.length; i++) {
-        // And stick the checked ones onto an array...
-        if (checkboxes[i].checked) {
-            checkboxesChecked.push(true);
-        }
-        else {
-            checkboxesChecked.push(false);
-        }
-  }
-  // Return the array if it is non-empty, or null
-  return checkboxesChecked.length > 0 ? checkboxesChecked : null;
-}
+
+
     // Initial on connection. Maybe it's better to check which transport is used by browser to pass data.
     ws.onopen = function(event){
         // clear
@@ -340,3 +292,83 @@ var checkBoxState = [false, false, false, false, false, false, false, false, fal
             btn_pair.setAttribute("onclick","true");
         }
    };
+
+
+
+function forceRefresh(){
+    var table = document.getElementById("tableID");
+    var tbody = table.getElementsByTagName('tbody')[0];
+    var trow = tbody.getElementsByTagName('tr');
+        for (var secinter = 0; secinter < trow.length; secinter++){
+                    var cells = trow[secinter].getElementsByTagName('td');
+                    countingstarts = 0;
+                    for (var trdinter = 0; trdinter < cells.length; trdinter++){
+                        if (checkBoxState[trdinter] === false){
+                            cells[trdinter].classList.toggle('pairhid')
+                        } else if (cells[trdinter].innerText === '—'){
+                            countingstarts++;
+                        }
+                    }
+                    if (countingstarts >= checkBoxState.filter(isTrue).length - 1){
+                        trow[secinter].classList.toggle('hidpairrow')
+                    }
+                }
+}
+// Supportive function to provide search in the current table
+function searchFunc() {
+  // Declare variables
+  var input, filter, table, tr, td, i, ftable;
+  input = document.getElementById("exchInput");
+  filter = input.value.toUpperCase();
+  ftable = document.getElementById("tableID");
+  table = ftable.getElementsByTagName("tbody")[0];
+  tr = table.getElementsByTagName("tr");
+
+  // Loop through all table rows, and hide those who don't match the search query
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0];
+    var h = tr[i].getElementsByTagName("th")[0];
+
+    if (h) {
+      if (h.innerHTML.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }
+  }
+}
+    // Supportive function to fix float number from math representation to classic 0.0000320421
+    function fix(value) {
+        if (value.toString().indexOf('e')) {
+            return value.toFixed(8);
+        }
+        else {
+            return Number(Math.round(value+'e8')+'e-8');
+        }
+    }
+
+    //Supportive function. Used in array with .filter
+    function isTrue(value) {
+        return value === true
+    }
+
+ // Crutch for made it works.
+var checkBoxState = [false, false, false, false, false, false, false, false, false, false, false, false, false];
+    // Checking whether checkbox has false or true state.
+    function getCheckedBoxes(chkboxName) {
+        var checkboxes = document.getElementsByName(chkboxName);
+        var checkboxesChecked = [];
+        // loop over them all
+        for (var i=0; i<checkboxes.length; i++) {
+        // And stick the checked ones onto an array...
+        if (checkboxes[i].checked) {
+            checkboxesChecked.push(true);
+        }
+        else {
+            checkboxesChecked.push(false);
+        }
+  }
+  // Return the array if it is non-empty, or null
+  return checkboxesChecked.length > 0 ? checkboxesChecked : null;
+}

@@ -2,45 +2,40 @@ import asyncio
 import time
 import json
 import logging
+import redis
 import websockets
+from Exchanges.ExchangeAPI.PairDataNOTAPI import approved_keys
+from PiedPiper.settings import REDIS_HOST, REDIS_PORT
 from mongo_db_connection import MongoDBConnection
 
 
 logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
                     level=logging.DEBUG)
+r = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=0)
+
+p = r.pubsub()
+p.subscribe('keychannel')
 
 
 # Function, that provides connect between client and server.
 # Works with async to prevent interrupting main thread.
 async def arbitration_socket(websocket, path):
     # After the connect with client was established open connect to MongoDB
-    b = MongoDBConnection().start_db()
-    db = b.PiedPiperStock
+    all_the_current_keys = approved_keys()
     while 1:
-        # Checking for the initial time
-        sttime = time.time()
-        # Checking for the distinct Exchange and Pair names.
-        cnames = db.PoorArb.distinct('Value.Exchange')
-        rnames = db.Arbnames.distinct('Value')
-        arbitage_data = db.PoorArb.find({}, {"_id": False}).limit(1)
-        # Checking for the current data after it was inserted.
-        if arbitage_data.count() == 0:
-            time.sleep(1)
-            arbitage_data = db.PoorArb.find({}, {"_id": False})
-        # Importing library to transform data to JSON format
-        from bson.json_util import dumps as dss
-        # Creating dict to pass it through socket transport
-        websocket_arbitration = {'ticks': dss(arbitage_data), 'cnames': sorted(cnames),
-                                 'rnames': sorted(rnames)}
-        websocket_arbitration = json.dumps(websocket_arbitration)
-        # Creating a co-routine for pass data
-        await websocket.send(websocket_arbitration)
-        # Closing the cursor
-        arbitage_data.close()
-        # Checking for the ending time
-        mttime = time.time() - sttime
-        # Creating a co-routine. Sending a subprocess to sleep.
-        await asyncio.sleep(25 - mttime)
+        try:
+            msg = bytes(dict(p.get_message())['data'])
+        except TypeError:
+            time.sleep(0.01)
+            continue
+        if msg.decode('utf-8') in all_the_current_keys:
+            try:
+                logging.info(msg.decode('utf-8') + ' ' + r.get(msg.decode('utf-8')).decode('utf-8'))
+                await websocket.send(json.dumps({msg.decode('utf-8').split('/')[1] + '/'
+                                                 + msg.decode('utf-8').split('/')[2]:
+                                                 r.get(msg.decode('utf-8')).decode('utf-8')}))
+            except AttributeError:
+                time.sleep(0.001)
 
 logging.info(u'Arbitartion websocket started')
 # Initialise websocket connection on host 127.0.0.1 and port 8090

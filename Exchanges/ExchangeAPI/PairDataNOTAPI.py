@@ -16,6 +16,39 @@ p = r.pubsub()
 p.subscribe('keychannel')
 
 
+def approved_pairs():
+    pair_data = []
+    non_return_pairs = []
+    return_pairs = []
+    for key in r.scan_iter():
+        pair_data.append({key.decode('utf-8'): r.get(key).decode('utf-8')})
+
+    for item in pair_data:
+        for key in item:
+            split_var = str(key).split('/')
+            non_return_pairs.append(split_var[2])
+    for item in non_return_pairs:
+        if non_return_pairs.count(item) >= 2:
+            if item not in return_pairs:
+                return_pairs.append(item)
+
+    return return_pairs
+
+
+def approved_exchanges():
+    exch_data = []
+    return_exch = []
+    for key in r.scan_iter():
+        exch_data.append({key.decode('utf-8'): r.get(key).decode('utf-8')})
+
+    for item in exch_data:
+        for key in item:
+            split_var = str(key).split('/')
+            if split_var[1] not in return_exch:
+                return_exch.append(split_var[1])
+    return return_exch
+
+
 def approved_keys():
     whole_data = []
     key_list = []
@@ -42,18 +75,3 @@ def approved_keys():
                 key_list.append(key)
 
     return key_list
-
-all_the_current_keys = approved_keys()
-while 1:
-    try:
-        msg = bytes(dict(p.get_message())['data'])
-    except TypeError:
-        time.sleep(0.01)
-        continue
-    if msg.decode('utf-8') in all_the_current_keys:
-        try:
-            logging.info(msg.decode('utf-8') + ' ' + r.get(msg.decode('utf-8')).decode('utf-8'))
-        except AttributeError:
-            time.sleep(0.001)
-
-

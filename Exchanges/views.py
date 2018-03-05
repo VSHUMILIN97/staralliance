@@ -1,8 +1,13 @@
-import datetime
+import os
+import json
+import sys
+import logging
 from django.shortcuts import render
 from django.views.generic import View
 from mongo_db_connection import MongoDBConnection
-from .TimeAggregator import arbitration_aggregate
+from Exchanges.ExchangeAPI.PairDataNOTAPI import approved_exchanges, approved_pairs
+logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
+                    level=logging.DEBUG)
 # Create your views here.
 
 
@@ -54,4 +59,6 @@ class Comparison(View):
         if mode == 'new':
             return render(request, 'comparebeta.html', {})  # установить compare для другого отображения арбитража
         else:
-            return render(request, 'compare.html', {})  # установить compare для другого отображения арбитража
+            return render(request, 'compare.html', {'pairs': json.dumps(sorted(approved_pairs())), 'exchs':
+                json.dumps(sorted(approved_exchanges()))})
+            # установить compare для другого отображения арбитража
