@@ -18,7 +18,7 @@ logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(a
 
 
 def proc_start():
-    global data_parse_pid, agtion_pid, arbitration_ws_pid, ws_charts_pid, agtion_tick_pid, agtion_vol_pid
+    global agtion_pid, arbitration_ws_pid, ws_charts_pid, agtion_tick_pid, agtion_vol_pid
     # Далее открываем субпроцесс, в качестве "входа" используем PIPE.
     # Arbitration 8090 port Web-socket subprocess
     try:
@@ -51,23 +51,6 @@ def proc_start():
     # PID Declaration
     ws_charts_pid = ws_charts_pipe.pid
     #
-    # Data parse subprocess
-    # try:
-    #     data_parse = os.path.join(os.path.dirname(__file__), "data_parser.py")
-    # except FileNotFoundError:
-    #     logging.error(u'Data_parsing process could not be reached. Check File path')
-    #     sys.exit(-1)
-    # data_parse_command = [sys.executable, data_parse]
-    # try:
-    #     data_parse_pipe = subprocess.Popen(data_parse_command, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-    # except OSError:
-    #     logging.error(u'Data_parsing process could not be started. Check logs.')
-    #     os.kill(arbitration_ws_pid, signal.SIGTERM)
-    #     os.kill(ws_charts_pid, signal.SIGTERM)
-    #     sys.exit(-1)
-    # # PID Declaration
-    # data_parse_pid = data_parse_pipe.pid
-    #
     # OHLC aggregation subprocess
     try:
         agtion_ohlc = os.path.join(os.path.dirname(__file__), "aggregation_OHLC.py")
@@ -81,7 +64,6 @@ def proc_start():
         logging.error(u'AggregationOHLC process could not be started. Check logs.')
         os.kill(arbitration_ws_pid, signal.SIGTERM)
         os.kill(ws_charts_pid, signal.SIGTERM)
-        os.kill(data_parse_pid, signal.SIGTERM)
         sys.exit(-1)
     # PID Declaration
     agtion_pid = agtion_ohlc_pipe.pid
@@ -99,7 +81,6 @@ def proc_start():
     #     logging.error(u'AggregationOHLC process could not be started. Check logs.')
     #     os.kill(arbitration_ws_pid, signal.SIGTERM)
     #     os.kill(ws_charts_pid, signal.SIGTERM)
-    #     os.kill(data_parse_pid, signal.SIGTERM)
     #     os.kill(agtion_pid, signal.SIGTERM)
     #     sys.exit(-1)
     # # PID Declaration
@@ -118,7 +99,6 @@ def proc_start():
         logging.error(u'AggregationOHLC process could not be started. Check logs.')
         os.kill(arbitration_ws_pid, signal.SIGTERM)
         os.kill(ws_charts_pid, signal.SIGTERM)
-        os.kill(data_parse_pid, signal.SIGTERM)
         os.kill(agtion_pid, signal.SIGTERM)
         os.kill(agtion_tick_pid, signal.SIGTERM)
         sys.exit(-1)
@@ -135,7 +115,6 @@ def children_kill():
             os.kill(ws_charts_pid, signal.SIGTERM)
             os.kill(agtion_pid, signal.SIGTERM)
             # os.kill(agtion_tick_pid, signal.SIGTERM)
-            os.kill(data_parse_pid, signal.SIGTERM)
             os.kill(agtion_vol_pid, signal.SIGTERM)
         except OSError:
             logging.critical(u'Process manager cannot kill processes\nUse `kill` command in terminal')
