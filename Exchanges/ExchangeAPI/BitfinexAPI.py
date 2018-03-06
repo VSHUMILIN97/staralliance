@@ -66,7 +66,7 @@ def pair_fix(pair_string):
 async def bitfinex_ticker():
     global info_request, data_request
     import os
-    file_name = os.path.basename(sys.argv[0])
+    file_name = os.path.basename(sys.argv[0]).replace('.py', '')
     logging.info('Bitfinex API method started')
     while 1:
         try:
@@ -89,11 +89,14 @@ async def bitfinex_ticker():
                 logging.error(u'Bitfinex API cannot be reached')
             full_data = json.loads(data_request.text)
             for items in full_data:
+                main_key = file_name + '/Bitfinex/' + pair_fix(items[0])
+                if r.get(main_key) is None:
+                    r.set(main_key, 1)
                 r.set(file_name + '/Bitfinex/' + pair_fix(items[0]), (float(items[1]) + float(items[3]))/2)
                 if float(r.get(file_name + '/Bitfinex/' +
                                pair_fix(items[0])).decode('utf-8')) != (float(items[1]) + float(items[3]))/2:
                     r.set(file_name + '/Bitfinex/' + pair_fix(items[0]), (float(items[1]) + float(items[3])) / 2)
-                    r.publish('keychannel', file_name + '/Bitfinex/' + pair_fix(items[0]))
+                    r.publish('s-Bitfinex', file_name + '/Bitfinex/' + pair_fix(items[0]))
                 else:
                     continue
             await asyncio.sleep(32)

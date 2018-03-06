@@ -24,7 +24,7 @@ async def bleutrade_ticker():
     # Данные собираются для каждой валютной пары из списка pairlist
     global info_request, api_request
     import os
-    file_name = os.path.basename(sys.argv[0])
+    file_name = os.path.basename(sys.argv[0]).replace('.py', '')
     logging.info(u'Bleutrade getticker started')
     while 1:
         try:
@@ -52,12 +52,15 @@ async def bleutrade_ticker():
                 root = json_data['result']
                 index = 0
                 for item in root:
+                    main_key = file_name + '/Bleutrade/' + pair_fix(pair_array[index])
+                    if r.get(main_key) is None:
+                        r.set(main_key, 1)
                     if float(r.get(file_name + '/Bleutrade/' +
                                    pair_fix(pair_array[index])).decode('utf-8')) != (float(item['Bid']) +
                                                                                      float(item['Ask']))/2:
                         r.set(file_name + '/Bleutrade/' + pair_fix(pair_array[index]),
                               (float(item['Bid']) + float(item['Ask'])) / 2)
-                        r.publish('keychannel', file_name + '/Bleutrade/' + pair_fix(pair_array[index]))
+                        r.publish('s-Bleutrade', file_name + '/Bleutrade/' + pair_fix(pair_array[index]))
                     else:
                         continue
                     index += 1

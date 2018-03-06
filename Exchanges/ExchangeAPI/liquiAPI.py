@@ -23,7 +23,7 @@ def pair_fix(pair_string):
 async def liqui_ticker():
     global best_ask, best_bid, info_request, api_request
     import os
-    file_name = os.path.basename(sys.argv[0])
+    file_name = os.path.basename(sys.argv[0]).replace('.py', '')
     logging.info(u'Liqui getticker started')
     #
     while 1:
@@ -48,13 +48,16 @@ async def liqui_ticker():
                 # Если все ок - парсим
                 try:
                     for item in json_data:
+                        main_key = file_name + '/Liqui/' + pair_fix(item)
+                        if r.get(main_key) is None:
+                            r.set(main_key, 1)
                         if float(r.get(file_name + '/Liqui/' + pair_fix(item)).decode('utf-8')) != ((json_data[item]
                                                                                                     ['buy'] +
                                                                                                     json_data[item]
                                                                                                     ['sell']))/2:
                             r.set(file_name + '/Liqui/' + pair_fix(item), ((json_data[item]['buy'] + json_data[item]
                                                                             ['sell']))/2)
-                            r.publish('keychannel', file_name + '/Liqui/' + pair_fix(item))
+                            r.publish('s-Liqui', file_name + '/Liqui/' + pair_fix(item))
                         else:
                             continue
                 except LookupError:

@@ -14,3 +14,4 @@ THIS FILE CONTAINS KEY MOMENTS.
 12) POLONIEX -> PAIRS COME AS BTC_DASH. STABLE
 ANY OTHER INFO ABOUT PUBLIC API'S IS UNNECESSARY.
 
+'s-*' in publish is the main KEY. Reserved only for site arbitration

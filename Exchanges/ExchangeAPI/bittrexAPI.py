@@ -85,7 +85,7 @@ async def api_get_getticker():
     # Получаем данные с API битрикса по конкретной валютной паре (ex. localhost/bittrex/btc-eth)
     global api_request
     import os
-    file_name = os.path.basename(sys.argv[0])
+    file_name = os.path.basename(sys.argv[0]).replace('.py', '')
     logging.info(u'Bittrex getticker started')
     while 1:
         try:
@@ -100,11 +100,12 @@ async def api_get_getticker():
                 # Назначаем объект 'result' корневым, для простоты обращения
                 root = json_data['result']
                 for item in root:
-                    if float(r.get(file_name + '/Bittrex/' +
-                                   item['MarketName']).decode('utf-8')) != (float(item['Bid']) + float(item['Ask']))/2:
-                        r.set(file_name + '/Bittrex/' + item['MarketName'],
-                              (float(item['Bid']) + float(item['Ask'])) / 2)
-                        r.publish('keychannel', file_name + '/Bittrex/' + item['MarketName'])
+                    main_key = file_name + '/Bittrex/' + item['MarketName']
+                    if r.get(main_key) is None:
+                        r.set(main_key, 1)
+                    if float(r.get(main_key).decode('utf-8')) != (float(item['Bid']) + float(item['Ask']))/2:
+                        r.set(main_key, (float(item['Bid']) + float(item['Ask'])) / 2)
+                        r.publish('s-Bittrex', main_key)
                     else:
                         continue
         await asyncio.sleep(15)

@@ -44,7 +44,7 @@ def pair_fix(pair_string):
 async def hitbtc_ticker():
     global data_request
     import os
-    file_name = os.path.basename(sys.argv[0])
+    file_name = os.path.basename(sys.argv[0]).replace('.py', '')
     logging.info("HitbtcAPI method started")
     while 1:
         try:
@@ -55,12 +55,15 @@ async def hitbtc_ticker():
             full_data = json.loads(data_request.text)
             for item in full_data:
                 try:
+                    main_key = file_name + '/Hitbtc/' + pair_fix(item['symbol'])
+                    if r.get(main_key) is None:
+                        r.set(main_key, 1)
                     if float(r.get(file_name + '/Hitbtc/' +
                                    pair_fix(item['symbol'])).decode('utf-8')) != (float(item['bid']) +
                                                                                   float(item['ask']))/2:
                         r.set(file_name + '/Hitbtc/' + pair_fix(item['symbol']),
                               (float(item['bid']) + float(item['ask'])) / 2)
-                        r.publish('keychannel', file_name + '/Hitbtc/' + pair_fix(item['symbol']))
+                        r.publish('s-Hitbtc', file_name + '/Hitbtc/' + pair_fix(item['symbol']))
                     else:
                         continue
                 except TypeError:

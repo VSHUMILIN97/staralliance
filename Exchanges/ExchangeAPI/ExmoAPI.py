@@ -80,7 +80,7 @@ async def exmo_ticker():
     # Получаем данные с API битрикса по конкретной валютной паре (ex. localhost/bittrex/btc-eth)
     global data, api_request
     import os
-    file_name = os.path.basename(sys.argv[0])
+    file_name = os.path.basename(sys.argv[0]).replace('.py', '')
     logging.info(u'Exmo getticker started')
     while 1:
         try:
@@ -93,12 +93,15 @@ async def exmo_ticker():
             json_data = json.loads(api_request.text)
             # Если все ок - парсим
             for item in json_data:
+                main_key = file_name + '/Exmo/' + pair_fix(item)
+                if r.get(main_key) is None:
+                    r.set(main_key, 1)
                 if float(r.get(file_name + '/Exmo/' +
                                pair_fix(item)).decode('utf-8')) != (float(json_data[item]['buy_price']) +
                                                                     float(json_data[item]['sell_price']))/2:
                     r.set(file_name + '/Exmo/' + pair_fix(item),
                           (float(json_data[item]['buy_price']) + float(json_data[item]['sell_price'])) / 2)
-                    r.publish('keychannel', file_name + '/Exmo/' + pair_fix(item))
+                    r.publish('s-Exmo', file_name + '/Exmo/' + pair_fix(item))
 
                 else:
                     continue

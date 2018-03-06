@@ -43,7 +43,7 @@ def pair_fix(pair_string):
 async def kraken_ticker():
     global eu_name_index, info_request, data_request
     import os
-    file_name = os.path.basename(sys.argv[0])
+    file_name = os.path.basename(sys.argv[0]).replace('.py', '')
     logging.info('Kraken API has started')
     while 1:
         try:
@@ -78,12 +78,15 @@ async def kraken_ticker():
                 data_alt_var = data[each_item]
                 if each_item in alt_china_name:
                     eu_name_index = alt_china_name.index(each_item)
+                main_key = file_name + '/Kraken/' + pair_fix(alt_name[eu_name_index])
+                if r.get(main_key) is None:
+                    r.set(main_key, 1)
                 if float(r.get(file_name + '/Kraken/' +
                                pair_fix(alt_name[eu_name_index])).decode('utf-8')) != (float(data_alt_var['b'][0]) +
                                                                                        float(data_alt_var['a'][0]))/2:
                     r.set(file_name + '/Kraken/' + pair_fix(alt_name[eu_name_index]),
                           (float(data_alt_var['b'][0]) + float(data_alt_var['a'][0])) / 2)
-                    r.publish('keychannel', file_name + '/Kraken/' + pair_fix(alt_name[eu_name_index]))
+                    r.publish('s-Kraken', file_name + '/Kraken/' + pair_fix(alt_name[eu_name_index]))
                 else:
                     continue
                 iterable2 += 1

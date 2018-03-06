@@ -24,7 +24,7 @@ async def kucoin_ticker():
     # Данные собираются для каждой валютной пары из списка pairlist
     global info_request
     import os
-    file_name = os.path.basename(sys.argv[0])
+    file_name = os.path.basename(sys.argv[0]).replace('.py', '')
     logging.info(u'Kucoin getticker started')
     while 1:
         try:
@@ -37,12 +37,15 @@ async def kucoin_ticker():
                 data = info_data['data']
                 for item in data:
                     try:
+                        main_key = file_name + '/Kucoin/' + pair_fix(item['symbol'])
+                        if r.get(main_key) is None:
+                            r.set(main_key, 1)
                         if float(r.get(file_name + '/Kucoin/'
                                  + pair_fix(item['symbol'])).decode('utf-8')) != (float(item['buy'])
                                                                                   + float(item['sell']))/2:
                             r.set(file_name + '/Kucoin/' + pair_fix(item['symbol']),
                                   (float(item['buy']) + float(item['sell'])) / 2)
-                            r.publish('keychannel', file_name + '/Kucoin/' + pair_fix(item['symbol']))
+                            r.publish('s-Kucoin', file_name + '/Kucoin/' + pair_fix(item['symbol']))
                         else:
                             continue
                     except KeyError:

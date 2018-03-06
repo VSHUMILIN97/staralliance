@@ -44,7 +44,7 @@ def pair_fix(pair_string):
 async def gatecoin_ticker():
     global api_request
     import os
-    file_name = os.path.basename(sys.argv[0])
+    file_name = os.path.basename(sys.argv[0]).replace('.py', '')
     logging.info(u'Gatecoin collection of data in parse')
     while 1:
         try:
@@ -57,12 +57,15 @@ async def gatecoin_ticker():
                 json_data = json.loads(api_request.text)
                 result = json_data['tickers']
                 for item in result:
+                    main_key = file_name + '/Gatecoin/' + pair_fix(item['currencyPair'])
+                    if r.get(main_key) is None:
+                        r.set(main_key, 1)
                     if float(r.get(file_name + '/Gatecoin/' +
                                    pair_fix(item['currencyPair'])).decode('utf-8')) != (float(item['bid'])
                                                                                         + float(item['ask']))/2:
                         r.set(file_name + '/Gatecoin/' + pair_fix(item['currencyPair']),
                               (float(item['bid']) + float(item['ask'])) / 2)
-                        r.publish('keychannel', file_name + '/Gatecoin/' + pair_fix(item['currencyPair']))
+                        r.publish('s-Gatecoin', file_name + '/Gatecoin/' + pair_fix(item['currencyPair']))
                     else:
                         continue
                         #

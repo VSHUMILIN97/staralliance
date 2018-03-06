@@ -25,7 +25,7 @@ async def livecoin_ticker():
     logging.info(u'livecoin getticker started')
     #
     import os
-    file_name = os.path.basename(sys.argv[0])
+    file_name = os.path.basename(sys.argv[0]).replace('.py', '')
     while 1:
         try:
             #
@@ -37,12 +37,15 @@ async def livecoin_ticker():
             if api_request.status_code == 200:
                 json_data = json.loads(api_request.text)
                 for item in json_data:
+                    main_key = file_name + '/Livecoin/' + pair_fix(item['symbol'])
+                    if r.get(main_key) is None:
+                        r.set(main_key, 1)
                     if float(r.get(file_name + '/Livecoin/' +
                              pair_fix(item['symbol'])).decode('utf-8')) != (float(item['best_bid'])
                                                                             + float(item['best_ask']))/2:
                         r.set(file_name + '/Livecoin/' + pair_fix(item['symbol']),
                               (float(item['best_bid']) + float(item['best_ask']))/2)
-                        r.publish('keychannel', file_name + '/Livecoin/' + pair_fix(item['symbol']))
+                        r.publish('s-Livecoin', file_name + '/Livecoin/' + pair_fix(item['symbol']))
                     else:
                         continue
             await asyncio.sleep(18.4)

@@ -12,9 +12,6 @@ logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(a
                     level=logging.DEBUG)
 r = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=0)
 
-p = r.pubsub()
-p.subscribe('keychannel')
-
 
 def approved_pairs():
     pair_data = []
