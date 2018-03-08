@@ -2,13 +2,47 @@ import os
 import json
 import sys
 import logging
+
+import redis
 from django.shortcuts import render
 from django.views.generic import View
+
+from PiedPiper.settings import REDIS_HOST, REDIS_PORT
 from mongo_db_connection import MongoDBConnection
-from Exchanges.ExchangeAPI.PairDataNOTAPI import approved_exchanges, approved_pairs
+from Exchanges.ExchangeAPI.PairDataNOTAPI import approved_exchanges, approved_pairs, approved_keys
 logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
                     level=logging.DEBUG)
+r = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=0)
 # Create your views here.
+
+
+def keys(dictionary):
+    repaired_map = []
+    state_map = state_saver()
+    for item in state_map:
+        for preload in dictionary:
+            if str(preload).endswith(item):
+                repaired_map.append(preload)
+                break
+    return repaired_map
+
+
+def state_saver():
+    cleared_state = []
+    pairs = sorted(approved_pairs())
+    exchs = sorted(approved_exchanges())
+    for pair in pairs:
+        for exch in exchs:
+            cleared_state.append(exch + '/' + pair)
+    return cleared_state
+
+
+def state_getter(clear_map):
+    lul = []
+    for item in clear_map:
+        ok_state = item.split('/')
+        lul.append({ok_state[1] + '/' + ok_state[2]: r.get(item).decode('utf-8')})
+    return lul
 
 
 def index_view(request):
@@ -60,5 +94,6 @@ class Comparison(View):
             return render(request, 'comparebeta.html', {})  # установить compare для другого отображения арбитража
         else:
             return render(request, 'compare.html', {'pairs': json.dumps(sorted(approved_pairs())), 'exchs':
-                json.dumps(sorted(approved_exchanges()))})
+                                                    json.dumps(sorted(approved_exchanges())),
+                                                    'ticks': json.dumps(state_getter(keys(approved_keys())))})
             # установить compare для другого отображения арбитража

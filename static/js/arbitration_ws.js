@@ -30,7 +30,7 @@ function maxormin(int){
                    indexmin = cells[joy].cellIndex - 1;
                }
                if (cells[joy].innerText === '—') {
-                   //cells[joy].classList.toggle("nope");
+                   cells[joy].classList.toggle("nope");
                }
            }
            if (((max - min) / max) * 100 > 3) {
@@ -46,11 +46,14 @@ var ws = new WebSocket("ws://" + window.location.hostname + ":8090/");
 //Second button supportive hide function
  var myexchs = document.getElementById("myexchs").value;
  var mypairs = document.getElementById("mypairs").value;
+ var myticks = document.getElementById("myticks").value;
  var notarray = myexchs + '';
+ var raw_data = JSON.stringify(myticks);
+ var preparsed_data = JSON.parse(raw_data);
+ var truly_ticks = JSON.parse(preparsed_data);
  var nosecondarray = mypairs + '';
  var truly_array = notarray.replace('[', '').replace(']', '').split(',');
  var truly_pairs = nosecondarray.replace('[', '').replace(']', '').split(',');
-
 
 
  var table = document.getElementById("tableID");
@@ -79,23 +82,32 @@ var ws = new WebSocket("ws://" + window.location.hostname + ":8090/");
 
  var tableBody = document.createElement('tbody');
  table.appendChild(tableBody);
-
+        var liter = 0;
         /* Massive loop-block. Pushes data from server JSON array to our table.
          * Creates blocks, cells and rows dynamically.
          * Throw - into the cell if there are no value for this Exchanger, but the pair exists.
          */
-        for (var trend = 0; trend < truly_pairs.length; trend++) {
+        for (var trend in truly_pairs) {
 
             var tr = document.createElement('tr');
-            var text = truly_pairs[trend];
+            var text = truly_pairs[trend].toString();
             var th = document.createElement('th');
             th.appendChild(document.createTextNode(text));
             tr.appendChild(th);
             for (var exch in truly_array) {
                 var td = document.createElement('td');
-                var v = 0;
+                var ex = truly_array[exch].toString();
+                var full_text = ex.replace('"', '').replace('"', '') + '/' + text.replace('"', '').replace('"', '');
+                full_text = full_text.replace(' ', '').replace(' ', '');
+                var v;
+                if (truly_ticks[liter][full_text] !== undefined){
+                    v = truly_ticks[liter][full_text];
+                    liter++;
+                } else {
+                    v = 0;
+                }
                 if (v !== 0) {
-                    td.appendChild(document.createTextNode(fix(v)));
+                    td.appendChild(document.createTextNode(fix(parseFloat(v))));
                 } else {
                     td.appendChild(document.createTextNode('—'));
                 }
@@ -108,14 +120,11 @@ var ws = new WebSocket("ws://" + window.location.hostname + ":8090/");
                  }*/
                 td.setAttribute("id", (text + "_" + truly_array[exch]));
                 tr.appendChild(td);
-                //tr.replaceChild(td);
 
             }
             tr.setAttribute("title", text);
-            tr.classList.add('hid');
             tableBody.appendChild(tr);
         }
-
     document.getElementById("scrdiv").addEventListener('scroll', function () {
             this.querySelector("thead").style.transform = "translate(0," + this.scrollTop + "px)";
         }, false);
@@ -133,53 +142,64 @@ var ws = new WebSocket("ws://" + window.location.hostname + ":8090/");
             }, false);
         btn.setAttribute("onclick","true");
 
+ var mxmnrows = tableBody.getElementsByTagName('tr');
+ for (var mxmn = 0; mxmn < mxmnrows.length; mxmn++){
+     maxormin(mxmn)
+ }
 
-    // Initial on connection. Maybe it's better to check which transport is used by browser to pass data.
-    ws.onopen = function(event){
-        // clear
-    };
+ // Initial on connection. Maybe it's better to check which transport is used by browser to pass data.
+ ws.onopen = function(event){
+     // clear
+ };
 
-    ws.onmessage = function (event) {
-        var message = JSON.parse(event.data);
-        var info_half = message[0].split('/');
-        var exch = info_half[0];
-        var pair = info_half[1];
-        var tick = message[1];
-        var state_num;
-        var thead = table.getElementsByTagName('th');
-        for (var nul = 0; nul < thead.length; nul++){
-            if (thead[nul].innerText === '"' + exch + '"'){
-                state_num = nul - 1;
-            }
-        }
-        var tbody = table.getElementsByTagName('tbody')[0];
-        var tablerow = tbody.getElementsByTagName('tr');
-        for (var iter = 0; iter < tablerow.length; iter++){
-            var th = tablerow[iter].getElementsByTagName('th');
-            if (th[0].innerText === '"' + pair + '"'){
-                var td = tablerow[iter].getElementsByTagName('td');
-                td[state_num].innerText = fix(parseFloat(tick));
-                maxormin(iter);
-                break;
-            }
-        }
-    };
-
-    /* Works, when the server or client goes away.
-     * Better to release all the memory and so on there.
-     */
-    ws.onclose = function (event) {
-         if (event.wasClean){
-             alert('Соединение закрыто');
-         } else{
-             alert('Соединение оборвано по причине: ' + event.reason + ' - код ошибки: '+ event.code );
+ ws.onmessage = function (event) {
+     var message = JSON.parse(event.data);
+     var info_half = message[0].split('/');
+     var exch = info_half[0];
+     var pair = info_half[1];
+     var tick = message[1];
+     var state_num;
+     var thead = table.getElementsByTagName('th');
+     for (var nul = 0; nul < thead.length; nul++){
+         if (thead[nul].innerText === '"' + exch + '"'){
+             state_num = nul - 1;
+             break;
          }
-     };
+     }
+     var tbody = table.getElementsByTagName('tbody')[0];
+     var tablerow = tbody.getElementsByTagName('tr');
+     for (var iter = 0; iter < tablerow.length; iter++){
+         var th = tablerow[iter].getElementsByTagName('th');
+         if (th[0].innerText === '"' + pair + '"'){
+             var td = tablerow[iter].getElementsByTagName('td');
+             if (parseFloat(td[state_num].innerText) > fix(parseFloat(tick))()){
+                 td[state_num].appendChild(document.createElement('up'))
+             }
+             else if (parseFloat(td[state_num].innerText) < fix(parseFloat(tick))()) {
+                 td[state_num].appendChild(document.createElement('down'))
+             }
+             td[state_num].innerText = fix(parseFloat(tick));
+             maxormin(iter);
+             break;
+         }
+     }
+ };
 
-    // It's clear, I guess
-    ws.onerror = function (error) {
-         alert('Ошибка - ' + error.data);
-     };
+ /* Works, when the server or client goes away.
+  * Better to release all the memory and so on there.
+  */
+ ws.onclose = function (event) {
+      if (event.wasClean){
+          alert('Соединение закрыто');
+      } else{
+          alert('Соединение оборвано по причине: ' + event.reason + ' - код ошибки: '+ event.code );
+      }
+  };
+
+ // It's clear, I guess
+ ws.onerror = function (error) {
+      alert('Ошибка - ' + error.data);
+ };
 
     // Works, when server pass data to a client with a preferred transport.
    // ws.onmessage = function (event) {
