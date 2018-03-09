@@ -1,26 +1,43 @@
- function fix(value) {
+function fix(value) {
         if (value.toString().indexOf('e')) {
             return value.toFixed(8);
         }
         else {
             return Number(Math.round(value+'e8')+'e-8');
         }
-    }
-
-//Search state crutch
- var input = document.getElementById("exchInput");
- var filter = input.value.toUpperCase();
- if (filter !== ''){
-     searchFunc()
  }
+
+// Supportive function to provide search in the current table
+function searchFunc() {
+  // Declare variables
+  var input, filter, table, tr, td, i, ftable;
+  input = document.getElementById("unique");
+  filter = input.value.toUpperCase();
+  ftable = document.getElementById("tableID");
+  table = ftable.getElementsByTagName("tbody")[0];
+  tr = table.getElementsByTagName("tr");
+
+  // Loop through all table rows, and hide those who don't match the search query
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0];
+    var h = tr[i].getElementsByTagName("th")[0];
+
+    if (h) {
+      if (h.innerHTML.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }
+  }
+}
 function maxormin(int){
     var tbody = table.getElementsByTagName('tbody')[0];
      var trow = tbody.getElementsByTagName('tr');
      var cells = trow[int].getElementsByTagName('td');
-     var max = -999999999,
-         min = 99999999999,
-         indexmin, indexmax;
+     var max = -999999999, min = 99999999999, indexmin, indexmax;
            for (var joy = 0; joy < cells.length; joy++) {
+               cells[joy].className = '';
                if (parseFloat(cells[joy].innerText) > max) {
                    max = parseFloat(cells[joy].innerText);
                    indexmax = cells[joy].cellIndex - 1;
@@ -64,7 +81,15 @@ var ws = new WebSocket("ws://" + window.location.hostname + ":8090/");
  tableHead.appendChild(tr);
  // The real header with Exchanges 150px height.
  var th = document.createElement('th');
+ var x = document.createElement("INPUT");
+ x.type = "text";
+ x.id = "unique";
+ x.name = "search";
+ x.setAttribute("placeholder", "Searching field");
+ x.style.width = "150px";
+ x.onkeyup = function () {searchFunc()};
  th.style.width = "150px";
+ th.appendChild(x);
  tr.appendChild(th);
 
  for (var inter = 0; inter < truly_array.length; inter++) {
@@ -147,6 +172,11 @@ var ws = new WebSocket("ws://" + window.location.hostname + ":8090/");
      maxormin(mxmn)
  }
 
+ var input = document.getElementById("unique");
+ var filter = input.value.toUpperCase();
+ if (filter !== ''){
+     searchFunc()
+ }
  // Initial on connection. Maybe it's better to check which transport is used by browser to pass data.
  ws.onopen = function(event){
      // clear
@@ -172,13 +202,14 @@ var ws = new WebSocket("ws://" + window.location.hostname + ":8090/");
          var th = tablerow[iter].getElementsByTagName('th');
          if (th[0].innerText === '"' + pair + '"'){
              var td = tablerow[iter].getElementsByTagName('td');
-             if (parseFloat(td[state_num].innerText) > fix(parseFloat(tick))()){
-                 td[state_num].appendChild(document.createElement('up'))
-             }
-             else if (parseFloat(td[state_num].innerText) < fix(parseFloat(tick))()) {
+             var currentVal = td[state_num].innerText;
+             td[state_num].innerText = fix(parseFloat(tick));
+             if (currentVal > fix(parseFloat(tick)) && currentVal != '—'){
                  td[state_num].appendChild(document.createElement('down'))
              }
-             td[state_num].innerText = fix(parseFloat(tick));
+             else if (currentVal < fix(parseFloat(tick)) && currentVal != '—') {
+                 td[state_num].appendChild(document.createElement('up'))
+             }
              maxormin(iter);
              break;
          }
@@ -443,30 +474,7 @@ function forceRefresh(){
                     }
                 }
 }
-// Supportive function to provide search in the current table
-function searchFunc() {
-  // Declare variables
-  var input, filter, table, tr, td, i, ftable;
-  input = document.getElementById("exchInput");
-  filter = input.value.toUpperCase();
-  ftable = document.getElementById("tableID");
-  table = ftable.getElementsByTagName("tbody")[0];
-  tr = table.getElementsByTagName("tr");
 
-  // Loop through all table rows, and hide those who don't match the search query
-  for (i = 0; i < tr.length; i++) {
-    td = tr[i].getElementsByTagName("td")[0];
-    var h = tr[i].getElementsByTagName("th")[0];
-
-    if (h) {
-      if (h.innerHTML.toUpperCase().indexOf(filter) > -1) {
-        tr[i].style.display = "";
-      } else {
-        tr[i].style.display = "none";
-      }
-    }
-  }
-}
     // Supportive function to fix float number from math representation to classic 0.0000320421
 
 

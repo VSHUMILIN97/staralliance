@@ -5,7 +5,6 @@
     <input type="hidden" id="myexchs" name="variable" value="{{exchs}}" readonly>
     <input type="hidden" id="mypairs" name="variable" value="{{ pairs }}" readonly>
     <input type="hidden" id="myticks" name="variable" value="{{ticks}}" readonly>
-    <input type="text" id="exchInput" onkeyup="searchFunc()" placeholder="Search for pairnames..">
   <table id="tableID" style="table-layout:fixed">
   </table>
 </div>
@@ -138,6 +137,12 @@ table.hidePair td.pairhid{
 }
 table.hidePair tr.hidpairrow{
     display: none;
+}
+#unique {
+    width: 140px;
+    font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+    font-weight: lighter;
+    font-size: 14px;
 }
 </style>
 {% endblock content %}
