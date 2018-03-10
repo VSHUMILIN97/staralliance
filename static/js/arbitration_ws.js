@@ -1,11 +1,15 @@
 function fix(value) {
-        if (value.toString().indexOf('e')) {
+		var prec = 9 - value.toString().split('.')[0].length;
+        if (prec < 0) {
+        		return value.toString().split('.')[0];
+        }
+        if (value.toString().indexOf('e') > 0) {
             return value.toFixed(8);
         }
         else {
-            return Number(Math.round(value+'e8')+'e-8');
+            return Number(Math.round(value + 'e' + prec)+'e-' + prec).toFixed(prec);
         }
- }
+}
 
 // Supportive function to provide search in the current table
 function searchFunc() {
