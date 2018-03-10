@@ -11,6 +11,12 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "PiedPiper.settings")
+if os.path.exists('/etc/cryptopiper/settings.py'):
+    try:
+        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "/etc/cryptopiper/settings.py")
+    except ModuleNotFoundError:
+        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "PiedPiper.settings")
+else:
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "PiedPiper.settings")
 
 application = get_wsgi_application()
