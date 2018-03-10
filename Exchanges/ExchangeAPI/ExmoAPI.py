@@ -84,28 +84,32 @@ async def exmo_ticker():
     logging.info(u'Exmo getticker started')
     while 1:
         try:
-            api_request = requests.get("https://api.exmo.me/v1/ticker/")
-        except ConnectionError:
-            logging.error(u'Exmo API cannot be reached')
-        # Проверяем ответ на вшивость. Если код не 200, то данные не записываем.
-        if api_request.status_code == 200:
-            # Формируем JSON массив из данных с API
-            json_data = json.loads(api_request.text)
-            # Если все ок - парсим
-            for item in json_data:
-                main_key = file_name + '/Exmo/' + pair_fix(item)
-                if r.get(main_key) is None:
-                    r.set(main_key, 1)
-                if float(r.get(file_name + '/Exmo/' +
-                               pair_fix(item)).decode('utf-8')) != (float(json_data[item]['buy_price']) +
-                                                                    float(json_data[item]['sell_price']))/2:
-                    r.set(file_name + '/Exmo/' + pair_fix(item),
-                          (float(json_data[item]['buy_price']) + float(json_data[item]['sell_price'])) / 2)
-                    r.publish('s-Exmo', file_name + '/Exmo/' + pair_fix(item))
-
-                else:
-                    continue
-        await asyncio.sleep(18)
+            try:
+                api_request = requests.get("https://api.exmo.me/v1/ticker/")
+            except ConnectionError:
+                logging.error(u'Exmo API cannot be reached')
+            # Проверяем ответ на вшивость. Если код не 200, то данные не записываем.
+            if api_request.status_code == 200:
+                # Формируем JSON массив из данных с API
+                json_data = json.loads(api_request.text)
+                # Если все ок - парсим
+                for item in json_data:
+                    main_key = file_name + '/Exmo/' + pair_fix(item)
+                    if r.get(main_key) is None:
+                        r.set(main_key, 1)
+                    if float(r.get(file_name + '/Exmo/' +
+                                   pair_fix(item)).decode('utf-8')) != (float(json_data[item]['buy_price']) +
+                                                                        float(json_data[item]['sell_price']))/2:
+                        r.set(file_name + '/Exmo/' + pair_fix(item),
+                              (float(json_data[item]['buy_price']) + float(json_data[item]['sell_price'])) / 2)
+                        r.publish('s-Exmo', file_name + '/Exmo/' + pair_fix(item))
+                        await asyncio.sleep(18 / 46)
+                    else:
+                        await asyncio.sleep(18 / 46)
+                        continue
+        except OSError:
+            logging.error('No internet connection on EXMO')
+            continue
 
 
 def exmo_volume_data():

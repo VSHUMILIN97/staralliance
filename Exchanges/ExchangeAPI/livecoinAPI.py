@@ -34,9 +34,11 @@ async def livecoin_ticker():
                 api_request = requests.get("https://api.livecoin.net" + "/exchange/ticker")
             except ConnectionError:
                 logging.error(u'Livecoin API cannot be reached')
+            j = 0
             if api_request.status_code == 200:
                 json_data = json.loads(api_request.text)
                 for item in json_data:
+                    j += 1
                     main_key = file_name + '/Livecoin/' + pair_fix(item['symbol'])
                     if r.get(main_key) is None:
                         r.set(main_key, 1)
@@ -46,9 +48,11 @@ async def livecoin_ticker():
                         r.set(file_name + '/Livecoin/' + pair_fix(item['symbol']),
                               (float(item['best_bid']) + float(item['best_ask']))/2)
                         r.publish('s-Livecoin', file_name + '/Livecoin/' + pair_fix(item['symbol']))
+                        await asyncio.sleep(26 / 520)
                     else:
+                        await asyncio.sleep(26 / 520)
                         continue
-            await asyncio.sleep(18.4)
+        #
         except OSError:
             logging.error(u'Livecoin parse crash')
             continue

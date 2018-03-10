@@ -46,13 +46,15 @@ async def kucoin_ticker():
                             r.set(file_name + '/Kucoin/' + pair_fix(item['symbol']),
                                   (float(item['buy']) + float(item['sell'])) / 2)
                             r.publish('s-Kucoin', file_name + '/Kucoin/' + pair_fix(item['symbol']))
+                            await asyncio.sleep(16 / 298)
                         else:
+                            await asyncio.sleep(16 / 298)
                             continue
                     except KeyError:
                         continue
                     except AttributeError:
                         continue
-            await asyncio.sleep(14.9)
+        #
         except OSError:
             logging.info(u'Kucoin parse crash')
             continue

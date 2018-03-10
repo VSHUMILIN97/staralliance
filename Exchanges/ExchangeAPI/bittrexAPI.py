@@ -89,27 +89,31 @@ async def api_get_getticker():
     logging.info(u'Bittrex getticker started')
     while 1:
         try:
-            api_request = requests.get("https://bittrex.com/api/v1.1/public/" + "getmarketsummaries")
-        except ConnectionError:
-            logging.error(u'Bittrex API cannot be reached')
-        #
-        if api_request.status_code == 200:
-            json_data = json.loads(api_request.text)
-            # Если все ок - парсим
-            if json_data['success']:
-                # Назначаем объект 'result' корневым, для простоты обращения
-                root = json_data['result']
-                for item in root:
-                    main_key = file_name + '/Bittrex/' + item['MarketName']
-                    if r.get(main_key) is None:
-                        r.set(main_key, 1)
-                    if float(r.get(main_key).decode('utf-8')) != (float(item['Bid']) + float(item['Ask']))/2:
-                        r.set(main_key, (float(item['Bid']) + float(item['Ask'])) / 2)
-                        r.publish('s-Bittrex', main_key)
-                    else:
-                        continue
-        await asyncio.sleep(15)
-
+            try:
+                api_request = requests.get("https://bittrex.com/api/v1.1/public/" + "getmarketsummaries")
+            except ConnectionError:
+                logging.error(u'Bittrex API cannot be reached')
+            #
+            if api_request.status_code == 200:
+                json_data = json.loads(api_request.text)
+                # Если все ок - парсим
+                if json_data['success']:
+                    # Назначаем объект 'result' корневым, для простоты обращения
+                    root = json_data['result']
+                    for item in root:
+                        main_key = file_name + '/Bittrex/' + item['MarketName']
+                        if r.get(main_key) is None:
+                            r.set(main_key, 1)
+                        if float(r.get(main_key).decode('utf-8')) != (float(item['Bid']) + float(item['Ask']))/2:
+                            r.set(main_key, (float(item['Bid']) + float(item['Ask'])) / 2)
+                            r.publish('s-Bittrex', main_key)
+                            await asyncio.sleep(16/270)
+                        else:
+                            await asyncio.sleep(16/270)
+                            continue
+        except OSError:
+            logging.error('NO INTERNET CONNECTION')
+            continue
 
 
 # Получаем все сделки за некоторое(б-гу известное) время.

@@ -58,11 +58,14 @@ async def liqui_ticker():
                             r.set(file_name + '/Liqui/' + pair_fix(item), ((json_data[item]['buy'] + json_data[item]
                                                                             ['sell']))/2)
                             r.publish('s-Liqui', file_name + '/Liqui/' + pair_fix(item))
+                            await asyncio.sleep(22 / 226)
                         else:
+                            await asyncio.sleep(22 / 226)
                             continue
                 except LookupError:
                     logging.critical(u'Liqui API returned 0 elements')
-            await asyncio.sleep(21.12)
+                    await asyncio.sleep(30)
+        #
         except OSError:
             logging.error(u'Liqui parse mistake')
             continue

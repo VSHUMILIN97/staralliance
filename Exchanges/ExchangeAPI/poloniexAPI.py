@@ -26,24 +26,28 @@ async def poloniex_ticker():
     while 1:
         #
         try:
-            api_request = requests.get("https://poloniex.com/public" + "?command=returnTicker")
-        except ConnectionError:
-            logging.error(u'Poloniex API cannot be reached')
-        #
-        if api_request.status_code == 200:
-            json_data = json.loads(api_request.text)
-            for item in json_data:
-                main_key = file_name + '/Poloniex/' + pair_fix(item)
-                if r.get(main_key) is None:
-                    r.set(main_key, 1)
-                if float(r.get(main_key).decode('utf-8')) != (float(json_data[item]['highestBid']) +
-                                                              float(json_data[item]['lowestAsk']))/2:
-                    r.set(main_key, (float(json_data[item]['highestBid']) + float(json_data[item]['lowestAsk']))/2)
-                    r.publish('s-Poloniex', main_key)
-                else:
-                    continue
-        await asyncio.sleep(16.9)
-
+            try:
+                api_request = requests.get("https://poloniex.com/public" + "?command=returnTicker")
+            except ConnectionError:
+                logging.error(u'Poloniex API cannot be reached')
+            #
+            if api_request.status_code == 200:
+                json_data = json.loads(api_request.text)
+                for item in json_data:
+                    main_key = file_name + '/Poloniex/' + pair_fix(item)
+                    if r.get(main_key) is None:
+                        r.set(main_key, 1)
+                    if float(r.get(main_key).decode('utf-8')) != (float(json_data[item]['highestBid']) +
+                                                                  float(json_data[item]['lowestAsk']))/2:
+                        r.set(main_key, (float(json_data[item]['highestBid']) + float(json_data[item]['lowestAsk']))/2)
+                        r.publish('s-Poloniex', main_key)
+                        await asyncio.sleep(17/99)
+                    else:
+                        await asyncio.sleep(17/99)
+                        continue
+        except OSError:
+            logging.info('NO INTERNET CONNECTION')
+            continue
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(poloniex_ticker())

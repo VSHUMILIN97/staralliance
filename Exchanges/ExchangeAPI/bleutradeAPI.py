@@ -61,13 +61,16 @@ async def bleutrade_ticker():
                         r.set(file_name + '/Bleutrade/' + pair_fix(pair_array[index]),
                               (float(item['Bid']) + float(item['Ask'])) / 2)
                         r.publish('s-Bleutrade', file_name + '/Bleutrade/' + pair_fix(pair_array[index]))
+                        await asyncio.sleep(13.8 / 138)
+
                     else:
+                        await asyncio.sleep(13.8 / 138)
                         continue
                     index += 1
-            await asyncio.sleep(13.8)
+        #
         except OSError:
             logging.info(u'Bleutrade parse mistake')
-            break
+            continue
 
 
 loop = asyncio.get_event_loop()

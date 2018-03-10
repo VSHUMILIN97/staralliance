@@ -66,10 +66,11 @@ async def gatecoin_ticker():
                         r.set(file_name + '/Gatecoin/' + pair_fix(item['currencyPair']),
                               (float(item['bid']) + float(item['ask'])) / 2)
                         r.publish('s-Gatecoin', file_name + '/Gatecoin/' + pair_fix(item['currencyPair']))
+                        await asyncio.sleep(19.7/72)
                     else:
+                        await asyncio.sleep(19.7/72)
                         continue
-                        #
-            await asyncio.sleep(19.7)
+        #
         except OSError:
             logging.error(r'Gatecoin ticker mistake')
             continue

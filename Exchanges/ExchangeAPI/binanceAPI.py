@@ -66,10 +66,11 @@ async def binance_ticker():
                         r.set(file_name + '/Binance/' + pair_fix(item['symbol']),
                               (float(item['bidPrice']) + float(item['askPrice'])) / 2)
                         r.publish('s-Binance', file_name + '/Binance/' + pair_fix(item['symbol']))
+                        await asyncio.sleep(21/280)
                     else:
+                        await asyncio.sleep(21/280)
                         continue
             #
-            await asyncio.sleep(20.5)
         except OSError:
             logging.error(u'Binance parse mistake')
             continue

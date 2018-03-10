@@ -73,7 +73,6 @@ async def kraken_ticker():
                 logging.error(u'Kraken API cannot be reached')
             json_data = json.loads(data_request.text)
             data = json_data['result']
-            iterable2 = 0
             for each_item in data:
                 data_alt_var = data[each_item]
                 if each_item in alt_china_name:
@@ -87,10 +86,11 @@ async def kraken_ticker():
                     r.set(file_name + '/Kraken/' + pair_fix(alt_name[eu_name_index]),
                           (float(data_alt_var['b'][0]) + float(data_alt_var['a'][0])) / 2)
                     r.publish('s-Kraken', file_name + '/Kraken/' + pair_fix(alt_name[eu_name_index]))
+                    await asyncio.sleep(24/57)
                 else:
+                    await asyncio.sleep(24/57)
                     continue
-                iterable2 += 1
-            await asyncio.sleep(23.923)
+        #
         except OSError:
             logging.error('Kraken API was prevented from execution')
             continue

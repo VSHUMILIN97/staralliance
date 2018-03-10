@@ -64,7 +64,9 @@ async def hitbtc_ticker():
                         r.set(file_name + '/Hitbtc/' + pair_fix(item['symbol']),
                               (float(item['bid']) + float(item['ask'])) / 2)
                         r.publish('s-Hitbtc', file_name + '/Hitbtc/' + pair_fix(item['symbol']))
+                        await asyncio.sleep(28 / 566)
                     else:
+                        await asyncio.sleep(28 / 566)
                         continue
                 except TypeError:
                     logging.info('null in data parsing at ' + pair_fix(item['symbol']))
@@ -73,7 +75,6 @@ async def hitbtc_ticker():
                     logging.info('NoneType at redis DB, pair - ' + pair_fix(item['symbol']))
                     # Add if/else statement that'll check, whether pair is null now or not, if not it'll add it to redis
                     continue
-            await asyncio.sleep(25.9)
         except OSError:
             logging.error('HitbtcAPI method crashed')
             continue
