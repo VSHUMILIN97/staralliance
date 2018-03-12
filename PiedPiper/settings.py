@@ -29,7 +29,8 @@ ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
     '192.168.2.140',
-    'arbitr.tenguai.com'
+    'arbitr.tenguai.com',
+    '216.189.157.83',
 ]
 
 REDIS_HOST = 'localhost'
