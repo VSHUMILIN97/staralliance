@@ -7,7 +7,7 @@ function fix(value) {
             return value.toFixed(8);
         }
         else {
-            return Number(Math.round(value + 'e' + prec)+'e-' + prec).toFixed(prec);
+            return Number(Math.round(value + 'e' + prec) +'e-' + prec).toFixed(prec);
         }
 }
 
