@@ -6,3 +6,4 @@ pymongo
 websockets
 requests
 django-compressor
+django-bootstrap4
