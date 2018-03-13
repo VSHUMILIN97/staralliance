@@ -31,6 +31,7 @@ ALLOWED_HOSTS = [
     '192.168.2.140',
     'arbitr.tenguai.com',
     '216.189.157.83',
+    'vadim.sysnursery.org',
 ]
 
 REDIS_HOST = 'localhost'
