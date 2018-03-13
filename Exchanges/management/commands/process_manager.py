@@ -22,7 +22,7 @@ class Command(BaseCommand):
                 except OSError:
                     logging.error(u'Processes were not started\nTerminating command')
                     sys.exit(0)
-            else:
+            elif sys.platform == 'linux':
                 # Production starter
                 logging.info(u'Threads"re successfully started')
                 parent_pipe, child_pipe = os.pipe()
