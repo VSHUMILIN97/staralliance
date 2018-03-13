@@ -9,10 +9,8 @@ html, body{
 }
 
 .hero{
-  background-image: url('{{ STATIC_URL }}index/images/header.jpg');
-  background-repeat: no-repeat;
-  min-height: 300px;
-  background-attachment: fixed;
+    min-height: 300px;
+    background: url('/static/index/images/header.jpg') no-repeat fixed;
 }
 
 .background-image{
