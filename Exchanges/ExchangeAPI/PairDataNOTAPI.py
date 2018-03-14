@@ -57,8 +57,11 @@ def approved_keys():
 
     for item in whole_data:
         for key in item:
-            some_var = str(key).split('/')
-            pairs.append(some_var[2])
+            try:
+                some_var = str(key).split('/')
+                pairs.append(some_var[2])
+            except IndexError:
+                pass
 
     for item in pairs:
         if pairs.count(item) >= 2:

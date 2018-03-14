@@ -1,12 +1,8 @@
-import os
 import json
-import sys
 import logging
-
 import redis
 from django.shortcuts import render
 from django.views.generic import View
-
 from PiedPiper.settings import REDIS_HOST, REDIS_PORT
 from mongo_db_connection import MongoDBConnection
 from Exchanges.ExchangeAPI.PairDataNOTAPI import approved_exchanges, approved_pairs, approved_keys
