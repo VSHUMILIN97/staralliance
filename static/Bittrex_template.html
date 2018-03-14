@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+ <div class="wrapper row2">
+  <div id="container" class="clear">
+  <script>
+      var ws = new WebSocket("ws://" + window.location.hostname + ":8070/");
+      ws.onopen = function (event) {
+          alert('Opened');
+          ws.send('500')
+      };
+      ws.onmessage = function (event){
+          alert(event.data);
+          ws.send('101')
+      }
+  </script>
+  <table>
+{% for item in temp %}
+    <tr>
+    <td>{{ item.PairName }}&nbsp;</td>
+    <td>{{ item.High }}&nbsp;</td>
+    <td>{{ item.Low }}&nbsp;</td>
+    <td>{{ item.Last }}&nbsp;</td>
+    <td>{{ item.Volume }}&nbsp;</td>
+    <td>{{ item.BaseVolume }}&nbsp;</td>
+    <td>{{ item.TimeStamp }}&nbsp;</td>
+    <td>{{ item.Bid }}&nbsp;</td>
+    <td>{{ item.Ask }}&nbsp;</td>
+    <td>{{ item.Tick }}&nbsp;</td>
+    <td>{{ item.Exch }}&nbsp;</td>
+    <td>{{ item.OpenBuyOrders }}&nbsp;</td>
+    <td>{{ item.OpenSellOrders }}&nbsp;</td>
+    <td>{{ item.PrevDay }}&nbsp;</td>
+    </tr>
+{% endfor %}
+  </table>
+  </div>
+</div>
+
+{% endblock content %}

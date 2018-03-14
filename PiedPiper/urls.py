@@ -20,3 +20,6 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'', include('Exchanges.urls')),
 ]
+
+(r'^static/(?P<path>.*)$', 'django.views.static.serve',
+        {'document_root': '/static/admin/css/'}),

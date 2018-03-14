@@ -58,6 +58,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'requests',
     'compressor',
+    'bootstrap4',
+    'jquery',
 ]
 
 MIDDLEWARE = [
@@ -160,4 +162,4 @@ STATIC_ROOT = 'static'  # пустая папка, сюда будет соби�
 
 STATIC_URL = '/static/'  # URL для шаблонов
 
-
+STATICFILES_DIRS = ('/Exchanges/Templates/', )

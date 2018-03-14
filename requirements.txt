@@ -6,5 +6,4 @@ pymongo
 websockets
 requests
 django-compressor
-redis
-django-jquery
+django-bootstrap4
