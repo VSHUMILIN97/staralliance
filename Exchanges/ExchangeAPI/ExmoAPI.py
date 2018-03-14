@@ -8,7 +8,7 @@ import requests
 import json
 import sys
 import os.path
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../../djangopiper'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../../cryptopiper'))
 from PiedPiper.settings import REDIS_STARALLIANS_HOST, REDIS_DEFAULT_PORT
 from django.utils import timezone
 from mongo_db_connection import MongoDBConnection

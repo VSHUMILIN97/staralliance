@@ -10,7 +10,7 @@ logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(a
                     level=logging.DEBUG, filename='/var/log/cryptopiper/bittrexAPI.log')
 import sys
 import os.path
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../../djangopiper'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../../cryptopiper'))
 from PiedPiper.settings import REDIS_STARALLIANS_HOST, REDIS_DEFAULT_PORT
 from mongo_db_connection import MongoDBConnection
 

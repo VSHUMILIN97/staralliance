@@ -2,7 +2,7 @@ import redis
 import sys
 import os.path
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../../djangopiper'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../../cryptopiper'))
 from PiedPiper.settings import REDIS_STARALLIANS_HOST, REDIS_DEFAULT_PORT
 
 conn_r = redis.ConnectionPool(host=REDIS_STARALLIANS_HOST, port=REDIS_DEFAULT_PORT, db=0)
