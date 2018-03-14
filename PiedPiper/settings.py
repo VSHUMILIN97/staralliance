@@ -36,7 +36,7 @@ ALLOWED_HOSTS = [
 
 REDIS_STARALLIANS_HOST = '216.189.157.83'
 REDIS_DEFAULT_PORT = 6379
-REDIS_DEMOS_HOST = 'localhost'
+REDIS_DEMOS_HOST = '127.0.0.1'
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
