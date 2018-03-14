@@ -1,12 +1,12 @@
 # https://www.binance.com/api/v3/ticker/bookTicker
 import json
+import sys
+import os.path
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../../cryptopiper'))
 import logging
 import requests
 import asyncio
 import redis
-import sys
-import os.path
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../../cryptopiper'))
 from PiedPiper.settings import REDIS_STARALLIANS_HOST, REDIS_DEFAULT_PORT
 
 logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
