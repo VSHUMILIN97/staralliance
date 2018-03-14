@@ -9,8 +9,9 @@
     <hr />
   </div>
 
-  <input type="text" class="form-control" id="exchInput" onkeyup="searchFunc()" placeholder="Search for pairnames..">
-
+    <input type="hidden" id="myexchs" name="variable" value="{{exchs}}" readonly>
+    <input type="hidden" id="mypairs" name="variable" value="{{ pairs }}" readonly>
+    <input type="hidden" id="myticks" name="variable" value="{{ticks}}" readonly>
   <div class="tblHolder" id="scrdiv" style="width:auto; height:450px; overflow-x:auto; overflow-y:auto">
     <table id="tableID" style="table-layout:fixed">
     </table>
