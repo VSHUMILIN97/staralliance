@@ -34,8 +34,10 @@ ALLOWED_HOSTS = [
     'vadim.sysnursery.org',
 ]
 
-REDIS_HOST = 'localhost'
-REDIS_PORT = 6379
+REDIS_STARALLIANS_HOST = '216.189.157.83'
+REDIS_DEFAULT_PORT = 6379
+REDIS_DEMOS_HOST = 'localhost'
+
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',

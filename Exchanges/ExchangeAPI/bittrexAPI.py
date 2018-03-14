@@ -11,11 +11,12 @@ logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(a
 import sys
 import os.path
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../../djangopiper'))
-from PiedPiper.settings import REDIS_HOST, REDIS_PORT
+from PiedPiper.settings import REDIS_STARALLIANS_HOST, REDIS_DEFAULT_PORT
 from mongo_db_connection import MongoDBConnection
 
 
-r = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=0)
+conn_r = redis.ConnectionPool(host=REDIS_STARALLIANS_HOST, port=REDIS_DEFAULT_PORT, db=0)
+r = redis.Redis(connection_pool=conn_r)
 
 pairlist = ['BTC-1ST', 'BTC-LTC', 'BTC-ETH', 'BTC-DASH', 'BTC-XRP', 'ETH-LTC']
 

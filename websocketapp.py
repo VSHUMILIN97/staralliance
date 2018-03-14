@@ -5,12 +5,12 @@ import logging
 import redis
 import websockets
 from Exchanges.ExchangeAPI.PairDataNOTAPI import approved_keys
-from PiedPiper.settings import REDIS_HOST, REDIS_PORT
+from PiedPiper.settings import REDIS_STARALLIANS_HOST, REDIS_DEFAULT_PORT
 
 
 logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
                     level=logging.DEBUG, filename='/var/log/cryptopiper/websockets.log')
-r = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=0)
+r = redis.StrictRedis(host=REDIS_STARALLIANS_HOST, port=REDIS_DEFAULT_PORT, db=0)
 
 p = r.pubsub()
 p.psubscribe('s-*')

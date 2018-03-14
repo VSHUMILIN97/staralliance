@@ -283,11 +283,11 @@ var ws = new WebSocket("ws://" + window.location.hostname + ":8090/");
       if (event.wasClean){
           alert('Соединение закрыто');
       } else{
-          alert('Соединение оборвано по причине: ' + event.reason + ' - код ошибки: '+ event.code );
+          alert('Your connection was closed. If you want to continue, reload thisc page');
       }
   };
 
  // It's clear, I guess
  ws.onerror = function (error) {
-      alert('Ошибка - ' + error.data);
+     // pass
  };
