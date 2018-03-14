@@ -6,14 +6,15 @@ import dateutil.parser
 import asyncio
 import redis
 import logging
+logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
+                    level=logging.DEBUG, filename='/var/log/cryptopiper/bittrexAPI.log')
 import sys
 import os.path
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../../djangopiper'))
 from PiedPiper.settings import REDIS_HOST, REDIS_PORT
 from mongo_db_connection import MongoDBConnection
 
-logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
-                    level=logging.DEBUG, filename='/var/log/cryptopiper/bittrexAPI.log')
+
 r = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=0)
 
 pairlist = ['BTC-1ST', 'BTC-LTC', 'BTC-ETH', 'BTC-DASH', 'BTC-XRP', 'ETH-LTC']
