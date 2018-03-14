@@ -105,7 +105,7 @@ function maxormin(int){
            }
 }
 
-var ws = new WebSocket("ws://" + '94.205.66.142' + ":8091/");
+var ws = new WebSocket("ws://" + '192.168.2.140' + ":8091/");
 //var ws = new WebSocket("ws://" + window.location.hostname + ":8091/");
 //Second button supportive hide function
  var myexchs = document.getElementById("myexchs").value;
