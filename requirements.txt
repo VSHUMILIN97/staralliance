@@ -8,3 +8,4 @@ requests
 django-compressor
 django-bootstrap4
 django-jquery
+redis
