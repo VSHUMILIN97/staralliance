@@ -41,7 +41,7 @@ async def arbitration_socket(websocket, path):
 
 logging.info(u'Arbitartion websocket started')
 # Initialise websocket connection on host 127.0.0.1 and port 8090
-asyncio.get_event_loop().run_until_complete(websockets.serve(arbitration_socket, '0.0.0.0', 8091))
+asyncio.get_event_loop().run_until_complete(websockets.unix_serve(arbitration_socket, '0.0.0.0', 8091))
 asyncio.get_event_loop().run_forever()
 
 
