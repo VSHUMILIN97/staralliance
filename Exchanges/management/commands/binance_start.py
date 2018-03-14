@@ -6,6 +6,8 @@ import atexit
 import time
 import os
 import sys
+logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
+                    level=logging.DEBUG, filename='/var/log/cryptopiper/binanceAPI.log')
 
 
 def poloniex_subprocess():
@@ -18,7 +20,7 @@ def poloniex_subprocess():
     try:
         poloniex_pipe = subprocess.Popen(poloniex_command, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     except OSError:
-        logging.error(u'BinancwAPI process could not be started. Check logs.')
+        logging.error(u'BinanceAPI process could not be started. Check logs.')
         sys.exit(-1)
     # PID Declaration
     poloniex_pid = poloniex_pipe.pid

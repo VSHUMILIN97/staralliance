@@ -7,7 +7,7 @@ import signal
 import logging
 
 logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
-                    level=logging.DEBUG)
+                    level=logging.DEBUG, filename='/var/log/cryptopiper/websockets.log')
 """
 #
 #
@@ -118,5 +118,5 @@ def children_kill():
             # os.kill(agtion_vol_pid, signal.SIGTERM)
         except OSError:
             logging.critical(u'Process manager cannot kill processes\nUse `kill` command in terminal')
-            logging.info(u'Web-Socket rundown')
+            logging.critical(u'Web-Socket rundown')
             sys.exit(-1)

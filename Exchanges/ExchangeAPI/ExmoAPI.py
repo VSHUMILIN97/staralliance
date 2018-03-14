@@ -17,7 +17,7 @@ import redis
 
 
 logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
-                    level=logging.DEBUG)
+                    level=logging.DEBUG, filename='/var/log/cryptopiper/exmoAPI.log')
 r = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=0)
 
 pairlist = ['DASH_BTC', 'LTC_BTC', 'ETH_BTC', 'XRP_BTC', 'ETH_LTC']

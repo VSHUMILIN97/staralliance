@@ -2,7 +2,6 @@ from django.conf.urls import url
 from Exchanges import views
 from django.conf.urls.static import static
 from PiedPiper import settings
-import logging
 
 
 urlpatterns = [
@@ -23,6 +22,3 @@ urlpatterns = [
     url(r'^compare/(?P<mode>.+)/$', views.Comparison.as_view(), name='Comparison'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 # STATIC_URL upload all our /static/ files. Full definition in root/static/INFO.txt
-
-logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
-                    level=logging.DEBUG)

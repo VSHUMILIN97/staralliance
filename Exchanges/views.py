@@ -1,13 +1,10 @@
 import json
-import logging
 import redis
 from django.shortcuts import render
 from django.views.generic import View
 from PiedPiper.settings import REDIS_HOST, REDIS_PORT
 from mongo_db_connection import MongoDBConnection
 from Exchanges.ExchangeAPI.PairDataNOTAPI import approved_exchanges, approved_pairs, approved_keys
-logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
-                    level=logging.DEBUG)
 r = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=0)
 # Create your views here.
 

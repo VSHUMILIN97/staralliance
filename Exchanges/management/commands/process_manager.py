@@ -7,7 +7,6 @@ import sys
 from process_manager import children_kill, proc_start
 
 
-# Log config should be changed
 class Command(BaseCommand):
     def handle(self, *args, **options):
         logging.info(u'Process manager started')
@@ -23,6 +22,8 @@ class Command(BaseCommand):
                     logging.error(u'Processes were not started\nTerminating command')
                     sys.exit(0)
             elif sys.platform == 'linux':
+                logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
+                                    level=logging.DEBUG, filename='/var/log/cryptopiper/websockets.log')
                 # Production starter
                 logging.info(u'Threads"re successfully started')
                 parent_pipe, child_pipe = os.pipe()

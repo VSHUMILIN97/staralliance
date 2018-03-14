@@ -10,7 +10,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../../../djangopiper'))
 from PiedPiper.settings import REDIS_HOST, REDIS_PORT
 
 logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
-                    level=logging.DEBUG)
+                    level=logging.DEBUG, filename='/var/log/cryptopiper/bleutradeAPI.log')
 r = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=0)
 
 
