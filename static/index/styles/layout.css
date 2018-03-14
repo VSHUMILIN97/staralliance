@@ -11,13 +11,15 @@ html, body{
 .hero{
     min-height: 300px;
     background: url('/static/index/images/header.jpg') no-repeat fixed;
-}
-
-.background-image{
+    padding: 10%;
+    color: #E3E3E3;
+    height: 500px;
+    border-image-width: auto;
+    font-size: 25px;
 }
 
 nav {
-    background-color: #2D2D2D;
+    background-color: #0f111d;
 }
 
 div.header nav{
@@ -63,16 +65,6 @@ hr{
   align: center;
   width: 90%;
   background-color: #E3901F;
-}
-
-.hero {
-  padding: 10%;
-  background-repeat: no-repeat;
-  color: #E3E3E3;
-  height: 500px;
-  background-size: cover;
-  border-image-width: auto;
-  font-size: 25px;
 }
 
 .hero p{}

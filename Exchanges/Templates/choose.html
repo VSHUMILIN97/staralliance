@@ -8,165 +8,23 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
 <!-- (Optional) Latest compiled and minified JavaScript translation files -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/i18n/defaults-*.min.js"></script>
+<link rel="stylesheet" href="/static/index/styles/choose.css" type="text/css">
+
 
 <div class="bckgrnd">
-    <div class="chooseBox" >
-      <div class="headerText">Выберите биржу и пару</div>
-      <p class="smallEmptySpace"></p>
-      <div class="exchDropdown">
-        <select class="selectpicker show-tick" id="exchSelector" data-live-search="true" data-size="6" title="Биржа" data-width="205px">
-        </select>
-      </div>
-      <div class="pairDropdown">
-        <select class="selectpicker show-tick" id="pairSelector" data-live-search="true" data-size="6" title="Пара" data-width="205px" disabled>
-        </select>
-      </div>
-      <p class="mediumEmptySpace"></p>
-      <div class="btnHolder">
-        <button type="button" class="btn btn-default btn-outline" id="okBtn"><span style="font-size: 14px;">Показать</span></button>
-        <p class="nothing">Сочетание не выбрано</p>
-      </div>
+  <div class="chooseBox">
+    <div class="caption">
+      <h2> Choose exchange and pair </h2>
+      <hr/>
     </div>
+    <div class="select-group">
+      <select class="selectpicker show-tick col-12 col-sm-12 col-md-6 col-lg-6" id="exchSelector" data-live-search="true" data-size="6" title="Exchange" data-width="205px">
+      </select>
+      <select class="selectpicker show-tick col-12 col-sm-12 col-md-6 col-lg-6" id="pairSelector" data-live-search="true" data-size="6" title="Pair" data-width="205px" disabled>
+      </select>
+    </div> 
+    <button class="btn btn-md" id="okBtn">Show </button>
+  </div>
 </div>
-<p class="bigEmptySpace"></p>
 
-
-<style>
-
-.bckgrnd {
-  background-image: url("../../static/index/images/chooseBckgrnd.jpg");
-  height: 900px;        //подгонка по высоте (нижний белый прямоугольник) в этой строке и в 111
-  width: 100%;
-  position: absolute;
-  filter: blur(2x);
-  position:absolute;
-  left:0;
-  right:0;
-}
-
-.chooseBox {
-    border-radius: 5px;
-    background: rgba(254, 254, 254, .9);
-    padding: 20px;
-    width: 500px;
-    height: 160px;
-    box-shadow: 0 4px 8px 4px rgba(0, 0, 0, 0.1), 0 6px 20px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    position: absolute;
-    z-index: 15;
-    top: 50%;
-    left: 50%;
-    margin: -83px 0 0 -205px;
-}
-
-.headerText {
-  font-family: "Century Gothic", Sans-Serif;
-  font-size: 20px;
-  color: rgb(54, 54, 54);
-}
-
-.pairDropdown {
-    position: relative;
-    display: inline-block;
-    font-family: "Roboto", Sans-Serif;
-}
-
-.exchDropdown {
-    position: relative;
-    display: inline-block;
-    font-family: "Roboto", Sans-Serif;
-}
-
-.btnHolder {
-    color: rgb(54, 54, 54);
-    font-family: "Roboto", Sans-Serif;
-    margin-top: 5px;
-}
-
-.btn-default:focus {
-    outline: none !important;
-}
-
-.btn-default:active {
-    outline: none !important;
-}
-
-.selectpicker:focus {
-    outline: none !important;
-}
-
-.selectpicker:active {
-    outline: none !important;
-}
-
-.smallEmptySpace {
-    margin-top: 10px;
-}
-
-.mediumEmptySpace {
-    margin-top: 0px;
-}
-
-.bigEmptySpace {
-    margin-top: 900px;    //значения должны быть одинаковыми с 38 строкой
-}
-
-.nothing {
-  margin-top: 5px;
-  color: transparent;
-}
-</style>
-
-<script>
-var exchs = document.getElementById("exchSelector");
-{% for item in exchList %}
-  var opt = document.createElement("option");
-  opt.innerText = '{{ item }}';
-  opt.style.textAlign = "left";
-  exchs.appendChild(opt);
-{% endfor %}
-
-var update_pairs = function () {
-    var success = false;
-    $('#pairSelector').empty();
-    $('.nothing').css('color', 'transparent');
-    var pairs = document.getElementById("pairSelector");
-    {% for item in combinations %}
-        if ('{{ item.Exch }}' == $('#exchSelector').val()) {
-          var opt = document.createElement("option");
-          opt.innerText = '{{ item.Pair }}';
-          opt.style.textAlign = "left";
-          pairs.appendChild(opt);
-          success = true;
-        }
-    {% endfor %}
-    if (success == false) {
-      $('.nothing').css('color', 'rgb(54, 54, 54)');
-      $('.nothing').text('Похоже, для этой биржи ничего нет');
-      $('#pairSelector').prop('disabled', true);
-    }
-    else {
-      $('#pairSelector').prop('disabled', false);
-    }
-    $('#pairSelector').selectpicker('refresh');
-};
-
-$("#exchSelector").change(update_pairs);
-$("#pairSelector").change( function () { $('.nothing').css('color', 'transparent'); } );
-
-
-$('#okBtn').click( function() {
-    if ($('#exchSelector').val().length && $('#pairSelector').val().length) {
-        $('.nothing').css('color', 'transparent');
-        window.location.href = $(location).attr('href')+$('#exchSelector').val()+'/'+$('#pairSelector').val();
-
-    }
-    else
-    {
-        $('.nothing').text('Сочетание не выбрано');
-        $('.nothing').css('color', 'rgb(54, 54, 54)');
-    }
-});
-
-</script>
 {% endblock content %}
