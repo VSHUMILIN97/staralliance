@@ -5,7 +5,7 @@ from django.views.generic import View
 from PiedPiper.settings import REDIS_DEFAULT_PORT, REDIS_DEMOS_HOST, REDIS_STARALLIANS_HOST
 from mongo_db_connection import MongoDBConnection
 from Exchanges.ExchangeAPI.PairDataNOTAPI import approved_exchanges, approved_pairs, approved_keys
-conn_r = redis.ConnectionPool(host=REDIS_STARALLIANS_HOST, port=REDIS_DEFAULT_PORT, db=0)
+conn_r = redis.ConnectionPool(host=REDIS_DEMOS_HOST, port=REDIS_DEFAULT_PORT, db=0)
 r = redis.Redis(connection_pool=conn_r)
 # Create your views here.
 
