@@ -7,4 +7,4 @@ websockets
 requests
 django-compressor
 redis
-psutil
+django-jquery
