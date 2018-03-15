@@ -56,11 +56,11 @@ async def handler(websocket, path):
     connected.add(websocket)
     try:
         while True:
-            message = await p.get_message()
+            message = p.run_in_thread(sleep_time=0.001)
             if message:
                 try:
                     try:
-                        msg = dict(message)['data'].decode('utf-8')
+                        msg = await dict(message)['data'].decode('utf-8')
                     except AttributeError:
                         continue
                     if msg in all_the_current_keys:

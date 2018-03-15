@@ -293,3 +293,7 @@ var ws = new WebSocket("ws://" + window.location.hostname + ":8091/");
  ws.onerror = function (error) {
      // pass
  };
+var ws2 = new WebSocket("ws://" + window.location.hostname + ":8091/");
+ws2.onopen = function (event) {
+    alert('onop2')
+};
