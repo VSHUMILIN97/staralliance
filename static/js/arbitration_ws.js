@@ -307,11 +307,11 @@ var checkBoxState = [false, false, false, false, false, false, false, false, fal
         if (!btn.hasAttribute("onclick")) {
             document.getElementById("hidebt").addEventListener('click', function () {
                 table.classList.toggle("hideUninteresting");
-                if (this.innerText === "Show Useless") {
-                    this.innerText = "Hide Useless";
+                if (this.innerText === "Show less than 3% difference") {
+                    this.innerText = "Hide less than 3% difference";
                 }
                 else {
-                    this.innerText = "Show Useless";
+                    this.innerText = "Show less than 3% difference";
                 }
             }, false);
             btn.setAttribute("onclick","true");
