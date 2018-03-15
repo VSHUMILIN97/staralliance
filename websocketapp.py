@@ -18,11 +18,10 @@ r = redis.Redis(connection_pool=conn_r)
 # Works with async to prevent interrupting main thread.
 async def arbitration_socket(websocket, path):
     # After the connect with client was established open connect to MongoDB
-
+    p = r.pubsub()
+    p.psubscribe('s-*')
     all_the_current_keys = approved_keys()
     while True:
-        p = r.pubsub()
-        p.psubscribe('s-*')
         message = p.get_message()
         if message:
             try:
