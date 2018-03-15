@@ -11,7 +11,10 @@
   margin-bottom: 2%;
   text-align: center;
   color: #0f111d;
+  font-family: "Fjalla One"
 }
+
+
 
 table {
   margin-left: 5%;
@@ -119,11 +122,28 @@ div.btnHolder button.hidbt {
 
 .btnHolder {
   text-align: center;
-	margin: 1px 0 0 0;
+	width: 100%;
+  margin: 1%;
+  padding-left: 7%;
+  padding-right: 7%;
+}
+
+div.btnHolder button.hidbt {
+  background-color: #E3901F;
+  color: #0f111d;
+  max-width: 500px;
+  margin-left: 2%;
+  margin-right: 2%;
+}
+
+.center{
+  width: 100%;
+  text-align: center;
 }
 
 .tblHolder {
 	margin-top: 2%;
+  width: 100%;
 }
 
 table.hideUninteresting tr.hid {

@@ -20,16 +20,19 @@ html, body{
 
 nav {
     background-color: #0f111d;
+    margin: 0;
 }
 
-div.header nav{
-  background-color: transparent;
+.navbar{
+  margin: 0;
 }
 
 a.navbar-brand{
     padding-left: 4%;
-    font-size: 1.5em;
+    font-size: 2em;
     color: #E3E3E3;
+    margin: 0;
+    font-family: "Fjalla One"
 }
 
 a.nav-link:hover {
@@ -47,12 +50,13 @@ a.nav-link:hover {
 }
 
 .footer {
-    background-color: #575757;
+    background-color: #2E2E3E;
     padding-left: 5%;
 }
 
 .footer a {
-    color: #CFCFCF;
+    color: #949494;
+    margin-top: 5px;
 }
 
 .footer a:hover {
@@ -65,6 +69,8 @@ hr{
   align: center;
   width: 90%;
   background-color: #E3901F;
+  color: #E3901F;
+  border-top: 1px solid #E3901F;
 }
 
 .hero p{}
@@ -127,7 +133,7 @@ h3{
 }
 
 #carouselInfo img {
-  width: 100%;  
+  width: 100%;
 }
 
 .carousel-item img{
@@ -138,6 +144,8 @@ h3{
   top: 0;
   bottom: auto;
   color: #000000;
+  text-shadow: none;
+  text-decoration: none;
 }
 
 .carousel h2{
