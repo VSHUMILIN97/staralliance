@@ -41,6 +41,13 @@ async def arbitration_socket(websocket, path):
         time.sleep(0.001)
 
 
+async def redis_con(message):
+    global msg
+    try:
+        msg = message['data'].decode('utf-8')
+    except AttributeError:
+        pass
+
 connected = set()
 
 async def handler(websocket, path):
@@ -48,7 +55,7 @@ async def handler(websocket, path):
     conn_r = redis.ConnectionPool(host=LOCAL_SERVICE_HOST, port=REDIS_DEFAULT_PORT, db=0)
     r = redis.Redis(connection_pool=conn_r)
     p = r.pubsub()
-    p.psubscribe('s-*')
+    p.psubscribe(**{'s-*': redis_con})
     # After the connect with client was established open connect to MongoDB
     all_the_current_keys = approved_keys()
     global connected
@@ -59,14 +66,18 @@ async def handler(websocket, path):
             message = p.run_in_thread(sleep_time=0.001)
             if message:
                 try:
+                    # try:
+                    #     msg = await dict(message)['data'].decode('utf-8')
+                    #     pass
+                    # except AttributeError:
+                    #     continue
                     try:
-                        msg = await dict(message)['data'].decode('utf-8')
-                    except AttributeError:
-                        continue
-                    if msg in all_the_current_keys:
-                        await asyncio.wait([ws.send(json.dumps([msg.split('/')[1] + '/'
+                        if msg in all_the_current_keys:
+                            await asyncio.wait([ws.send(json.dumps([msg.split('/')[1] + '/'
                                                      + msg.split('/')[2],
                                                      r.get(msg).decode('utf-8')])) for ws in connected])
+                    except NameError:
+                        await asyncio.sleep(0.001)
                 except TypeError:
                     pass
     finally:
