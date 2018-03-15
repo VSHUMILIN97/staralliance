@@ -12,9 +12,11 @@ from PiedPiper.settings import STARALLIANS_HOST, REDIS_DEFAULT_PORT, LOCAL_SERVI
 logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
                     level=logging.DEBUG, filename='/var/log/cryptopiper/websockets.log')
 
+connections = []
 # Function, that provides connect between client and server.
 # Works with async to prevent interrupting main thread.
 async def arbitration_socket(websocket, path):
+    connections.append(websocket)
     # After the connect with client was established open connect to MongoDB
     conn_r = redis.ConnectionPool(host=LOCAL_SERVICE_HOST, port=REDIS_DEFAULT_PORT, db=0)
     r = redis.Redis(connection_pool=conn_r)
@@ -31,9 +33,10 @@ async def arbitration_socket(websocket, path):
                 except AttributeError:
                     continue
                 if msg in all_the_current_keys:
-                    await websocket.send(json.dumps([msg.split('/')[1] + '/'
-                                                    + msg.split('/')[2],
-                                                    r.get(msg).decode('utf-8')]))
+                    for connection in connections:
+                        await connection.send(json.dumps([msg.split('/')[1] + '/'
+                                                         + msg.split('/')[2],
+                                                         r.get(msg).decode('utf-8')]))
             except TypeError:
                 pass
         await websocket.send('1')
