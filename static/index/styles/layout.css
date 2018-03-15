@@ -126,6 +126,10 @@ h3{
   color: #000000;
 }
 
+#carouselInfo img {
+  width: 100%;  
+}
+
 .carousel-item img{
   opacity: 0.25;
 }
