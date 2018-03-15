@@ -12,31 +12,28 @@ from PiedPiper.settings import STARALLIANS_HOST, REDIS_DEFAULT_PORT, LOCAL_SERVI
 logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
                     level=logging.DEBUG, filename='/var/log/cryptopiper/websockets.log')
 
-connections = []
+
 # Function, that provides connect between client and server.
 # Works with async to prevent interrupting main thread.
 async def arbitration_socket(websocket, path):
-    connections.append(websocket)
-    # After the connect with client was established open connect to MongoDB
     conn_r = redis.ConnectionPool(host=LOCAL_SERVICE_HOST, port=REDIS_DEFAULT_PORT, db=0)
     r = redis.Redis(connection_pool=conn_r)
+
     p = r.pubsub()
     p.psubscribe('s-*')
+    # After the connect with client was established open connect to MongoDB
     all_the_current_keys = approved_keys()
     while True:
         message = p.get_message()
         if message:
             try:
                 try:
-                    logging.info(dict(message)['data'].decode('utf-8'))
                     msg = dict(message)['data'].decode('utf-8')
                 except AttributeError:
                     continue
                 if msg in all_the_current_keys:
-                    for connection in connections:
-                        await connection.send(json.dumps([msg.split('/')[1] + '/'
-                                                         + msg.split('/')[2],
-                                                         r.get(msg).decode('utf-8')]))
+                    await websocket.send(json.dumps([msg.split('/')[1] + '/'
+                                                     + msg.split('/')[2], r.get(msg).decode('utf-8')]))
             except TypeError:
                 pass
         time.sleep(0.001)

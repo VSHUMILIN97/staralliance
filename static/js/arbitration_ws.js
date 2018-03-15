@@ -239,11 +239,11 @@ var ws = new WebSocket("ws://" + window.location.hostname + ":8091/");
  }
  // Initial on connection. Maybe it's better to check which transport is used by browser to pass data.
  ws.onopen = function(event){
+     alert('wsonopen1');
      // clear
  };
 
  ws.onmessage = function (event) {
-     alert(event.data);
      var message = JSON.parse(event.data);
      var info_half = message[0].split('/');
      var exch = info_half[0];
@@ -292,3 +292,11 @@ var ws = new WebSocket("ws://" + window.location.hostname + ":8091/");
  ws.onerror = function (error) {
      // pass
  };
+
+ var ws2 = new WebSocket("ws://" + window.location.hostname + ":8091/");
+    ws2.onopen = function (event) {
+        alert('onopen2')
+    };
+    ws2.onmessage = function (event) {
+        alert('onmessage2')
+    };
