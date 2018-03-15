@@ -70,7 +70,7 @@ async def browser_server(websocket, path):
         conn.close()
 
 loop = asyncio.get_event_loop()
-ws_server = websockets.serve(browser_server, 'localhost', 8091)
+ws_server = websockets.serve(browser_server, '0.0.0.0', 8091)
 loop.run_until_complete(ws_server)
 loop.run_forever()
 
