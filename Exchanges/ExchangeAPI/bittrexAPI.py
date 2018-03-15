@@ -11,11 +11,11 @@ logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(a
 import sys
 import os.path
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../../cryptopiper'))
-from PiedPiper.settings import REDIS_STARALLIANS_HOST, REDIS_DEFAULT_PORT
+from PiedPiper.settings import STARALLIANS_HOST, REDIS_DEFAULT_PORT
 from mongo_db_connection import MongoDBConnection
 
 
-conn_r = redis.ConnectionPool(host=REDIS_STARALLIANS_HOST, port=REDIS_DEFAULT_PORT, db=0)
+conn_r = redis.ConnectionPool(host=STARALLIANS_HOST, port=REDIS_DEFAULT_PORT, db=0)
 r = redis.Redis(connection_pool=conn_r)
 
 pairlist = ['BTC-1ST', 'BTC-LTC', 'BTC-ETH', 'BTC-DASH', 'BTC-XRP', 'ETH-LTC']
@@ -36,7 +36,7 @@ def pair_fix(pair_string):
 def api_get_getmarketsummaries():
     global lurktime
     logging.info(u'Bittrex getsummaries started')
-    b = MongoDBConnection().start_db()
+    b = MongoDBConnection().start_local()
     db = b.PiedPiperStock
     test = db.Bittrex
     for i in range(0, len(pairlist)):
@@ -124,7 +124,7 @@ def api_get_getmarkethistory():
     # Данные собираются для каждой валютной пары из списка pairlist
     logging.info(u'Bittrex getmarkethistory started')
     #
-    b = MongoDBConnection().start_db()
+    b = MongoDBConnection().start_local()
     db = b.PiedPiperStock
     test = db.BittrexMHist
     #

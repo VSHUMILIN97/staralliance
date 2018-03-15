@@ -3,9 +3,9 @@ import sys
 import os.path
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../../cryptopiper'))
-from PiedPiper.settings import REDIS_STARALLIANS_HOST, REDIS_DEFAULT_PORT, REDIS_DEMOS_HOST
+from PiedPiper.settings import STARALLIANS_HOST, REDIS_DEFAULT_PORT, LOCAL_SERVICE_HOST
 
-conn_r = redis.ConnectionPool(host=REDIS_DEMOS_HOST, port=REDIS_DEFAULT_PORT, db=0)
+conn_r = redis.ConnectionPool(host=LOCAL_SERVICE_HOST, port=REDIS_DEFAULT_PORT, db=0)
 r = redis.Redis(connection_pool=conn_r)
 
 

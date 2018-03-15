@@ -23,7 +23,7 @@ def Volumeaggregation(ServerTime):
     logging.info(u'..VolumeAggregation started at..' + str(ServerTime))
     global sell_data, endingtime, startingtime, buy_data, TimeStamp, PairName, sold_data,\
         bought_data, pairlist, timer_at_first, time_after_aggregation, pair_matcher
-    b = MongoDBConnection().start_db()
+    b = MongoDBConnection().start_local()
     db = b.PiedPiperStock
     exchlist = ['BittrexMHist', 'ExmoMHist']
     for inner in range(0, len(exchlist)):
@@ -100,7 +100,7 @@ def Volumeaggregation(ServerTime):
 def indexator():
     logging.info(u'IndexatorVol started')
     global sell_data, endingtime, startingtime, buy_data, TimeStamp, PairName, sold_data, bought_data, pairlist, timer_at_first, time_after_aggregation, pair_matcher
-    b = MongoDBConnection().start_db()
+    b = MongoDBConnection().start_local()
     db = b.PiedPiperStock
     exchlist = ['BittrexMHist', 'ExmoMHist']
     indexes = ['TimeStamp', 'Mod', 'Aggregated']

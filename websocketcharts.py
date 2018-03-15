@@ -12,7 +12,7 @@ logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(a
 # Works with async to prevent interrupting main thread.
 async def echo(websocket, path):
     # After the connect with client was established open connect to MongoDB
-    b = MongoDBConnection().start_db()
+    b = MongoDBConnection().start_local()
     db = b.PiedPiperStock
     # Checking for message from client. Trying to find what did he chose.
     async for message in websocket:

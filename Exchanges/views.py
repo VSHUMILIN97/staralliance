@@ -2,10 +2,10 @@ import json
 import redis
 from django.shortcuts import render
 from django.views.generic import View
-from PiedPiper.settings import REDIS_DEFAULT_PORT, REDIS_DEMOS_HOST, REDIS_STARALLIANS_HOST
+from PiedPiper.settings import REDIS_DEFAULT_PORT, LOCAL_SERVICE_HOST, STARALLIANS_HOST
 from mongo_db_connection import MongoDBConnection
 from Exchanges.ExchangeAPI.PairDataNOTAPI import approved_exchanges, approved_pairs, approved_keys
-conn_r = redis.ConnectionPool(host=REDIS_DEMOS_HOST, port=REDIS_DEFAULT_PORT, db=0)
+conn_r = redis.ConnectionPool(host=LOCAL_SERVICE_HOST, port=REDIS_DEFAULT_PORT, db=0)
 r = redis.Redis(connection_pool=conn_r)
 # Create your views here.
 
@@ -45,7 +45,7 @@ def index_view(request):
 
 # DEBUG ONLY WEB-PAGE
 def Bittrex_view(request, market=""):
-    b = MongoDBConnection().start_db()
+    b = MongoDBConnection().start_local()
     db = b.PiedPiperStock
     if market != "":
         market = market.upper()
@@ -59,7 +59,7 @@ def Bittrex_view(request, market=""):
 # CHARTS WEB-PAGE. NOT IN CURRENT USE. Still works.
 class ChartsView(View):  #
     def get(self, request, exchange="", pair="", *args, **kwargs):
-        b = MongoDBConnection().start_db()
+        b = MongoDBConnection().start_local()
         db = b.PiedPiperStock
         db.ExchsAndPairs.drop()
         ins = db.ExchsAndPairs

@@ -23,7 +23,7 @@ def Tickaggregation(ServerTime):
     logging.info(u'TickAggregation started at..' + str(ServerTime))
     global tick, endingtime, startingtime, TimeStamp, PairName, hammertime,\
         pair_matcher, timer_at_first, time_after_aggregation
-    b = MongoDBConnection().start_db()
+    b = MongoDBConnection().start_local()
     db = b.PiedPiperStock
     exchlist = ['BittrexTick', 'LiveCoinTick', 'GatecoinTick', 'LiquiTick', 'BleutradeTick', 'PoloniexTick',
                 'BinanceTick', 'ExmoTick']
@@ -90,7 +90,7 @@ def indexator():
     logging.info(u'IndexatorVol started')
     global sell_data, endingtime, startingtime, buy_data, TimeStamp, PairName, sold_data,\
         bought_data, pairlist, timer_at_first, time_after_aggregation, pair_matcher
-    b = MongoDBConnection().start_db()
+    b = MongoDBConnection().start_local()
     db = b.PiedPiperStock
     exchlist = ['BittrexTick', 'LiveCoinTick', 'GatecoinTick', 'LiquiTick', 'BleutradeTick', 'PoloniexTick',
                 'BinanceTick', 'ExmoTick']

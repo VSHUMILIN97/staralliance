@@ -26,7 +26,7 @@ def OHLCaggregation(ServerTime):
     global TimeStamp
     global PairName
     logging.info(u'..OHLCAggregation started at..' + str(ServerTime))
-    b = MongoDBConnection().start_db()
+    b = MongoDBConnection().start_local()
     db = b.PiedPiperStock
     exchlist = ['Bittrex', 'Exmo']
     for inner in range(0, len(exchlist)):
@@ -140,7 +140,7 @@ def OHLCaggregation(ServerTime):
 def indexator():
     logging.info(u'IndexatorVol started')
     global sell_data, endingtime, startingtime, buy_data, TimeStamp, PairName, sold_data, bought_data, pairlist, timer_at_first, time_after_aggregation, pair_matcher
-    b = MongoDBConnection().start_db()
+    b = MongoDBConnection().start_local()
     db = b.PiedPiperStock
     exchlist = ['Bittrex', 'Exmo']
     indexes = ['TimeStamp', 'Mod', 'Aggregated']

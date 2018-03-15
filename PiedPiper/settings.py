@@ -32,11 +32,13 @@ ALLOWED_HOSTS = [
     'arbitr.tenguai.com',
     '216.189.157.83',
     'vadim.sysnursery.org',
+    'staralliance.pro',
 ]
 
-REDIS_STARALLIANS_HOST = '216.189.157.83'
+STARALLIANS_HOST = '216.189.157.83'
 REDIS_DEFAULT_PORT = 6379
-REDIS_DEMOS_HOST = '127.0.0.1'
+LOCAL_SERVICE_HOST = '127.0.0.1'
+MONGODB_DEFAULT_PORT = 27017
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
