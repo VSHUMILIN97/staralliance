@@ -13,14 +13,13 @@ from PiedPiper.settings import STARALLIANS_HOST, REDIS_DEFAULT_PORT, LOCAL_SERVI
 conn_r = redis.ConnectionPool(host=LOCAL_SERVICE_HOST, port=REDIS_DEFAULT_PORT, db=0)
 r = redis.Redis(connection_pool=conn_r)
 
-p = r.pubsub()
-p.psubscribe('s-*')
-
 
 # Function, that provides connect between client and server.
 # Works with async to prevent interrupting main thread.
 async def arbitration_socket(websocket, path):
     # After the connect with client was established open connect to MongoDB
+    p = r.pubsub()
+    p.psubscribe('s-*')
     all_the_current_keys = approved_keys()
     while True:
         message = p.get_message()
