@@ -243,6 +243,7 @@ var ws = new WebSocket("ws://" + window.location.hostname + ":8091/");
  };
 
  ws.onmessage = function (event) {
+     alert(event.data);
      var message = JSON.parse(event.data);
      var info_half = message[0].split('/');
      var exch = info_half[0];
