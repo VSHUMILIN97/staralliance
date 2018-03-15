@@ -35,7 +35,7 @@ async def arbitration_socket(websocket, path):
                         await websocket.send(json.dumps([msg.split('/')[1] + '/'
                                                         + msg.split('/')[2],
                                                         r.get(msg).decode('utf-8')]))
-                    except ConnectionError:
+                    except websockets.ConnectionClosed:
                         continue
             except TypeError:
                 pass
