@@ -30,12 +30,9 @@ async def arbitration_socket(websocket, path):
                 except AttributeError:
                     continue
                 if msg in all_the_current_keys:
-                    try:
-                        await websocket.send(json.dumps([msg.split('/')[1] + '/'
-                                                        + msg.split('/')[2],
-                                                        r.get(msg).decode('utf-8')]))
-                    except websockets.ConnectionClosed:
-                        continue
+                    await websocket.send(json.dumps([msg.split('/')[1] + '/'
+                                                    + msg.split('/')[2],
+                                                    r.get(msg).decode('utf-8')]))
             except TypeError:
                 pass
         time.sleep(0.001)
