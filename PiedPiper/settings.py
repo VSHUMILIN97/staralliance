@@ -33,6 +33,7 @@ ALLOWED_HOSTS = [
     '216.189.157.83',
     'vadim.sysnursery.org',
     'staralliance.pro',
+    'www.staralliance.pro',
 ]
 
 STARALLIANS_HOST = '216.189.157.83'
