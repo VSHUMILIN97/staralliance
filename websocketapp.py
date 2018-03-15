@@ -9,9 +9,8 @@ import websockets
 from Exchanges.ExchangeAPI.PairDataNOTAPI import approved_keys
 from PiedPiper.settings import STARALLIANS_HOST, REDIS_DEFAULT_PORT, LOCAL_SERVICE_HOST
 
-
-#logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
-                    #level=logging.DEBUG, filename='/var/log/cryptopiper/websockets.log')
+logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
+                    level=logging.DEBUG, filename='/var/log/cryptopiper/websockets.log')
 
 # Function, that provides connect between client and server.
 # Works with async to prevent interrupting main thread.
@@ -27,6 +26,7 @@ async def arbitration_socket(websocket, path):
         if message:
             try:
                 try:
+                    logging.info(dict(message)['data'].decode('utf-8'))
                     msg = dict(message)['data'].decode('utf-8')
                 except AttributeError:
                     continue
@@ -36,6 +36,7 @@ async def arbitration_socket(websocket, path):
                                                     r.get(msg).decode('utf-8')]))
             except TypeError:
                 pass
+        await websocket.send(r.get('poloniexAPI/Poloniex/BTC-LBC').decode('utf-8'))
         time.sleep(0.001)
 
 
