@@ -36,7 +36,7 @@ async def arbitration_socket(websocket, path):
                                                     r.get(msg).decode('utf-8')]))
             except TypeError:
                 pass
-        await websocket.send(r.get('poloniexAPI/Poloniex/BTC-LBC').decode('utf-8'))
+        await websocket.send('1')
         time.sleep(0.001)
 
 
