@@ -44,19 +44,17 @@ async def arbitration_socket(websocket, path):
         time.sleep(0.001)
 
 
-connected = set()
-r = aredis.StrictRedis(host=LOCAL_SERVICE_HOST, port=REDIS_DEFAULT_PORT, db=0)
-# r = redis.Redis(connection_pool=conn_r)
-p = r.pubsub()
+
 
 async def handler(websocket, path):
     websockets_all.append(websocket)
+    r = aredis.StrictRedis(host=LOCAL_SERVICE_HOST, port=REDIS_DEFAULT_PORT, db=0)
+    # r = redis.Redis(connection_pool=conn_r)
+    p = r.pubsub()
     await p.psubscribe('s-*')
     # After the connect with client was established open connect to MongoDB
     all_the_current_keys = approved_keys()
-    global connected
     # Register.
-    connected.add(websocket)
     try:
         while True:
             message = await p.get_message()
@@ -70,16 +68,14 @@ async def handler(websocket, path):
                     pair = str(msg.split('/')[2])
                     pretick = await r.get(msg)
                     tick = str(pretick.decode('utf-8'))
-                # if msg in all_the_current_keys:
-                await websocket.send(json.dumps([exch + '/' + pair, tick]))
+                if msg in all_the_current_keys:
+                    await websocket.send(json.dumps([exch + '/' + pair, tick]))
                 #else:
                   #  pass
     #
     finally:
         # Unregister.
-        #connected.remove(websocket)
         pass
-
 
 logging.info(u'Arbitartion websocket started')
 # Initialise websocket connection on host 0.0.0.0 and port 8090
