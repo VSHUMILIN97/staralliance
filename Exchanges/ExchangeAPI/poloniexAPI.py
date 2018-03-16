@@ -7,7 +7,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../../../cryptopiper'))
 import logging
 import requests
 import redis
-from PiedPiper.settings import STARALLIANS_HOST, REDIS_DEFAULT_PORT
+from PiedPiper.settings import STARALLIANS_HOST, REDIS_DEFAULT_PORT, LOCAL_SERVICE_HOST
 
 logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
                     level=logging.DEBUG, filename='/var/log/cryptopiper/poloniexAPI.log')

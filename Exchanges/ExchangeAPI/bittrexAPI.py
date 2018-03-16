@@ -11,7 +11,7 @@ logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(a
 import sys
 import os.path
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../../cryptopiper'))
-from PiedPiper.settings import STARALLIANS_HOST, REDIS_DEFAULT_PORT
+from PiedPiper.settings import STARALLIANS_HOST, REDIS_DEFAULT_PORT, LOCAL_SERVICE_HOST
 from mongo_db_connection import MongoDBConnection
 
 

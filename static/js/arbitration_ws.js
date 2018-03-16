@@ -237,6 +237,8 @@ var ws = new WebSocket("ws://" + window.location.hostname + ":8091/");
  if (filter !== ''){
      searchFunc()
  }
+
+
  // Initial on connection. Maybe it's better to check which transport is used by browser to pass data.
  ws.onopen = function(event){
      alert('wsonopen1');
@@ -293,7 +295,3 @@ var ws = new WebSocket("ws://" + window.location.hostname + ":8091/");
  ws.onerror = function (error) {
      // pass
  };
-var ws2 = new WebSocket("ws://" + window.location.hostname + ":8091/");
-ws2.onopen = function (event) {
-    alert('onop2')
-};

@@ -9,6 +9,7 @@ logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(a
 # Functional class for connection to MongoDB
 # This wrapper is not yet completed
 class MongoDBConnection:
+
     # Start connection for opening cursors
     def start_local(self):
         connect = MongoClient(LOCAL_SERVICE_HOST, MONGODB_DEFAULT_PORT)
