@@ -77,7 +77,8 @@ async def handler(websocket, path):
     #
     finally:
         # Unregister.
-        connected.remove(websocket)
+        #connected.remove(websocket)
+        pass
 
 
 logging.info(u'Arbitartion websocket started')
