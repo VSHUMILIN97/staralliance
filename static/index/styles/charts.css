@@ -1,0 +1,63 @@
+
+.headerText {
+  font-family: "Roboto", Sans-Serif;
+  font-size: 14px;
+  color: rgb(54, 54, 54);
+  display: inline-block;
+  padding-left: 200px;
+}
+
+.pairDropdown {
+    position: relative;
+    display: inline-block;
+    font-family: "Roboto", Sans-Serif;
+}
+
+.exchDropdown {
+    position: relative;
+    display: inline-block;
+    font-family: "Roboto", Sans-Serif;
+}
+
+.btnHolder {
+    color: rgb(54, 54, 54);
+    font-family: "Roboto", Sans-Serif;
+    display: inline-block;
+}
+
+.btn-default:focus {
+    outline: none !important;
+}
+
+.btn-default:active {
+    outline: none !important;
+}
+
+.selectpicker:focus {
+    outline: none !important;
+}
+
+.selectpicker:active {
+    outline: none !important;
+}
+
+.smallEmptySpace {
+    margin-top: 10px;
+}
+
+.mediumEmptySpace {
+    margin-top: 0px;
+}
+
+.bigEmptySpace {
+    margin-top: 543px;
+}
+
+.nothing {
+  margin-top: 5px;
+  color: transparent;
+}
+
+.textWrapper {
+  margin-top: 10px;
+}

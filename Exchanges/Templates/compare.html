@@ -18,12 +18,13 @@
     </table>
     </div>
 
-  <div class="btnHolder row">
-    <button class="hidbt btn col-sm-6" id="hidebt">Hide Useless</button>
-    <button class="hidbt btn xol-sm-6" id="pairhider">Hide Exchanges</button>
+  <div class="btnHolder row center">
+    <button class="hidbt btn col-12 col-md-6" id="hidebt">Hide less than 3% difference</button>
+    <button class="hidbt btn col-12 col-md-6" id="pairhider">Hide non-selected exchanges</button>
   </div>
 
 {% load compress static %}
+
 {% compress js %}
   <script src="{% static '/js/arbitration_ws.js'%}"></script>
 {% endcompress %}
