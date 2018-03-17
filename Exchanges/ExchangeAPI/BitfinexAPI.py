@@ -92,7 +92,6 @@ async def bitfinex_ticker():
                 main_key = file_name + '/Bitfinex/' + pair_fix(items[0])
                 if r.get(main_key) is None:
                     r.set(main_key, 1)
-                r.set(file_name + '/Bitfinex/' + pair_fix(items[0]), (float(items[1]) + float(items[3]))/2)
                 if float(r.get(file_name + '/Bitfinex/' +
                                pair_fix(items[0])).decode('utf-8')) != (float(items[1]) + float(items[3]))/2:
                     r.set(file_name + '/Bitfinex/' + pair_fix(items[0]), (float(items[1]) + float(items[3])) / 2)
