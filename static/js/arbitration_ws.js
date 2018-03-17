@@ -241,8 +241,6 @@ var ws = new WebSocket("ws://" + window.location.hostname + ":8090/");
 
  // Initial on connection. Maybe it's better to check which transport is used by browser to pass data.
  ws.onopen = function(event){
-     alert('wsonopen1');
-
      // clear
  };
 

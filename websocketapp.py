@@ -44,8 +44,6 @@ async def arbitration_socket(websocket, path):
         time.sleep(0.001)
 
 
-
-
 async def handler(websocket, path):
     websockets_all.append(websocket)
     r = aredis.StrictRedis(host=LOCAL_SERVICE_HOST, port=REDIS_DEFAULT_PORT, db=0)
