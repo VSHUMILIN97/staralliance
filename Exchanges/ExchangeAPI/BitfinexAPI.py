@@ -74,7 +74,7 @@ async def bitfinex_ticker():
             proxies = {'http': '219.223.251.173:3128',
                        'https': '219.223.251.173:3128'}
             try:
-                info_request = requests.get("https://api.bitfinex.com/v1/symbols", proxies=proxies, timeout=5)
+                info_request = requests.get("https://api.bitfinex.com/v1/symbols")
             except ConnectionError:
                 logging.error(u'Bitfinex info API cannot be reached')
             info_data = json.loads(info_request.text)
@@ -84,8 +84,7 @@ async def bitfinex_ticker():
                 if name + 1 < len(info_data):
                     pair_string += ','
             try:
-                data_request = requests.get("https://api.bitfinex.com/v2/tickers?symbols=" + pair_string,
-                                            proxies=proxies, timeout=5)
+                data_request = requests.get("https://api.bitfinex.com/v2/tickers?symbols=" + pair_string)
             except ConnectionError:
                 logging.error(u'Bitfinex API cannot be reached')
             full_data = json.loads(data_request.text)
