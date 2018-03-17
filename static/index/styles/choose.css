@@ -1,0 +1,49 @@
+.bckgrnd {
+  background: url('/static/index/images/header.jpg') no-repeat fixed;
+  background-size: cover;
+  height: 100%;
+  width: 100%;
+  overflow-y: hidden;
+  text-align: center;
+  padding-top: 10%;
+}
+
+.chooseBox {
+    margin: auto;
+    border-radius: 5px;
+    background: rgba(254, 254, 254, .9);
+    text-align: center;
+    max-width: 700px;
+    padding: 4%;
+}
+
+.pairDropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.exchDropdown {
+    position: relative;
+    display: inline-block;
+}
+
+#okBtn{
+  background-color: #E3901F;
+  margin-top: 2%;
+  padding: 1%;
+  width: 200px;
+  color: #0f111d;
+
+}
+
+.selectpicker{
+  margin: 2%;
+}
+
+.selectpicker:focus {
+    outline: none !important;
+}
+
+.selectpicker:active {
+    outline: none !important;
+}

@@ -10,24 +10,30 @@ html, body{
 
 .hero{
     min-height: 300px;
-    background: url('/static/index/images/header.jpg') no-repeat fixed;
-}
-
-.background-image{
+    background: url('/static/index/images/blockchain-1.jpg') no-repeat fixed;
+    background-size: 100%;
+    padding: 10%;
+    color: #E3E3E3;
+    height: 500px;
+    border-image-width: auto;
+    font-size: 25px;
 }
 
 nav {
-    background-color: #2D2D2D;
+    background-color: #0f111d;
+    margin: 0;
 }
 
-div.header nav{
-  background-color: transparent;
+.navbar{
+  margin: 0;
 }
 
 a.navbar-brand{
     padding-left: 4%;
-    font-size: 1.5em;
+    font-size: 2em;
     color: #E3E3E3;
+    margin: 0;
+    font-family: "Fjalla One"
 }
 
 a.nav-link:hover {
@@ -37,20 +43,21 @@ a.nav-link:hover {
 
 
 .block {
-  padding-left: 10%;
-  padding-right: 10%;
+  padding-left: 15%;
+  padding-right: 15%;
   padding-top: 5%;
   padding-bottom: 5%;
   font-size: 1.2em;
 }
 
 .footer {
-    background-color: #575757;
+    background-color: #2E2E3E;
     padding-left: 5%;
 }
 
 .footer a {
-    color: #CFCFCF;
+    color: #949494;
+    margin-top: 5px;
 }
 
 .footer a:hover {
@@ -63,16 +70,8 @@ hr{
   align: center;
   width: 90%;
   background-color: #E3901F;
-}
-
-.hero {
-  padding: 10%;
-  background-repeat: no-repeat;
-  color: #E3E3E3;
-  height: 500px;
-  background-size: cover;
-  border-image-width: auto;
-  font-size: 25px;
+  color: #E3901F;
+  border-top: 1px solid #E3901F;
 }
 
 .hero p{}
@@ -146,6 +145,8 @@ h3{
   top: 0;
   bottom: auto;
   color: #000000;
+  text-shadow: none;
+  text-decoration: none;
 }
 
 .carousel h2{
@@ -163,6 +164,15 @@ h3{
   margin-left: 10%;
   padding-right: 10%;
   margin-top: 5%;
+}
+
+div.downloads a{
+  color: #251935;
+  font-size: 20px;
+}
+
+div.downloads a:hover{
+  color:  #E3901F;
 }
 
 .contacts p{

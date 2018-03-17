@@ -3,6 +3,7 @@
 {% block content %}
  <div class="wrapper row2">
   <div id="container" class="clear">
+
   <script>
       var ws = new WebSocket("ws://" + window.location.hostname + ":8090/");
       ws.onopen = function (event) {
@@ -11,6 +12,7 @@
           alert(event.data);
       }
   </script>
+  
   <table>
 {% for item in temp %}
     <tr>
