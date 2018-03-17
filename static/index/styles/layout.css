@@ -1,139 +1,175 @@
-/*
-HTML 5 Template Name: Basic 88
-File: Layout CSS
-Author: OS Templates
-Author URI: http://www.os-templates.com/
-Licence: <a href="http://www.os-templates.com/template-terms">Website Template Licence</a>
-*/
+{% load staticfiles %}
 
-html{overflow-y:scroll;} /* Forces a scrollbar when the viewport is larger than the websites content - CSS3 */
+html, body{
+  width: 100%;
+  height: 100%;
+  margin: 0px;
+  padding: 0px;
+  overflow-x: hidden;
+}
 
-body{margin:0; padding:0; font-size:13px; font-family:Georgia, "Times New Roman", Times, serif; color:#919191; background-color:#232323;}
+.hero{
+    min-height: 300px;
+    background: url('/static/index/images/header.jpg') no-repeat fixed;
+}
 
-.clear:after{content:"."; display:block; height:0; clear:both; visibility:hidden; line-height:0;}
-.clear{display:block; clear:both;}
-html[xmlns] .clear{display:block;}
-* html .clear{height:1%;}
+.background-image{
+}
 
-a{outline:none; text-decoration:none;}
+nav {
+    background-color: #2D2D2D;
+}
 
-code{font-weight:normal; font-style:normal; font-family:Georgia, "Times New Roman", Times, serif;}
+div.header nav{
+  background-color: transparent;
+}
 
-.fl_left{float:left;}
-.fl_right{float:right;}
+a.navbar-brand{
+    padding-left: 4%;
+    font-size: 1.5em;
+    color: #E3E3E3;
+}
 
-img{margin:0; padding:0; border:none; line-height:normal; vertical-align:middle;}
-.imgholder, .imgl, .imgr{padding:4px; border:1px solid #D6D6D6; text-align:center;}
-.imgl{float:left; margin:0 15px 15px 0; clear:left;}
-.imgr{float:right; margin:0 0 15px 15px; clear:right;}
+a.nav-link:hover {
+    border-bottom: 3px solid #E3901F;
+    padding-left: 3%;
+}
 
-/*----------------------------------------------HTML 5 Overrides-------------------------------------*/
 
-address, article, aside, figcaption, figure, footer, header, nav, section{display:block; margin:0; padding:0;}
+.block {
+  padding-left: 10%;
+  padding-right: 10%;
+  padding-top: 5%;
+  padding-bottom: 5%;
+  font-size: 1.2em;
+}
 
-q{display:block; padding:0 10px 8px 10px; color:#979797; background-color:#ECECEC; font-style:italic; line-height:normal;}
-q:before{content:'� '; font-size:26px;}
-q:after{content:' �'; font-size:26px; line-height:0;}
+.footer {
+    background-color: #575757;
+    padding-left: 5%;
+}
 
-/* ----------------------------------------------Wrapper-------------------------------------*/
+.footer a {
+    color: #CFCFCF;
+}
 
-div.wrapper{display:block; width:100%; margin:0; padding:0; text-align:left;}
+.footer a:hover {
+    color: #E3901F;
+    text-decoration: none;
+}
 
-.row1, .row1 a{color:#C0BAB6; background-color:#333333;}
-.row2{color:#979797; background-color:#FFFFFF;}
-.row2 a{color:#FF9900; background-color:#FFFFFF;}
-.row3{color:#989898; background-color:#333333;}
-.row3 a{color:#FF9900; background-color:#333333;}
-.row4, .row4 a{color:#919191; background-color:#232323;}
 
-/*----------------------------------------------Generalise-------------------------------------*/
+hr{
+  align: center;
+  width: 90%;
+  background-color: #E3901F;
+}
 
-#header, #container, #footer, #copyright{display:block; width:960px; margin:0 auto;}
+.hero {
+  padding: 10%;
+  background-repeat: no-repeat;
+  color: #E3E3E3;
+  height: 500px;
+  background-size: cover;
+  border-image-width: auto;
+  font-size: 25px;
+}
 
-nav ul{margin:0; padding:0; list-style:none;}
+.hero p{}
 
-h1, h2, h4, h5, h6{margin:0; padding:0; font-size:32px; font-weight:normal; font-style:italic; line-height:normal;}
-h3 {font-size: 14px; font-style: normal}
-address{font-style:normal;}
+.hero h1{
+  font-family: 'Fjalla One';
+  font-size: 2em;
+}
 
-blockquote, q{display:block; padding:8px 10px; color:#979797; background-color:#ECECEC; font-style:italic; line-height:normal;}
-blockquote:before, q:before{content:'� '; font-size:26px;}
-blockquote:after, q:after{content:' �'; font-size:26px; line-height:0;}
+.currencies{
+  background-color: #13182b;
+  color: #73a3b6;
+  text-align: center;
+}
 
-form, fieldset, legend{margin:0; padding:0; border:none;}
-legend{display:none;}
-input, textarea, select{font-size:12px; font-family:Georgia,"Times New Roman",Times,serif;}
+.doings{
+  text-align: center;
+}
 
-.one_quarter, .two_quarter, .three_quarter, .four_quarter{display:block; float:left; margin:0 20px 0 0;}
-.one_quarter{width:225px;}
-.two_quarter{width:470px;}
-.three_quarter{width:715px;}
-.four_quarter{width:960px; float:none; margin-right:0; clear:both;}
+.how p{
+  color: #2D2D2D;
+  margin-left: 4%;
+  margin-right: 4%;
+}
 
-.one_third, .two_third, .three_third{display:block; float:left; margin:0 30px 0 0;}
-.one_third{width:300px;}
-.two_third{width:630px;}
-.three_third{width:960px; float:none; margin-right:0; clear:both;}
+.png{
+  padding: 5px;
+}
 
-.lastbox{margin-right:0;}
+.block h2, .carousel h2{
+  text-align: center;
+  font-family: 'Fjalla One';
+  color: #141b2d;
+}
 
-/*----------------------------------------------Header-------------------------------------*/
+.equipment img {
+  height: 150px;
+  width: 150px;
+  margin-left: 20%;
+  align-self: center;
+  margin-bottom: 10px;
+}
 
-#header{padding:20px 0;}
+h3{
+  text-align: center;
+}
 
-#header #hgroup{float:left; margin:0 0 20px 0;}
-#header #hgroup h1, #header #hgroup h2{font-weight:normal; font-style:normal; text-transform:none;}
-#header #hgroup h1{font-size:36px;}
-#header #hgroup h2{font-size:13px;}
+@media (max-width: 900px){
+  .carousel{
+    display: none;
+  }}
 
-#header nav{display:block; float:right; margin:10px 0 0 0; padding:20px 0; color:#C0BAB6; background-color:#232323;}
-#header nav ul{padding:0 20px;}
-#header nav li{display:inline; margin-right:25px; text-transform:uppercase;}
-#header nav li.last{margin-right:0;}
-#header nav li a{color:#C0BAB6; background-color:#232323;}
-#header nav li a:hover{color:#FF9900; background-color:#232323;}
 
-/*----------------------------------------------Content Area-------------------------------------*/
+#carouselInfo{
+  padding-left: 0%;
+  padding-right: 0%;
+  max-height: 500px;
+  overflow: hidden;
+  color: #000000;
+}
 
-#container{padding:30px 0;}
-#container section{display:block; width:100%; height: 100%; margin:0 0 30px 0; padding:0;}
-#container .last{margin:0;}
-#container .more{text-align:right;}
-#container section h3{font-size: 14px; font-style: normal}
-/* ------Slider-----*/
+#carouselInfo img {
+  width: 100%;
+}
 
-#container #slider{}
+.carousel-item img{
+  opacity: 0.25;
+}
 
-/* ------Main Content-----*/
+.carousel-caption{
+  top: 0;
+  bottom: auto;
+  color: #000000;
+}
 
-#container #homepage{display:block; width:100%; height: 1000px; line-height:1.8em;}
+.carousel h2{
+  padding-top: 5%;
+}
 
-#container #homepage #services{}
-#container #homepage #services article{}
-#container #homepage #services article figure{}
-#container #homepage #services article figure img{margin:0 0 15px 0; padding:4px; border:1px solid #D6D6D6;}
-#container #homepage #services article figure figcaption{}
-#container #homepage #services article figure h2{font-size:14px; font-weight:bold;}
-#container #homepage #services article figure footer{}
+.carousel p{
+  color: #000000;
+  font-size: 1.7em;
+}
 
-#container #homepage #intro{}
-#container #homepage #intro article{}
-#container #homepage #intro article figure{}
-#container #homepage #intro article figure img{float:right; margin:0 0 10px 0; padding:4px; border:1px solid #D6D6D6;}
-#container #homepage #intro article figure figcaption{float:left; width:460px;}
-#container #homepage #intro article figure h2{}
-#container #homepage #intro article figure footer{}
+.map{
+  width: 80%;
+  height: 400px;
+  margin-left: 10%;
+  padding-right: 10%;
+  margin-top: 5%;
+}
 
-/*----------------------------------------------Footer-------------------------------------*/
+.contacts p{
+  padding-left: 10%;
+}
 
-#footer{padding:30px 0; font-size:12px; line-height:1.4em;}
-
-#footer section h2.title{margin:0 0 25px 0; padding:0; color:#FFFFFF; background-color:#333333; font-size:12px; font-weight:bold; text-transform:uppercase;}
-
-#footer section nav li{margin:0 0 5px 0; padding:0 0 5px 0; border-bottom:1px solid #555555;}
-#footer section nav li.last{margin:0;}
-
-/*----------------------------------------------Copyright-------------------------------------*/
-
-#copyright{padding:20px 0;}
-#copyright p{margin:0; padding: 0;}
+@media screen{
+  .info{
+    padding-top: 7%;
+  }}

@@ -1,136 +1,50 @@
-{% load static %}
+{% load staticfiles %}
+{% load bootstrap4 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" src={% static "admin/js/vendor/jquery/jquery.js"%}> </script>
+    <link href="{% static "rest_framework/css/bootstrap-responsive.css" %}" rel="stylesheet">
+    <script src="{% static "rest_framework/js/bootstrap.min.js" %}"></script>
     <link rel="stylesheet" href="/static/index/styles/layout.css" type="text/css">
+    <link rel="stylesheet" href="/static/index/styles/compare.css" type="text/css">
     <title>Piped Watcher</title>
-    {% include 'base/css.html' %}
-    {% include 'base/bootstrap_defaults.html' %}
   </head>
+
   <body>
-
-  <div class="wrapper row1">
-  <header id="header" class="clear">
-    <div id="hgroup">
-      <h1><a href="/">Crypto currencies' market analyzer</a></h1>
-      <h2>4:21 p.m. design tryouts</h2>
-    </div>
-    <nav>
-      <ul>
-        <li><a href="/bittrex">See Data</a></li>
-        <li><a href="/charts">See Charts</a></li>
-        <li class="last" id="drop" style="width: 200px;">
-          <a href="/compare/" class="dropbtn">See Pairs</a>
-          <div class="dropdown-content">
-            <a href="/compare/old">Old</a>
-            <a href="/compare/new" style="padding-bottom: 32px;">New</a>
+      <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="/"> StarAllianse</a>
+        <button class="navbar-toggler" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label = "Toggle navigation" data-target="#navbarNavAltMarkup" data-toggle="collapse" type = "button">
+          <span class="navbar-toggler-icon"></span></button>
+        <div id="navbarNavAltMarkup" class="collapse navbar-collapse">
+          <div class="navbar-nav">
+            <a class="nav-item nav-link" href="/charts" onclick="return false"> See Charts(soon) </a>
+            <a class="nav-item nav-link" href="/compare/">See Pairs</a>
           </div>
-        </li>
-      </ul>
-    </nav>
-  </header>
-</div>
-    {% include 'base/js.html' %}
-    <div class='container'>
-    {% block content %}
-    {% endblock content %}
+        </div>
+      </nav>
+{% block content %}
+ {% endblock %}
+
+  <div class="footer">
+    <div class="block">
+      <h2>StarAllianse</h2>
+      <a href="#"> First link</a>
+      <br />
+      <a href="#"> Second link</a>
+      <br />
+      <a href="#"> Third link</a>
+      <br />
+      <a href="#"> Fourth link</a>
     </div>
-  <!-- Footer -->
-<div class="wrapper row3">
-  <div id="footer" class="clear">
-    <!-- Section One -->
-    <section class="one_quarter">
-      <h2 class="title">Link Block</h2>
-      <nav>
-        <ul>
-
-        </ul>
-      </nav>
-    </section>
-    <!-- Section Two -->
-    <section class="one_quarter 2">
-      <h2 class="title">Link Block</h2>
-      <nav>
-        <ul>
-
-        </ul>
-      </nav>
-    </section>
-    <!-- Section Three -->
-    <section class="one_quarter 3">
-      <h2 class="title">Link Block</h2>
-      <nav>
-        <ul>
-
-        </ul>
-      </nav>
-    </section>
-    <!-- Section Four -->
-    <section class="one_quarter lastbox">
-      <h2 class="title">Link Block</h2>
-      <nav>
-        <ul>
-
-        </ul>
-      </nav>
-    </section>
-    <!-- / Section -->
   </div>
-</div>
-<!-- Copyright -->
-<div class="wrapper row4">
-  <footer id="copyright" class="clear">
-    <p class="fl_left">Copyright &copy; 2012 - All Rights Reserved - <a href="#">PiedPiper</a></p>
-  </footer>
-</div>
+
   </body>
+
 </html>
-
-<style>
-
-li a, .dropbtn {
-    display: inline-block;
-    color: white;
-    background-color: #fff;
-    text-align: center;
-    text-decoration: none;
-}
-
-li. #drop {
-    display: inline-block;
-}
-
-.dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #f9f9f9;
-    min-width: 100px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-    margin-left: 197.5px;
-}
-
-.dropdown-content a {
-    color: black;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
-    text-align: left;
-    height: 35px;
-    width: 110px;
-}
-
-.dropdown-content a:hover {background-color: #f1f1f1}
-
-#drop:hover .dropdown-content {
-    display: block;
-}
-
-.last {
-  background-color: #fff;
-  height: 100px;
-}
-</style>

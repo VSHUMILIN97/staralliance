@@ -1,0 +1,135 @@
+.form-control {
+  width: 90%;
+  margin-left: 5%;
+  margin-right: 10%;
+}
+
+.caption{
+  margin-top: 2%;
+  margin-left: 5%;
+  margin-right: 5%;
+  margin-bottom: 2%;
+  text-align: center;
+}
+
+table {
+  margin-left: 5%;
+  margin-right: 5%;
+  font-size: 14px;
+  border-collapse: collapse;
+  text-align: center;
+}
+
+th, td {
+  border-bottom: 1px solid #eaeaea;
+  background: #ffffff;
+  padding: 5px;
+}
+
+th {
+  text-align: center;
+}
+
+tbody tr th {
+  width: 130px;
+  padding: 0 0 0 8px;
+  text-align: left;
+}
+
+tbody tr:hover td:not(.min):not(.max) {
+  background: rgba(250, 250, 250, .8);
+}
+
+tbody tr:hover th {
+  background: rgba(250, 250, 250, .8);
+}
+
+tbody tr.selected:hover td.selected:not(.min):not(.max) {
+  background: rgba(254, 254, 254, .8);
+}
+
+tbody tr.selected:hover th.selected {
+  background: rgba(254, 254, 254, .8);
+}
+
+up {
+  border-width: 0 6px 6px 6px;
+  border-style: solid;
+  border-color: transparent transparent #25E876 transparent;
+  display: inline-block;
+  margin: 3px 0px 2px 7px;
+  transform: none;
+}
+
+down {
+  background: transparent;
+  border-style: solid;
+  border-color: #FF6347 transparent transparent transparent;
+  border-width: 6px 6px 0 6px;
+  display: inline-block;
+  margin: 0 0 1px 8px;
+  transform: none;
+}
+
+.selected:not(.min):not(.max):not(up):not(down) {
+  background: #f2f2f2;
+}
+
+.max {
+  background: #e6ffe6;
+}
+
+.min {
+  background: #ffe6e6;
+}
+
+.nope {
+  color: #bbb;
+}
+
+.hid {
+  display: table-row;
+}
+.hidpairrow{
+    display: table-row;
+}
+.pairhid{
+    visibility: visible;
+}
+
+div.btnHolder button.hidbt {
+  background-color: #E3E3E3;
+  color: black;
+	border: none;
+  font-size: 16px;
+	font-weight: bold;
+  position: relative;
+  width: 50%;
+	text-align: center;
+	outline: none;
+}
+
+.hidbt:hover {
+  background-color: #E3E3E3;
+  color: #df9900;
+  transition-duration: 0.4s;
+}
+
+.btnHolder {
+  text-align: center;
+	margin: 1px 0 0 0;
+}
+
+.tblHolder {
+	margin-top: 2%;
+}
+
+table.hideUninteresting tr.hid {
+  display: none;
+}
+table.hidePair td.pairhid{
+    visibility: hidden;
+}
+table.hidePair tr.hidpairrow{
+    display: none;
+}

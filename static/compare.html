@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+
+<body>
+  <div class="caption">
+    <h2>Arbitration</h2>
+    <hr />
+  </div>
+
+  <input type="text" class="form-control" id="exchInput" onkeyup="searchFunc()" placeholder="Search for pairnames..">
+
+  <div class="tblHolder" id="scrdiv" style="width:auto; height:450px; overflow-x:auto; overflow-y:auto">
+    <table id="tableID" style="table-layout:fixed">
+    </table>
+    </div>
+
+  <div class="btnHolder row">
+    <button class="hidbt btn col-sm-6" id="hidebt">Hide Useless</button>
+    <button class="hidbt btn xol-sm-6" id="pairhider">Hide Exchanges</button>
+  </div>
+
+{% load compress static %}
+{% compress js %}
+  <script src="{% static '/js/arbitration_ws.js'%}"></script>
+{% endcompress %}
+
+</body>
+
+{% endblock content %}

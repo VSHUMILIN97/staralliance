@@ -1,10 +1,131 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load staticfiles %}
 {% block content %}
-<div class="wrapper row2">
-  <div id="container" class="clear">
-    <!-- Slider -->
-    <section id="slider"><a href="https://trello.com/b/jW8KIRf4/piedpiper" target="_blank"><img src="{% static "index/images/harold-0.jpg" %}" alt="" width="960" height="530"></a></section>
+
+<div class="hero">
+  <h1>Investment fund</h1>
+  <p>Your tool in a highly profitable market for investments</p>
+</div>
+
+<div class="currencies">
+  <div class="row">
+    <div class="col-md-2 col-sm-4 col-6">
+      <img src="/static/index/images/btc2.png"> BTC
+      <p>{{ BTC }}$</p>
+    </div>
+    <div class="col-md-2 col-sm-4 col-6">
+      <img src="/static/index/images/dash2.png"> DASH
+      <p>{{ DASH }}$</p>
+    </div>
+    <div class="col-md-2 col-sm-4 col-6">
+      <img src="/static/index/images/ethereum2.png"> ETH
+      <p>{{ ETH }}$</p>
+    </div>
+    <div class="col-md-2 col-sm-4 col-6">
+      <img src="/static/index/images/litecoin2.png">LTC
+      <p>{{ LTC }}$</p>
+    </div>
+    <div class="col-md-2 col-sm-4 col-6">
+      <img src="/static/index/images/monero2.png">XMR
+      <p>{{ XMR }}$</p>
+    </div>
+    <div class="col-md-2 col-sm-4 col-6">
+      <img src="/static/index/images/ripple2.png"> XRP
+      <p>{{ XRP }}$</p>
+    </div>
   </div>
 </div>
+
+
+<div class="doings block">
+  <h2>What are we doing?</h2>
+  <hr />
+  <img class="png" src="/static/index/images/grow.png">
+  <p>Our fund is engaged in investing in highyield blockchain projects. We find underestimated blockchain "pearls" (coins) on the market, which will increase in value on market for next 3-4 months. We are doing it on the basis of deep analysis.</p>
+</div>
+
+
+<div id="carouselInfo" class="carousel slide" data-ride = "carousel">
+  <div class="carousel-inner" role = "listbox">
+    <div class="carousel-item active">
+      <img class="d-block img-fluid" alt="First slide" src="/static/index/images/pic1.jpg">
+      <div class="carousel-caption d-none d-md-block">
+        <h2>What we are investing in?</h2>
+        <hr />
+        <p>We are investing only in project, which have already entered the stock exchange and have had high liquidity of 20-200 million dollars and have had a breakthrough technology, a strong team and developed community. We select only really powerful projects, with deeply developed white paper and supporting of large funds and industry players.</p>
+      </div>
+    </div>
+    <div class="carousel-item">
+      <img class="d-block img-fluid" alt ="Second slide" src="/static/index/images/pic2.jpg">
+      <div class="carousel-caption d-none d-md-block">
+        <h2>Full transparency</h2>
+        <hr />
+        <p>Our fund conducts and supports policy of full transparency in relations with partners, their means and profitability. In 24/7 mode, you are 100% aware of your portfolio and current yield of your investments.</p>
+      </div>
+    </div>
+    <div class="carousel-item">
+      <img class="d-block img-fluid" alt = "Third slide" src="/static/index/images/pic3.jpg">
+      <div class="carousel-caption d-none d-md-block">
+        <h2>Profitability</h2>
+        <hr />
+        <p>The current average monthly return is 30-60% per month. Our best investments show growth of more than 500% within 3-4 months.</p>
+      </div>
+    </div>
+    <div class="carousel-item">
+      <img class="d-block img-fluid" alt = "Fourth slide" src="/static/index/images/pic4.jpg">
+      <div class="carousel-caption d-none d-md-block">
+        <h2>Partner Support</h2>
+        <hr />
+        <p>Our partners in the 24/7 mode are 100% aware of the state of their portfolio and the current profitability of their investments. Support is provided in a special closed telegram-chat.</p>
+      </div>
+    </div>
+  </div>
+  <a class="carousel-control-prev" data-slide = "prev" href = "#carouselInfo" role = "button">
+    <span class="carousel-control-prev-icon" aria-hidden = "true"></span>
+    <span class="sr-only">Previous</span></a>
+  <a class="carousel-control-next" data-slide = "next" href = "#carouselInfo" role = "button">
+    <span class="carousel-control-next-icon" aria-hidden = "true"></span>
+    <span class="sr-only">Next</span>
+  </a>
+</div>
+
+
+<div class="how block">
+  <h2>How are we do it?</h2>
+  <hr />
+  <div class="row text-center">
+    <div class="col-sm-12 col-md-4">
+      <img class="png" src="/static/index/images/investor.png">
+      <p>The best analysts of our fond carefully select and study more than 50 projects every week. One of these projects is selected. We are offering it to our investor partners.</p>
+    </div>
+    <div class="col-sm-12 col-md-4">
+      <img class="png" src="/static/index/images/trend_up.png">
+      <p>Preference is given to infrastructure projects, which are solve real problems of any industry or create undeniable competitive advantage in the market, changing paradigm of the market.</p>
+    </div>
+    <div class="col-sm-12 col-md-4">
+      <img class="png" src="/static/index/images/portfolio.png">
+      <p>We provide analytical report and conclusion with an assessment of risks and returns for each project (coin) submitted for investment.</p>
+    </div>
+  </div>
+</div>
+
+
+<div class="contacts block">
+  <h2>Contacts</h2>
+  <hr />
+  <div class="row">
+    <div class="col-md-12 col-12">
+    </div>
+    <div class="col-md-12 col-12">
+      <div class="info">
+        <p>Phone number:</p>
+        <br />
+        <p>Address:</p>
+        <br />
+        <p>e-mail:</p>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock content %}

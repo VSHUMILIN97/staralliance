@@ -1,9 +1,15 @@
-#!/usr/bin/env python3
+#!/usr/bin/
 import os
 import sys
 
 if __name__ == "__main__":
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "PiedPiper.settings")
+    if os.path.exists('/etc/cryptopiper/settings.py'):
+        try:
+            os.environ.setdefault("DJANGO_SETTINGS_MODULE", "/etc/cryptopiper/settings.py")
+        except ModuleNotFoundError:
+            os.environ.setdefault("DJANGO_SETTINGS_MODULE", "PiedPiper.settings")
+    else:
+        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "PiedPiper.settings")
     try:
         from django.core.management import execute_from_command_line
     except ImportError:

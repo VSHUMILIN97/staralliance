@@ -4,3 +4,9 @@ python-dateutil
 iso8601
 pymongo
 websockets
+requests
+django-compressor
+django-bootstrap4
+django-jquery
+redis
+aredis

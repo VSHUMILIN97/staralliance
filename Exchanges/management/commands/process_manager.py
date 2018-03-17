@@ -1,49 +1,50 @@
 from django.core.management.base import BaseCommand, CommandError
-# from mongo_db_connection import MongoDBConnection
 import logging
 import atexit
-import sys
 import time
 import os
+import sys
 from process_manager import children_kill, proc_start
 logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
-                    level=logging.DEBUG, filename='/var/log/cryptopiper/processmanager.log')
+                                    level=logging.DEBUG, filename='/var/log/cryptopiper/websockets.log')
 
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        # Вызов экземпляра класс MongoDBConnection из файла mongo_db_connection
-        #connectme = MongoDBConnection()
-        # Подключение к БД PiedPiperStock(Дебаговая БД) После подключения все концы сбрасывает,
-        # так что технически безопасно
-        #db = connectme.start_db().PiedPiperStock
-
-        #
-        # URLS.PY загружается только один раз, как следствие запускать наш скрипт на обработку данных можно отсюда
-        # Необходимо для постоянного сбора данных. Вынесено в отдельный поток во избежания
-        # страданий основного из-за While(True)
-        # Make daemonic(!) ПРОДУМАТЬ БЕЗОПАСНОСТЬ!
-        logging.info(u'Server started')
-        # testing_threads = ThreadingT()
-
+        logging.info(u'Process manager started')
         try:
-            # testing_threads.start()
-            logging.info(u'Threads"re successfully started')
-            parent_pipe, child_pipe = os.pipe()
-            pid = os.fork()
-            if pid == 0:
-                os.close(child_pipe)
-                sys.stdin.close()
-                sys.stdout.close()
-                sys.stderr.close()
-                # From process manager
-                proc_start()
-                while True:
-                    time.sleep(0.1)
-            else:
-                os._exit(0)
-
-        except():
-            logging.critical(u'Threads were not started')
-
-        atexit.register(children_kill)
+            # windows/mac debug starter
+            if sys.platform == 'win32' or 'darwin':
+                try:
+                    proc_start()
+                    logging.info(u"Processes're successfully started")
+                    while True:
+                        time.sleep(0.1)
+                except OSError:
+                    logging.error(u'Processes were not started\nTerminating command')
+                    sys.exit(0)
+            elif sys.platform == 'linux':
+                # Production starter
+                logging.info(u'Threads"re successfully started')
+                parent_pipe, child_pipe = os.pipe()
+                try:
+                    pid = os.fork()
+                    if pid == 0:
+                        os.close(child_pipe)
+                        sys.stdin.close()
+                        sys.stdout.close()
+                        sys.stderr.close()
+                        proc_start()
+                        while True:
+                            time.sleep(0.1)
+                    else:
+                        os._exit(0)
+                except OSError:
+                    logging.error(u'Processes were not started on production\nTerminating command')
+                    sys.exit(-1)
+        except OSError:
+            logging.critical(u'Process manager is unreachable. Check CODE')
+        try:
+            atexit.register(children_kill)
+        except OSError:
+            logging.critical(u'Process manager cannot kill processes\nUse `kill` command in terminal')

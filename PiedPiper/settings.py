@@ -24,15 +24,32 @@ SECRET_KEY = 'tm3d(#yvvm^dz3*l908)w_#_!1r&f!5!5ep^rq@ghc*+rojo7u'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
+COMPRESS_ENABLED = True
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
     '192.168.2.140',
-    'arbitr.tenguai.com'
+    'arbitr.tenguai.com',
+    '216.189.157.83',
+    'vadim.sysnursery.org',
+    'staralliance.pro',
+    'www.staralliance.pro',
 ]
 
+STARALLIANS_HOST = '216.189.157.83'
+REDIS_DEFAULT_PORT = 6379
+LOCAL_SERVICE_HOST = '127.0.0.1'
+MONGODB_DEFAULT_PORT = 27017
 
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    # other finders..
+    'compressor.finders.CompressorFinder',
+)
+STATICFILES_DIRS = (
+        #'c:/users/pc/pycharmprojects/djangopiper/static', #
+)
 # Application definition
 
 INSTALLED_APPS = [
@@ -45,6 +62,9 @@ INSTALLED_APPS = [
     'Exchanges',
     'rest_framework',
     'requests',
+    'compressor',
+    'bootstrap4',
+    'jquery',
 ]
 
 MIDDLEWARE = [
@@ -145,6 +165,6 @@ USE_TZ = True
 
 STATIC_ROOT = 'static'  # пустая папка, сюда будет собирать статику collectstatic
 
-STATIC_URL = 'static/'  # URL для шаблонов
+STATIC_URL = '/static/'  # URL для шаблонов
 
-
+STATICFILES_DIRS = ('/Exchanges/Templates/', )
