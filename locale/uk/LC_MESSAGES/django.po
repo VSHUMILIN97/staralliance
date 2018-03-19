@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-19 17:14+0500\n"
+"POT-Creation-Date: 2018-03-20 01:13+0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,27 +21,49 @@ msgstr ""
 
 #: Exchanges/Templates/base.html:35
 msgid "See Pairs"
-msgstr ""
+msgstr "Арбітраж"
 
-#: Exchanges/Templates/base.html:59
+#: Exchanges/Templates/base.html:58
 msgid "Home"
-msgstr ""
+msgstr "Домашня сторінка"
 
-#: Exchanges/Templates/base.html:61
+#: Exchanges/Templates/base.html:60
 msgid "See pairs"
-msgstr ""
+msgstr "Арбітраж"
+
+#: Exchanges/Templates/compare.html:8
+#, fuzzy
+#| msgid "Distribution"
+msgid "Arbitration"
+msgstr "Дистрибутив"
+
+#: Exchanges/Templates/compare.html:9
+msgid "After load you'll see the current state without growth dynamic"
+msgstr "Після завантаження ви побачите поточний стан ринку, без динаміки зростання."
+
+#: Exchanges/Templates/compare.html:22
+msgid "Hide less than 3%% difference"
+msgstr "Прибрати ті пари, де різниця менше 3%"
+
+#: Exchanges/Templates/compare.html:23
+msgid "Hide non-selected exchanges"
+msgstr "Прибрати невідмічені біржі"
+
+#: Exchanges/Templates/compare.html:24
+msgid "Differ_between_pairs"
+msgstr "Настроіть_разніцу_между_парамі"
 
 #: Exchanges/Templates/index.html:6
 msgid "Investment fund"
-msgstr ""
+msgstr "Інвестиційний фонд"
 
 #: Exchanges/Templates/index.html:7
 msgid "Your tool in a highly profitable market for investments"
-msgstr ""
+msgstr "Ваш інструмент на високорентабельному ринку інвестицій"
 
 #: Exchanges/Templates/index.html:41
 msgid "What are we doing?"
-msgstr ""
+msgstr "Чим ми займаємося?"
 
 #: Exchanges/Templates/index.html:44
 msgid ""
@@ -50,10 +72,13 @@ msgid ""
 "increase in value on market for next 3-4 months. We are doing it on the "
 "basis of deep analysis."
 msgstr ""
+"Наш фонд займається інвестиціями в 'врожайні' блокчейн проекти. Ми знаходимо "
+"'Недооцінені перлини' (монети) на ринку, які, ймовірно, будуть рости в "
+"найближчі 3-4 місяці. Наші дані засновані на результатах глибокого аналізу."
 
 #: Exchanges/Templates/index.html:53
 msgid "What we are investing in?"
-msgstr ""
+msgstr "У що ми інвестуємо?"
 
 #: Exchanges/Templates/index.html:55
 msgid ""
@@ -63,45 +88,54 @@ msgid ""
 "only really powerful projects, with deeply developed white paper and "
 "supporting of large funds and industry players."
 msgstr ""
+"Ми інвестуємо тільки в проекти, які вже торгують на біржах, мають високу "
+"ліквідність порядку 20-200 мільйонів доларів, мають проривні технології і "
+"сильну команду розробників."
 
 #: Exchanges/Templates/index.html:61
 msgid "Full transparency"
-msgstr ""
+msgstr "Повна прозорість"
 
 #: Exchanges/Templates/index.html:63
-#, python-format
 msgid ""
 "Our fund conducts and supports policy of full transparency in relations with "
 "partners, their means and profitability. In 24/7 mode, you are 100%% aware "
 "of your portfolio and current yield of your investments."
 msgstr ""
+"Наш фонд проводить і підтримує політику абсолютної прозорості в відношенні з "
+"нашіімі партнерами, їх засобами і прибутком. Ви можете бути впевнені, що "
+"отримуєте 100% інформації про вашому портфоліо і поточної прибутковості "
+"вашого портфеля 24/7."
 
 #: Exchanges/Templates/index.html:69
 msgid "Profitability"
-msgstr ""
+msgstr "Прибутковість"
 
 #: Exchanges/Templates/index.html:71
-#, python-format
 msgid ""
 "The current average monthly return is 30-60%% per month. Our best "
 "investments show growth of more than 500%% within 3-4 months."
 msgstr ""
+"Поточний місячний середній дохід - від 30 до 60% зростання. Наші кращі "
+"інвестиції за 3-4 місяці показують зростання в 500 і більше відсотків."
 
 #: Exchanges/Templates/index.html:77
 msgid "Partner Support"
-msgstr ""
+msgstr "Підтримка партнерів"
 
 #: Exchanges/Templates/index.html:79
-#, python-format
 msgid ""
 "Our partners in the 24/7 mode are 100%% aware of the state of their "
 "portfolio and the current profitability of their investments. Support is "
 "provided in a special closed telegram-chat."
 msgstr ""
+"Наші партнери можуть бути впевнені, що отримують 100% інформації про їх "
+"портфоліо і поточної прибутковості інвестиціний портфеля 24/7. Підтримка "
+"здійснюється в закритому Telegram чаті."
 
 #: Exchanges/Templates/index.html:94
 msgid "How are we do it?"
-msgstr ""
+msgstr "Як ми це робимо?"
 
 #: Exchanges/Templates/index.html:99
 msgid ""
@@ -109,6 +143,9 @@ msgid ""
 "projects every week. One of these projects is selected. We are offering it "
 "to our investor partners."
 msgstr ""
+"Кращі аналітики нашого фонду ретельно вибирають і вивчають більш ніж 50 "
+"проектів щотижня. Деякі проекти мають пройти відбір і пропонуються нашим "
+"партнерам."
 
 #: Exchanges/Templates/index.html:103
 msgid ""
@@ -116,16 +153,21 @@ msgid ""
 "problems of any industry or create undeniable competitive advantage in the "
 "market, changing paradigm of the market."
 msgstr ""
+"Переваги надаються інфраструктурним проектам, які вирішують реальні проблеми "
+"виробництва або створюють незаперечну перевагу на ринку, змінюючи його "
+"парадигму."
 
 #: Exchanges/Templates/index.html:107
 msgid ""
 "We provide analytical report and conclusion with an assessment of risks and "
 "returns for each project (coin) submitted for investment."
 msgstr ""
+"Ми надаємо аналітичний звіт і висновок з оцінкою ризиків і потенційним "
+"поверненням вкладень за кожен запропонований проект (монету) для інвестиції."
 
 #: Exchanges/Templates/index.html:114
 msgid "Our Platform"
-msgstr ""
+msgstr "Наша платформа"
 
 #: Exchanges/Templates/index.html:117
 msgid ""
@@ -138,6 +180,13 @@ msgid ""
 "speak about increasing the stability of work and the possibility of an "
 "evolutionary development of the system as a whole."
 msgstr ""
+"Система разработа для управління будь-якими типами інвестицій, включаючи "
+"криптовалюта. Одне з можливих пропозицій - торгівля на біржі криптовалюта. "
+"Ми розробили спеціальну архітектуру платформи, що дозволяє працювати з будь-"
+"яким процесом на біржі в один час: Загальний стан ринку (tiki, DOM, "
+"зростання і падіння котирувань, освіта 'свічок'), Статус відкритих угод. "
+"Такий підхід дозволяє говорити про збільшення стабільності роботи і "
+"можливості еволюції системи в цілому."
 
 #: Exchanges/Templates/index.html:120
 msgid ""
@@ -146,6 +195,11 @@ msgid ""
 "possible to create chains yourself. In the future, the system allows you to "
 "track transactions, set the value of stop-loss and trailing."
 msgstr ""
+"Система дозволяє відстежувати кілька рівнів рекомендацій від наших "
+"аналітиків і створювати ланцюжка замовлень на основі їх даних. Крім того, "
+"такі ланцюжки можна створювати самостійно. В майбутньому, система дозволить "
+"відстежувати транзакції, встановлювати значення 'stop-loss' і стежити за "
+"проектами самостійно."
 
 #: Exchanges/Templates/index.html:123
 msgid ""
@@ -154,59 +208,62 @@ msgid ""
 "will be made automatically, the presence of the user on the network is not "
 "necessary."
 msgstr ""
+"Система розподілена і децентралізованого, основні процеси проходять на наших "
+"серверах. Користувач повинен визначити стратегію. Всі інші кроки будуть "
+"виконані автоматично, при цьому присутність користувача не буде потрібно."
 
 #: Exchanges/Templates/index.html:127
 msgid "Download"
-msgstr ""
+msgstr "Завантажити"
 
 #: Exchanges/Templates/index.html:131
 msgid "Distribution"
-msgstr ""
+msgstr "Дистрибутив"
 
 #: Exchanges/Templates/index.html:133
 msgid "Instruction (en)"
-msgstr ""
+msgstr "Керівництво користувача (eng)"
 
 #: Exchanges/Templates/index.html:135
 msgid "Instruction (ru)"
-msgstr ""
+msgstr "Керівництво користувача (rus)"
 
 #: Exchanges/Templates/index.html:140
 msgid "Contacts"
-msgstr ""
+msgstr "Контакти"
 
 #: Exchanges/Templates/index.html:147
 msgid "Phone number:"
-msgstr ""
+msgstr "Номер телефону:"
 
 #: Exchanges/Templates/index.html:149
 msgid "Address:"
-msgstr ""
+msgstr "Адреса:"
 
 #: Exchanges/Templates/index.html:151
 msgid "E-mail:"
-msgstr ""
-
-#: PiedPiper/settings.py:156
-msgid "German"
-msgstr ""
-
-#: PiedPiper/settings.py:157
-msgid "English"
-msgstr ""
+msgstr "E-mail:"
 
 #: PiedPiper/settings.py:158
-msgid "Russian"
-msgstr ""
+msgid "German"
+msgstr "Німецький"
 
 #: PiedPiper/settings.py:159
-msgid "Arab"
-msgstr ""
+msgid "English"
+msgstr "Англійська"
 
 #: PiedPiper/settings.py:160
-msgid "Ukrainian"
-msgstr ""
+msgid "Russian"
+msgstr "Русский"
 
 #: PiedPiper/settings.py:161
+msgid "Arab"
+msgstr "Арабська"
+
+#: PiedPiper/settings.py:162
+msgid "Ukrainian"
+msgstr "Український"
+
+#: PiedPiper/settings.py:163
 msgid "French"
-msgstr ""
+msgstr "Французький"
