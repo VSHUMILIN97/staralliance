@@ -32,10 +32,8 @@ msgid "See pairs"
 msgstr "Арбітраж"
 
 #: Exchanges/Templates/compare.html:8
-#, fuzzy
-#| msgid "Distribution"
 msgid "Arbitration"
-msgstr "Дистрибутив"
+msgstr "АрбітражАрбітраж"
 
 #: Exchanges/Templates/compare.html:9
 msgid "After load you'll see the current state without growth dynamic"
