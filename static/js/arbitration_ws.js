@@ -205,12 +205,12 @@ var ws = new WebSocket("ws://" + window.location.hostname + ":8090/");
         var btn = document.getElementById("hidebt");
         document.getElementById("hidebt").addEventListener('click', function () {
             table.classList.toggle("hideUninteresting");
-            if (this.innerText === "Show Useless") {
+            /*if (this.innerText === "Show Useless") {
                 this.innerText = "Hide Useless";
             }
             else {
                 this.innerText = "Show Useless";
-            }
+            }*/
             }, false);
         btn.setAttribute("onclick","true");
 
