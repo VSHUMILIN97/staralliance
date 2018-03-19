@@ -33,7 +33,7 @@ msgstr "Арбітраж"
 
 #: Exchanges/Templates/compare.html:8
 msgid "Arbitration"
-msgstr "АрбітражАрбітраж"
+msgstr "Арбітраж"
 
 #: Exchanges/Templates/compare.html:9
 msgid "After load you'll see the current state without growth dynamic"
