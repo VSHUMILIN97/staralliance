@@ -1,3 +1,5 @@
+var rinput = document.getElementById("pairDif");
+
 function fix(value) {
 		var prec = 9 - value.toString().split('.')[0].length;
         if (prec < 0) {
@@ -72,7 +74,11 @@ function maxormin(int){
     var tbody = table.getElementsByTagName('tbody')[0];
      var trow = tbody.getElementsByTagName('tr');
      var cells = trow[int].getElementsByTagName('td');
-     var max = -999999999, min = 99999999999, indexmin, indexmax;
+     var max = -999999999, min = 99999999999, indexmin, indexmax, hider;
+     hider = rinput.value;
+     if (hider < 1 || hider >= 99){
+         hider = 3
+     }
      trow[int].classList.remove('hid');
            for (var joy = 0; joy < cells.length; joy++) {
                if (cells[joy].classList.contains('nope')){
@@ -96,7 +102,7 @@ function maxormin(int){
                    cells[joy].classList.toggle("nope");
                }
            }
-           if (((max - min) / max) * 100 > 3) {
+           if (((max - min) / max) * 100 > hider) {
                cells[indexmax].classList.toggle("max");
                cells[indexmin].classList.toggle("min");
            }
@@ -232,6 +238,21 @@ var ws = new WebSocket("ws://" + window.location.hostname + ":8090/");
      maxormin(mxmn)
  }
 
+ rinput.onchange = function () {
+     if (rinput.value >= 1 && rinput.value <= 99) {
+         for (var mxmn = 0; mxmn < mxmnrows.length; mxmn++) {
+             maxormin(mxmn)
+         }
+     }
+     else {
+         rinput.value = 3;
+         for (var mxmn2 = 0; mxmn2 < mxmnrows.length; mxmn2++) {
+             maxormin(mxmn2)
+         }
+     }
+ };
+
+
  var input = document.getElementById("unique");
  var filter = input.value.toUpperCase();
  if (filter !== ''){
@@ -285,7 +306,7 @@ var ws = new WebSocket("ws://" + window.location.hostname + ":8090/");
       if (event.wasClean){
           alert('Соединение закрыто');
       } else{
-          alert('Your connection was closed. If you want to continue, reload this page ' + event.code);
+          alert('Your connection was closed. If you want to continue, reload this page.');
       }
   };
 

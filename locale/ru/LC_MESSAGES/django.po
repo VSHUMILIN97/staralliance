@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-19 18:34+0500\n"
+"POT-Creation-Date: 2018-03-20 00:06+0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -24,11 +24,11 @@ msgstr ""
 msgid "See Pairs"
 msgstr "Арбитраж"
 
-#: Exchanges/Templates/base.html:59
+#: Exchanges/Templates/base.html:58
 msgid "Home"
 msgstr "Домашняя страница"
 
-#: Exchanges/Templates/base.html:61
+#: Exchanges/Templates/base.html:60
 msgid "See pairs"
 msgstr "Арбитраж"
 
@@ -41,12 +41,18 @@ msgid "After load you'll see the current state without growth dynamic"
 msgstr "После загрузки вы увидите текущее состояние рынка, без динамики роста."
 
 #: Exchanges/Templates/compare.html:22
+#, fuzzy, python-format
+#| msgid "Hide less than 3%% difference"
 msgid "Hide less than 3%% difference"
 msgstr "Убрать те пары, где разница меньше 3%"
 
 #: Exchanges/Templates/compare.html:23
 msgid "Hide non-selected exchanges"
 msgstr "Убрать неотмеченные биржи"
+
+#: Exchanges/Templates/compare.html:24
+msgid "Differ_between_pairs"
+msgstr "Настроить_разницу_между_парами"
 
 #: Exchanges/Templates/index.html:6
 msgid "Investment fund"

@@ -21,6 +21,7 @@
   <div class="btnHolder row center">
     <button class="hidbt btn col-12 col-md-6" id="hidebt">{% trans "Hide less than 3% difference" %}</button>
     <button class="hidbt btn col-12 col-md-6" id="pairhider">{% trans "Hide non-selected exchanges" %}</button>
+      <input data-toggle="tooltip" title={% trans "Differ_between_pairs" %} id="pairDif" type="tel" max="99" min="1" maxlength="4" minlength="1" value="3" size="4">
   </div>
 
 {% load compress static %}
