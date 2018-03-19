@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
-
+{% load i18n %}
 {% block content %}
 
 <body>
   <div class="caption">
-    <h2>Arbitration</h2>
-      <h6>After load you'll see the current state without growth dynamic</h6>
+    <h2>{% trans "Arbitration" %}</h2>
+      <h6>{% trans "After load you'll see the current state without growth dynamic" %}</h6>
     <hr />
   </div>
 
@@ -19,8 +19,8 @@
     </div>
 
   <div class="btnHolder row center">
-    <button class="hidbt btn col-12 col-md-6" id="hidebt">Hide less than 3% difference</button>
-    <button class="hidbt btn col-12 col-md-6" id="pairhider">Hide non-selected exchanges</button>
+    <button class="hidbt btn col-12 col-md-6" id="hidebt">{% trans "Hide less than 3% difference" %}</button>
+    <button class="hidbt btn col-12 col-md-6" id="pairhider">{% trans "Hide non-selected exchanges" %}</button>
   </div>
 
 {% load compress static %}

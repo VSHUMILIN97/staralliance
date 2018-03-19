@@ -3,6 +3,8 @@ import redis
 import time
 from django.shortcuts import render
 from django.views.generic import View
+
+from PiedPiper import settings
 from PiedPiper.settings import REDIS_DEFAULT_PORT, LOCAL_SERVICE_HOST, STARALLIANS_HOST
 from mongo_db_connection import MongoDBConnection
 from Exchanges.ExchangeAPI.PairDataNOTAPI import approved_exchanges, approved_pairs, approved_keys

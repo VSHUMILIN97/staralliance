@@ -2,6 +2,7 @@
 {% load bootstrap4 %}
 {% bootstrap_css %}
 {% bootstrap_javascript %}
+{% load i18n %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -31,25 +32,36 @@
           <div class="navbar-nav">
             <!--<a class="nav-item nav-link" href="/bittrex">See Data</a>
             <a class="nav-item nav-link" href="/charts"> See Charts</a> -->
-            <a class="nav-item nav-link" href="/compare/old">See Pairs</a>
+            <a class="nav-item nav-link" href="/compare/old">{% trans "See Pairs" %}</a>
           </div>
         </div>
+          <form action="{% url 'set_language' %}" method="post">{% csrf_token %}
+    <input name="next" type="hidden" value="{{ redirect_to }}">
+    <select name="language" onchange="this.form.submit()" class>
+        {% get_current_language as LANGUAGE_CODE %}
+        {% get_available_languages as LANGUAGES %}
+        {% get_language_info_list for LANGUAGES as languages %}
+        {% for language in languages %}
+            <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
+                {{ language.name_local }} ({{ language.code }})
+            </option>
+        {% endfor %}
+    </select>
+</form>
       </nav>
 
 {% block content %}
 {% endblock %}
-
   <div class="footer">
     <div class="block">
       <h2>StarAllians</h2>
-      <a href="#"> Home</a>
+      <a href="#"> {% trans "Home" %}</a>
       <br />
-      <a href="#"> See Pairs</a>
+      <a href="#"> {% trans "See pairs" %}</a>
       <!-- <br />
       <a href="#"> See Charts</a> -->
     </div>
   </div>
-
   </body>
 
 </html>

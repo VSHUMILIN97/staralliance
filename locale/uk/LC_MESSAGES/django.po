@@ -1,0 +1,212 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-03-19 17:14+0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: Exchanges/Templates/base.html:35
+msgid "See Pairs"
+msgstr ""
+
+#: Exchanges/Templates/base.html:59
+msgid "Home"
+msgstr ""
+
+#: Exchanges/Templates/base.html:61
+msgid "See pairs"
+msgstr ""
+
+#: Exchanges/Templates/index.html:6
+msgid "Investment fund"
+msgstr ""
+
+#: Exchanges/Templates/index.html:7
+msgid "Your tool in a highly profitable market for investments"
+msgstr ""
+
+#: Exchanges/Templates/index.html:41
+msgid "What are we doing?"
+msgstr ""
+
+#: Exchanges/Templates/index.html:44
+msgid ""
+"Our fund is engaged in investing in highyield blockchain projects. We find "
+"underestimated blockchain 'pearls' (coins) on the market, which will "
+"increase in value on market for next 3-4 months. We are doing it on the "
+"basis of deep analysis."
+msgstr ""
+
+#: Exchanges/Templates/index.html:53
+msgid "What we are investing in?"
+msgstr ""
+
+#: Exchanges/Templates/index.html:55
+msgid ""
+"We are investing only in project, which have already entered the stock "
+"exchange and have had high liquidity of 20-200 million dollars and have had "
+"a breakthrough technology, a strong team and developed community. We select "
+"only really powerful projects, with deeply developed white paper and "
+"supporting of large funds and industry players."
+msgstr ""
+
+#: Exchanges/Templates/index.html:61
+msgid "Full transparency"
+msgstr ""
+
+#: Exchanges/Templates/index.html:63
+#, python-format
+msgid ""
+"Our fund conducts and supports policy of full transparency in relations with "
+"partners, their means and profitability. In 24/7 mode, you are 100%% aware "
+"of your portfolio and current yield of your investments."
+msgstr ""
+
+#: Exchanges/Templates/index.html:69
+msgid "Profitability"
+msgstr ""
+
+#: Exchanges/Templates/index.html:71
+#, python-format
+msgid ""
+"The current average monthly return is 30-60%% per month. Our best "
+"investments show growth of more than 500%% within 3-4 months."
+msgstr ""
+
+#: Exchanges/Templates/index.html:77
+msgid "Partner Support"
+msgstr ""
+
+#: Exchanges/Templates/index.html:79
+#, python-format
+msgid ""
+"Our partners in the 24/7 mode are 100%% aware of the state of their "
+"portfolio and the current profitability of their investments. Support is "
+"provided in a special closed telegram-chat."
+msgstr ""
+
+#: Exchanges/Templates/index.html:94
+msgid "How are we do it?"
+msgstr ""
+
+#: Exchanges/Templates/index.html:99
+msgid ""
+"The best analysts of our fond carefully select and study more than 50 "
+"projects every week. One of these projects is selected. We are offering it "
+"to our investor partners."
+msgstr ""
+
+#: Exchanges/Templates/index.html:103
+msgid ""
+"Preference is given to infrastructure projects, which are solve real "
+"problems of any industry or create undeniable competitive advantage in the "
+"market, changing paradigm of the market."
+msgstr ""
+
+#: Exchanges/Templates/index.html:107
+msgid ""
+"We provide analytical report and conclusion with an assessment of risks and "
+"returns for each project (coin) submitted for investment."
+msgstr ""
+
+#: Exchanges/Templates/index.html:114
+msgid "Our Platform"
+msgstr ""
+
+#: Exchanges/Templates/index.html:117
+msgid ""
+"The system is designed to manage any investment assets, including "
+"cryptocurrency. One of the possible applications of the system is trading on "
+"stock exchanges include cryptocurrencies. We created special architecture of "
+"platform which allow to work with any process of stock exchange at the same "
+"time:the general state of markets (tiki, DOM, rise and fall in quotes, "
+"candles formation), the status of open orders. Such an approach allows us to "
+"speak about increasing the stability of work and the possibility of an "
+"evolutionary development of the system as a whole."
+msgstr ""
+
+#: Exchanges/Templates/index.html:120
+msgid ""
+"The system allows you to track several levels of recommendations based on "
+"our analytic and create on their basis order chains. In addition, it is "
+"possible to create chains yourself. In the future, the system allows you to "
+"track transactions, set the value of stop-loss and trailing."
+msgstr ""
+
+#: Exchanges/Templates/index.html:123
+msgid ""
+"The system is distributed and decentralized, the main processes are located "
+"on the servers. The user needs to determine the strategy. All other steps "
+"will be made automatically, the presence of the user on the network is not "
+"necessary."
+msgstr ""
+
+#: Exchanges/Templates/index.html:127
+msgid "Download"
+msgstr ""
+
+#: Exchanges/Templates/index.html:131
+msgid "Distribution"
+msgstr ""
+
+#: Exchanges/Templates/index.html:133
+msgid "Instruction (en)"
+msgstr ""
+
+#: Exchanges/Templates/index.html:135
+msgid "Instruction (ru)"
+msgstr ""
+
+#: Exchanges/Templates/index.html:140
+msgid "Contacts"
+msgstr ""
+
+#: Exchanges/Templates/index.html:147
+msgid "Phone number:"
+msgstr ""
+
+#: Exchanges/Templates/index.html:149
+msgid "Address:"
+msgstr ""
+
+#: Exchanges/Templates/index.html:151
+msgid "E-mail:"
+msgstr ""
+
+#: PiedPiper/settings.py:156
+msgid "German"
+msgstr ""
+
+#: PiedPiper/settings.py:157
+msgid "English"
+msgstr ""
+
+#: PiedPiper/settings.py:158
+msgid "Russian"
+msgstr ""
+
+#: PiedPiper/settings.py:159
+msgid "Arab"
+msgstr ""
+
+#: PiedPiper/settings.py:160
+msgid "Ukrainian"
+msgstr ""
+
+#: PiedPiper/settings.py:161
+msgid "French"
+msgstr ""
