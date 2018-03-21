@@ -35,6 +35,7 @@ async def main_page_parser():
             await asyncio.sleep(20)
         except OSError:
             logging.error('No internet connection on CMCAPI!')
+            await asyncio.sleep(30)
 
 
 loop = asyncio.get_event_loop()
