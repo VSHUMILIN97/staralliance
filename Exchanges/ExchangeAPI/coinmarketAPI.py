@@ -16,22 +16,25 @@ async def main_page_parser():
     db = b.PiedPiperStock
     test = db.MainPage
     while 1:
-        coin_stack = []
         try:
-            api_request = requests.get("https://api.coinmarketcap.com/v1/ticker/")
-        except ConnectionError:
-            logging.error(u'coinmarketcapAPI cannot be reached')
-        #
-        if api_request.status_code == 200:
-            json_data = json.loads(api_request.text)
-            for item in json_data:
-                if item['symbol'] in target_coins:
-                    coin_stack.append({item['symbol']: item['price_usd']})
-            test.drop()
-            test.insert(coin_stack)
-        else:
-            pass
-        await asyncio.sleep(20)
+            coin_stack = []
+            try:
+                api_request = requests.get("https://api.coinmarketcap.com/v1/ticker/")
+            except ConnectionError:
+                logging.error(u'coinmarketcapAPI cannot be reached')
+            #
+            if api_request.status_code == 200:
+                json_data = json.loads(api_request.text)
+                for item in json_data:
+                    if item['symbol'] in target_coins:
+                        coin_stack.append({item['symbol']: item['price_usd']})
+                test.drop()
+                test.insert(coin_stack)
+            else:
+                pass
+            await asyncio.sleep(20)
+        except OSError:
+            logging.error('No internet connection on CMCAPI!')
 
 
 loop = asyncio.get_event_loop()
