@@ -80,7 +80,10 @@ async def bitfinex_ticker():
             info_data = json.loads(info_request.text)
             pair_string = ''
             for name in range(0, len(info_data)):
-                pair_string += 't' + info_data[name].upper()
+                try:
+                    pair_string += 't' + info_data[name].upper()
+                except KeyError:
+                    pass
                 if name + 1 < len(info_data):
                     pair_string += ','
             try:
