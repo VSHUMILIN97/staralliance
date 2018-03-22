@@ -1,27 +1,31 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
-
+{% load i18n %}
 {% block content %}
 
 <body>
   <div class="caption">
-    <h2>Arbitration</h2>
+    <h2>{% trans "Arbitration" %}</h2>
+      <h6>{% trans "After load you'll see the current state without growth dynamic" %}</h6>
     <hr />
   </div>
 
-  <input type="text" class="form-control" id="exchInput" onkeyup="searchFunc()" placeholder="Search for pairnames..">
-
+    <input type="hidden" id="myexchs" name="variable" value="{{exchs}}" readonly>
+    <input type="hidden" id="mypairs" name="variable" value="{{ pairs }}" readonly>
+    <input type="hidden" id="myticks" name="variable" value="{{ticks}}" readonly>
   <div class="tblHolder" id="scrdiv" style="width:auto; height:450px; overflow-x:auto; overflow-y:auto">
     <table id="tableID" style="table-layout:fixed">
     </table>
     </div>
 
-  <div class="btnHolder row">
-    <button class="hidbt btn col-sm-6" id="hidebt">Hide Useless</button>
-    <button class="hidbt btn xol-sm-6" id="pairhider">Hide Exchanges</button>
+  <div class="btnHolder row center">
+    <button class="hidbt btn col-12 col-md-6" id="hidebt">{% trans "Hide less than 3% difference" %}</button>
+    <button class="hidbt btn col-12 col-md-6" id="pairhider">{% trans "Hide non-selected exchanges" %}</button>
+      <input data-toggle="tooltip" title={% trans "Differ_between_pairs" %} id="pairDif" type="tel" max="99" min="1" maxlength="4" minlength="1" value="3" size="4">
   </div>
 
 {% load compress static %}
+
 {% compress js %}
   <script src="{% static '/js/arbitration_ws.js'%}"></script>
 {% endcompress %}

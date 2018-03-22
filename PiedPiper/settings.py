@@ -24,7 +24,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'tm3d(#yvvm^dz3*l908)w_#_!1r&f!5!5ep^rq@ghc*+rojo7u'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 COMPRESS_ENABLED = True
 ALLOWED_HOSTS = [
     'localhost',
@@ -84,7 +84,8 @@ ROOT_URLCONF = 'PiedPiper.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [ BASE_DIR + '/Exchanges/Templates/' ],
+        'DIRS': [BASE_DIR + '/Exchanges/Templates/',
+                  BASE_DIR + '/exchanger/templates/'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
