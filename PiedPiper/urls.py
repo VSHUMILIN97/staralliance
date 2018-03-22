@@ -19,7 +19,7 @@ from django.contrib import admin
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'', include('Exchanges.urls')),
-
+    url(r'^accounts/', include('registration.urls')),
 ]
 
 (r'^static/(?P<path>.*)$', 'django.views.static.serve',

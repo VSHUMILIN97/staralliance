@@ -23,8 +23,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'tm3d(#yvvm^dz3*l908)w_#_!1r&f!5!5ep^rq@ghc*+rojo7u'
 
+
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 COMPRESS_ENABLED = True
 ALLOWED_HOSTS = [
     'localhost',
@@ -66,6 +67,7 @@ INSTALLED_APPS = [
     'compressor',
     'bootstrap4',
     'jquery',
+    'registration',
 ]
 
 MIDDLEWARE = [
@@ -182,3 +184,17 @@ STATIC_ROOT = 'static'  # пустая папка, сюда будет соби�
 STATIC_URL = '/static/'  # URL для шаблонов
 
 STATICFILES_DIRS = ('/Exchanges/Templates/', )
+
+
+#REGISTRATION SETTINGS
+
+ACCOUNT_ACTIVATION_DAYS = 2 # кол-во дней для хранения кода активации
+
+# для отправки кода активации
+AUTH_USER_EMAIL_UNIQUE = True
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = 1025
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+EMAIL_USE_TLS = False
+DEFAULT_FROM_EMAIL = 'info@google.ru'
