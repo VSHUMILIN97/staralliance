@@ -60,12 +60,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'PiedPiper',
+    'exchanger',
     'Exchanges',
     'rest_framework',
     'requests',
     'compressor',
     'bootstrap4',
     'jquery',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -102,34 +105,28 @@ WSGI_APPLICATION = 'PiedPiper.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
-"""DATABASES = {
-    'default': {
-        'ENGINE': '',
-    },
-}"""
-
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "asgiref.inmemory.ChannelLayer",
-        "ROUTING": "Exchanges.routing.channel_routing",
-    },
-}
-# Before
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'zTrash/db.sqlite3'),
+    },
+    'users': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': '',
+        'USER': os.path.join(BASE_DIR, 'users.sqlite3'),
     }
 }
-"""
-DATABASES = {
+ASGI_APPLICATION = 'PiedPiper.routing.application'
+
+CHANNEL_LAYERS = {
     'default': {
-        'ENGINE': 'django_mongodb_engine',
-        'NAME': 'PiedPiperStock',
-    }
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('localhost', 7878)],
+        },
+    },
 }
-"""
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
