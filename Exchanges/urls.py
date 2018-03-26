@@ -23,4 +23,4 @@ urlpatterns = [
     url(r'^compare/$', views.Comparison.as_view(), name='Comparison'),
     url(r'^compare/(?P<mode>.+)/$', views.Comparison.as_view(), name='Comparison'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-# STATIC_URL upload all our /static/ files. Full definition in root/static/INFO.txt
+# STATIC_URL upload all our /static/ files. Full definition in cryptopiper/static/INFO.txt
