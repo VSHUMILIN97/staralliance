@@ -23,6 +23,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'tm3d(#yvvm^dz3*l908)w_#_!1r&f!5!5ep^rq@ghc*+rojo7u'
 
+#SSL connection
+SESSION_COOKIE_SECURE=True
+SESSION_COOKIE_HTTPONLY=True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https')
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 COMPRESS_ENABLED = True
