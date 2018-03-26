@@ -306,7 +306,7 @@ var ws = new WebSocket("wss://" + window.location.hostname + ":8090/");
       if (event.wasClean){
           alert('Соединение закрыто');
       } else{
-          alert('Your connection was closed. If you want to continue, reload this page.');
+          alert('Your connection was closed. If you want to continue, reload this page.' + event.code);
       }
   };
 
