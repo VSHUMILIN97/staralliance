@@ -92,7 +92,10 @@ async def bitfinex_ticker():
                 logging.error(u'Bitfinex API cannot be reached')
             full_data = json.loads(data_request.text)
             for items in full_data:
-                main_key = file_name + '/Bitfinex/' + pair_fix(items[0])
+                try:
+                    main_key = file_name + '/Bitfinex/' + pair_fix(items[0])
+                except TypeError:
+                    continue
                 if r.get(main_key) is None:
                     r.set(main_key, 1)
                 try:
