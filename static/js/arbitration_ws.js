@@ -313,5 +313,5 @@ var ws = new WebSocket("wss://" + window.location.hostname + ":8090/");
  // It's clear, I guess
  ws.onerror = function (error) {
      // pass
-     alert(error.message)
+     alert(error.toString())
  };
