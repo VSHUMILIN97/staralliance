@@ -111,7 +111,7 @@ function maxormin(int){
            }
 }
 
-var ws = new WebSocket("ws://" + window.location.hostname + ":8090/");
+var ws = new WebSocket("wss://" + window.location.hostname + ":8090/");
 //Second button supportive hide function
  var myexchs = document.getElementById("myexchs").value;
  var mypairs = document.getElementById("mypairs").value;
@@ -266,7 +266,6 @@ var ws = new WebSocket("ws://" + window.location.hostname + ":8090/");
  };
 
  ws.onmessage = function (event) {
-     alert(1);
      var message = JSON.parse(event.data);
      var info_half = message[0].split('/');
      var exch = info_half[0];
