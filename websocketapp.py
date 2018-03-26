@@ -1,4 +1,5 @@
 import asyncio
+import ssl
 import threading
 import time
 import json
@@ -77,7 +78,7 @@ async def handler(websocket, path):
 
 logging.info(u'Arbitartion websocket started')
 # Initialise websocket connection on host 0.0.0.0 and port 8090
-asyncio.get_event_loop().run_until_complete(websockets.serve(handler, '0.0.0.0', 8090))
+asyncio.get_event_loop().run_until_complete(websockets.serve(handler, '0.0.0.0', 8090, ssl=ssl.SSLContext))
 asyncio.get_event_loop().run_forever()
 
 
