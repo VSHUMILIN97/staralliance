@@ -111,11 +111,7 @@ function maxormin(int){
            }
 }
 
-var ws = new WebSocket("wss://" + window.location.hostname + ":8090/",{
-  protocolVersion: 8,
-  origin: 'https://localhost:15449',
-  rejectUnauthorized: false
-});
+var ws = new WebSocket("wss://" + window.location.hostname + ":8090/");
 //Second button supportive hide function
  var myexchs = document.getElementById("myexchs").value;
  var mypairs = document.getElementById("mypairs").value;
@@ -310,12 +306,11 @@ var ws = new WebSocket("wss://" + window.location.hostname + ":8090/",{
       if (event.wasClean){
           alert('Соединение закрыто');
       } else{
-          alert('Your connection was closed. If you want to continue, reload this page.' + event.code + event.reason);
+          alert('Your connection was closed. If you want to continue, reload this page.' + event.code);
       }
   };
 
  // It's clear, I guess
  ws.onerror = function (error) {
      // pass
-     alert(error.toString())
  };
