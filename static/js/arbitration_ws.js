@@ -111,7 +111,7 @@ function maxormin(int){
            }
 }
 
- ws = new WebSocket('ws://' +  window.location.host);
+ ws = new WebSocket('wss://' +  window.location.host);
 //Second button supportive hide function
  var myexchs = document.getElementById("myexchs").value;
  var mypairs = document.getElementById("mypairs").value;
