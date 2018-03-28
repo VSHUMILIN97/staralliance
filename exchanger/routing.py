@@ -1,7 +1,6 @@
 from django.conf.urls import url
+from exchanger.consumers import ArbitrationConsumer
 
-from . import consumers
-
-websocket_urlpatterns = [
-    url(r'^ws/chat/(?P<room_name>[^/]+)/$', consumers.ChatConsumer),
+channel_routing = [
+    url(r"", ArbitrationConsumer),
 ]

@@ -1,46 +1,41 @@
-from channels.generic.websocket import AsyncWebsocketConsumer
 import json
+import redis
+from channels.generic.websocket import WebsocketConsumer
+import logging
+from Exchanges.ExchangeAPI.PairDataNOTAPI import approved_keys
+from PiedPiper.settings import LOCAL_SERVICE_HOST, REDIS_DEFAULT_PORT
 
 
-class ChatConsumer(AsyncWebsocketConsumer):
-    async def connect(self):
-        self.room_name = self.scope['url_route']['kwargs']['room_name']
-        self.room_group_name = 'chat_%s' % self.room_name
+class ArbitrationConsumer(WebsocketConsumer):
 
-        # Join room group
-        await self.channel_layer.group_add(
-            self.room_group_name,
-            self.channel_name
-        )
+    def connect(self):
+        self.accept()
+        r = redis.StrictRedis(host=LOCAL_SERVICE_HOST, port=REDIS_DEFAULT_PORT, db=0)
+        # r = redis.Redis(connection_pool=conn_r)
+        p = r.pubsub()
+        while 1:
+            # self.send(text_data="[Welcome]")
+            p.psubscribe('s-*')
+            # After the connect with client was established open connect to MongoDB
+            all_the_current_keys = approved_keys()
+            # Register.
+            try:
+                while True:
+                    message = p.get_message()
+                    if message:
+                        msg = dict(message)['data']
+                        if msg == 1:
+                            continue
+                        else:
+                            msg = dict(message)['data'].decode('utf-8')
+                            exch = str(msg.split('/')[1])
+                            pair = str(msg.split('/')[2])
+                            pretick = r.get(msg)
+                            tick = str(pretick.decode('utf-8'))
+                        if msg in all_the_current_keys:
+                            self.send(text_data=json.dumps([exch + '/' + pair, tick]))
+            except BaseException:
+                pass
 
-        await self.accept()
-
-    async def disconnect(self, close_code):
-        # Leave room group
-        await self.channel_layer.group_discard(
-            self.room_group_name,
-            self.channel_name
-        )
-
-    # Receive message from WebSocket
-    async def receive(self, text_data):
-        text_data_json = json.loads(text_data)
-        message = text_data_json['message']
-
-        # Send message to room group
-        await self.channel_layer.group_send(
-            self.room_group_name,
-            {
-                'type': 'chat_message',
-                'message': message
-            }
-        )
-
-    # Receive message from room group
-    async def chat_message(self, event):
-        message = event['message']
-
-        # Send message to WebSocket
-        await self.send(text_data=json.dumps({
-            'message': message
-        }))
+    def disconnect(self, code):
+        logging.info('RIP connection')
