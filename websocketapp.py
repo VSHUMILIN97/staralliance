@@ -15,7 +15,7 @@ from Exchanges.ExchangeAPI.PairDataNOTAPI import approved_keys
 from PiedPiper.settings import STARALLIANS_HOST, REDIS_DEFAULT_PORT, LOCAL_SERVICE_HOST
 
 logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
-                    level=logging.DEBUG, filename='/var/log/cryptopiper/websockets.log')
+                    level=logging.DEBUG)#, filename='/var/log/cryptopiper/websockets.log')
 
 websockets_all = []
 
@@ -79,7 +79,7 @@ async def handler(websocket, path):
 
 logging.info(u'Arbitartion websocket started')
 # Initialise websocket connection on host 0.0.0.0 and port 8090
-asyncio.get_event_loop().run_until_complete(websockets.serve(handler, '0.0.0.0', 8090))
+asyncio.get_event_loop().run_until_complete(websockets.serve(handler, '0.0.0.0', 8090, ssl=ssl.SSLContext))
 asyncio.get_event_loop().run_forever()
 
 
