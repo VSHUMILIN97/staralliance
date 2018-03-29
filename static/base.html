@@ -1,7 +1,8 @@
-{% load staticfiles %}
 {% load bootstrap4 %}
 {% bootstrap_css %}
 {% bootstrap_javascript %}
+{% load i18n %}
+{% load staticfiles %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -10,42 +11,57 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script type="text/javascript" src={% static "admin/js/vendor/jquery/jquery.js"%}> </script>
-    <link href="{% static "rest_framework/css/bootstrap-responsive.css" %}" rel="stylesheet">
+    <link href="{% static "rest_framework/css/bootstrap.min.css" %}" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet">
     <script src="{% static "rest_framework/js/bootstrap.min.js" %}"></script>
+    <script src="{% static "index/js/charts.js" %}"></script>
+    <script src="{% static "index/js/choose.js" %}"></script>
     <link rel="stylesheet" href="/static/index/styles/layout.css" type="text/css">
     <link rel="stylesheet" href="/static/index/styles/compare.css" type="text/css">
-    <title>Piped Watcher</title>
+    <link rel="stylesheet" href="/static/index/styles/choose.css" type="text/css">
+    <link rel="stylesheet" href="/static/index/styles/charts.css" type="text/css">
+    <title>StarAlliance</title>
   </head>
 
   <body>
       <nav class="navbar navbar-expand-lg navbar-dark">
-        <a class="navbar-brand" href="#"> StarAllians</a>
+        <a class="navbar-brand" href="/"> StarAlliance</a>
         <button class="navbar-toggler" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label = "Toggle navigation" data-target="#navbarNavAltMarkup" data-toggle="collapse" type = "button">
           <span class="navbar-toggler-icon"></span></button>
         <div id="navbarNavAltMarkup" class="collapse navbar-collapse">
           <div class="navbar-nav">
-            <a class="nav-item nav-link" href="/bittrex">See Data</a>
-            <a class="nav-item nav-link" href="/charts"> See Charts</a>
-            <a class="nav-item nav-link" href="/compare/">See Pairs</a>
+            <!--<a class="nav-item nav-link" href="/bittrex">See Data</a>
+            <a class="nav-item nav-link" href="/charts"> See Charts</a> -->
+            <a class="nav-item nav-link" href="/compare/old">{% trans "See Pairs" %}</a>
           </div>
         </div>
+          <form action="{% url 'set_language' %}" method="post">{% csrf_token %}
+    <input name="next" type="hidden" value="{{ redirect_to }}">
+    <select name="language" onchange="this.form.submit()" class>
+        {% get_current_language as LANGUAGE_CODE %}
+        {% get_available_languages as LANGUAGES %}
+        {% get_language_info_list for LANGUAGES as languages %}
+        {% for language in languages %}
+            <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
+                {{ language.name_local }} ({{ language.code }})
+            </option>
+        {% endfor %}
+    </select>
+</form>
       </nav>
-{% block content %}
- {% endblock %}
 
+{% block content %}
+{% endblock %}
   <div class="footer">
     <div class="block">
-      <h2>StarAllians</h2>
-      <a href="#"> First link</a>
+      <h2>StarAlliance</h2>
+      <a href="#"> {% trans "Home" %}</a>
       <br />
-      <a href="#"> Second link</a>
-      <br />
-      <a href="#"> Third link</a>
-      <br />
-      <a href="#"> Fourth link</a>
+      <a href="#"> {% trans "See pairs" %}</a>
+      <!-- <br />
+      <a href="#"> See Charts</a> -->
     </div>
   </div>
-
   </body>
 
 </html>

@@ -30,7 +30,7 @@ SESSION_COOKIE_HTTPONLY = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 COMPRESS_ENABLED = True
 ALLOWED_HOSTS = [
     'localhost',
@@ -66,12 +66,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'PiedPiper',
+    'exchanger',
     'Exchanges',
     'rest_framework',
     'requests',
     'compressor',
     'bootstrap4',
     'jquery',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -90,7 +93,8 @@ ROOT_URLCONF = 'PiedPiper.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [ BASE_DIR + '/Exchanges/Templates/' ],
+        'DIRS': [BASE_DIR + '/Exchanges/Templates/',
+                  BASE_DIR + '/exchanger/templates/'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -107,34 +111,28 @@ WSGI_APPLICATION = 'PiedPiper.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
-"""DATABASES = {
-    'default': {
-        'ENGINE': '',
-    },
-}"""
-
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "asgiref.inmemory.ChannelLayer",
-        "ROUTING": "Exchanges.routing.channel_routing",
-    },
-}
-# Before
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'zTrash/db.sqlite3'),
+    },
+    'users': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': '',
+        'USER': os.path.join(BASE_DIR, 'users.sqlite3'),
     }
 }
-"""
-DATABASES = {
-    'default': {
-        'ENGINE': 'django_mongodb_engine',
-        'NAME': 'PiedPiperStock',
-    }
+ASGI_APPLICATION = 'PiedPiper.routing.application'
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("localhost", 6379)],
+        },
+    },
 }
-"""
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators

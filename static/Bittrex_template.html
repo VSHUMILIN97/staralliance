@@ -3,17 +3,16 @@
 {% block content %}
  <div class="wrapper row2">
   <div id="container" class="clear">
+
   <script>
-      var ws = new WebSocket("ws://" + window.location.hostname + ":8070/");
+      var ws = new WebSocket("ws://" + window.location.hostname + ":8090/");
       ws.onopen = function (event) {
-          alert('Opened');
-          ws.send('500')
       };
       ws.onmessage = function (event){
           alert(event.data);
-          ws.send('101')
       }
   </script>
+  
   <table>
 {% for item in temp %}
     <tr>

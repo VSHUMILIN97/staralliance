@@ -111,7 +111,7 @@ function maxormin(int){
            }
 }
 
-var ws = new WebSocket("wss://" + window.location.hostname + ":8090/");
+ ws = new WebSocket('wss://' +  window.location.host);
 //Second button supportive hide function
  var myexchs = document.getElementById("myexchs").value;
  var mypairs = document.getElementById("mypairs").value;
@@ -306,7 +306,7 @@ var ws = new WebSocket("wss://" + window.location.hostname + ":8090/");
       if (event.wasClean){
           alert('Соединение закрыто');
       } else{
-          alert('Your connection was closed. If you want to continue, reload this page.' + event.code);
+          alert('Your connection was closed. If you want to continue, reload this page.');
       }
   };
 
