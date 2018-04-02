@@ -111,8 +111,9 @@ function maxormin(int){
            }
 }
 
- var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
- var ws = new WebSocket(ws_scheme + '://' +  window.location.host + '/arbitr');
+ //var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+ //var ws = new WebSocket(ws_scheme + '://' +  window.location.host + '/arbitr');
+ var ws = new WebSocket("ws://" + window.location.host + '/arbitr');
 //Second button supportive hide function
  var myexchs = document.getElementById("myexchs").value;
  var mypairs = document.getElementById("mypairs").value;

@@ -133,7 +133,7 @@ ASGI_APPLICATION = 'PiedPiper.routing.application'
 #             "hosts": [("127.0.0.1", 6379)],
 #         },
 #     },
-# } NOT IMPORTNAT FOR NOW, BUT WE'LL FIND IT LATER
+# } NOT IMPORTNAT FOR NOW, BUT WE'LL FIND IT USEFUL LATER
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
