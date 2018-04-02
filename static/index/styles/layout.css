@@ -197,8 +197,38 @@ div.downloads a:hover{
   padding-left: 10%;
 }
 
-@media screen{
-  .info{
-    padding-top: 7%;
+.modal{
+  background-color: #ffffff;
+  text-align: center;
+  height: 430px;
+  width: 400px;
+}
+
+#modal_log{
+  height: 330px;
+  min-width: 300px;
+}
+
+@media screen and (max-width: 435px){
+  #modal_reg{
+    width: 100%;
+    margin: 5% 0%;
+  }
+
+  #modal_log{
+    width: 100%;
+    margin: 5% 0%;
+  }
+}
+
+@media screen and (min-width: 436px){
+  #modal_reg{
+    width: 50%;
+    margin: 5% 25%;
+  }
+
+  #modal_log{
+    width: 50%;
+    margin: 5% 25%;
   }
 }

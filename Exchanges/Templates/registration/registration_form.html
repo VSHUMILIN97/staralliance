@@ -8,12 +8,15 @@
     <hr />
 </div>
 
+
+
 <div class="block">
-  <form class="center" method="post" action="">
+  <form class="center" method="post" action=""> {% csrf_token %}
   <dl class="register">
   {% for field in form %}
       <dt>{{ field.label_tag }}</dt>
-      <dd class="clearfix">{{ field }}
+      <dd class="clearfix">{{ field }} {% csrf_token %}
+
       {% if field.errors %}
         <div class="myerrors clearfix">{{ field.errors }}</div>
       {% endif %}

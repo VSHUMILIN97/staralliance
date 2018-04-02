@@ -68,6 +68,7 @@ INSTALLED_APPS = [
     'bootstrap4',
     'jquery',
     'registration',
+    'django_extensions'
 ]
 
 MIDDLEWARE = [
@@ -184,7 +185,6 @@ STATIC_ROOT = 'static'  # пустая папка, сюда будет соби�
 STATIC_URL = '/static/'  # URL для шаблонов
 
 STATICFILES_DIRS = ('/Exchanges/Templates/', )
-
 
 #REGISTRATION SETTINGS
 

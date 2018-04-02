@@ -15,11 +15,25 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
+from registration.backends.default.views import RegistrationView
+from registration.forms import RegistrationFormUniqueEmail
+from django.contrib.auth import views as auth_views
+
+class RegistrationViewUniqueEmail(RegistrationView):
+    form_class = RegistrationFormUniqueEmail
+
+
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'', include('Exchanges.urls')),
+    url(r'', include('Exchanges.urls'), name="home"),
     url(r'^accounts/', include('registration.urls')),
+    url(r'^login/$', auth_views.login, name='login'),
+    url(r'^logout/$', auth_views.logout, name='logout'),
+    #registeration by using only unique email
+    url(r'^user/register/$', RegistrationView.as_view(form_class=RegistrationFormUniqueEmail), name='registration_register'),
+
+
 ]
 
 (r'^static/(?P<path>.*)$', 'django.views.static.serve',
