@@ -27,7 +27,7 @@ SECRET_KEY = 'tm3d(#yvvm^dz3*l908)w_#_!1r&f!5!5ep^rq@ghc*+rojo7u'
 # SESSION_COOKIE_SECURE = True
 # SECURE_SSL_REDIRECT = True
 # SESSION_COOKIE_HTTPONLY = True
-# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https')
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
