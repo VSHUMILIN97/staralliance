@@ -34,10 +34,13 @@
           <div class="navbar-nav">
             <!--<a class="nav-item nav-link" href="/bittrex">See Data</a>
             <a class="nav-item nav-link" href="/charts"> See Charts</a> -->
-            <a class="nav-item nav-link" href="/compare/old">{% trans "See Pairs" %}</a>
+              <a class="nav-item nav-link" href="/compare/old">{% trans "See Pairs" %}</a>
+
             {% if user.is_authenticated %}
+                <p class="nav-item nav-link">{% trans "Welcome:" %} {{ user.username }}</p>
             <a class="nav-item nav-link" href="/">{% trans "Profile" %}</a>
             <a class="nav-item nav-link" href="{% url 'logout' %}">{% trans "Log out" %}</a>
+
             {% else %}
             <a class="nav-item nav-link" data-toggle="modal" data-target="#modal_reg">{% trans "Registration" %}</a>
             <a class="nav-item nav-link" data-toggle="modal" data-target="#modal_log">{% trans "Log in" %}</a>

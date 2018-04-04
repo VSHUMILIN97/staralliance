@@ -2,7 +2,7 @@ from django.conf.urls import url, include
 from Exchanges import views
 from django.conf.urls.static import static
 from PiedPiper import settings
-
+from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
 
@@ -20,7 +20,7 @@ urlpatterns = [
     url(r'^charts/$', views.ChartsView.as_view(), name='Charts'),
     url(r'^charts/(?P<exchange>.+)/(?P<pair>.+)/$', views.ChartsView.as_view(), name='charts/marketname'),
 
-    url(r'^compare/$', views.Comparison.as_view(), name='Comparison'),
-    url(r'^compare/(?P<mode>.+)/$', views.Comparison.as_view(), name='Comparison'),
+    url(r'^compare/$', login_required(views.Comparison.as_view()), name='Comparison'),
+    url(r'^compare/(?P<mode>.+)/$', login_required(views.Comparison.as_view()), name='Comparison'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 # STATIC_URL upload all our /static/ files. Full definition in root/static/INFO.txt

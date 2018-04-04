@@ -30,7 +30,7 @@ urlpatterns = [
     url(r'', include('Exchanges.urls'), name="home"),
     url(r'^accounts/', include('registration.urls')),
     url(r'^login', auth_views.login, name='login'),
-    url(r'^logout/$', auth_views.logout, name='logout'),
+    url(r'^logout/$', auth_views.logout, {'next_page': '/'}, name='logout'),
     # registration by using only unique email
     url(r'^user/register/$', RegistrationView.as_view(form_class=RegistrationFormUniqueEmail),
         name='registration_register'),

@@ -1,10 +1,8 @@
 import json
 import redis
-import time
 from django.shortcuts import render
 from django.views.generic import View
 
-from PiedPiper import settings
 from PiedPiper.settings import REDIS_DEFAULT_PORT, LOCAL_SERVICE_HOST, STARALLIANS_HOST
 from mongo_db_connection import MongoDBConnection
 from Exchanges.ExchangeAPI.PairDataNOTAPI import approved_exchanges, approved_pairs, approved_keys
@@ -110,6 +108,7 @@ class ChartsView(View):  #
 
 # We got two versions of our web-page. User is forced to USE the /old version.
 class Comparison(View):
+
     def get(self, request, mode="", *args, **kwargs):
         if mode == 'new':
             return render(request, 'comparebeta.html', {})  # установить compare для другого отображения арбитража
