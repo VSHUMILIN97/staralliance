@@ -92,15 +92,21 @@ async def bitfinex_ticker():
                 logging.error(u'Bitfinex API cannot be reached')
             full_data = json.loads(data_request.text)
             for items in full_data:
-                main_key = file_name + '/Bitfinex/' + pair_fix(items[0])
+                try:
+                    main_key = file_name + '/Bitfinex/' + pair_fix(items[0])
+                except TypeError:
+                    continue
                 if r.get(main_key) is None:
                     r.set(main_key, 1)
-                if float(r.get(file_name + '/Bitfinex/' +
+                try:
+                    if float(r.get(file_name + '/Bitfinex/' +
                                pair_fix(items[0])).decode('utf-8')) != (float(items[1]) + float(items[3]))/2:
-                    r.set(file_name + '/Bitfinex/' + pair_fix(items[0]), (float(items[1]) + float(items[3])) / 2)
-                    r.publish('s-Bitfinex', file_name + '/Bitfinex/' + pair_fix(items[0]))
-                else:
-                    continue
+                        r.set(file_name + '/Bitfinex/' + pair_fix(items[0]), (float(items[1]) + float(items[3])) / 2)
+                        r.publish('s-Bitfinex', file_name + '/Bitfinex/' + pair_fix(items[0]))
+                    else:
+                        continue
+                except ValueError:
+                    pass
             await asyncio.sleep(32)
         except OSError:
             logging.error('Bitfinex API crashed')

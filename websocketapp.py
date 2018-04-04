@@ -1,8 +1,11 @@
 import asyncio
+import ssl
+from ssl import SSLContext
 import threading
 import time
 import json
 import logging
+from _ssl import PROTOCOL_TLS
 
 import aredis
 import redis
@@ -13,7 +16,7 @@ from Exchanges.ExchangeAPI.PairDataNOTAPI import approved_keys
 from PiedPiper.settings import STARALLIANS_HOST, REDIS_DEFAULT_PORT, LOCAL_SERVICE_HOST
 
 logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
-                    level=logging.DEBUG, filename='/var/log/cryptopiper/websockets.log')
+                    level=logging.DEBUG)#, filename='/var/log/cryptopiper/websockets.log')
 
 websockets_all = []
 
@@ -75,9 +78,12 @@ async def handler(websocket, path):
         # Unregister.
         pass
 
+ctx = ssl.create_default_context()
+ctx.load_cert_chain('/etc/letsencrypt/live/staralliance.pro-0001/fullchain.pem',
+                    '/etc/letsencrypt/live/staralliance.pro-0001/privkey.pem')
 logging.info(u'Arbitartion websocket started')
 # Initialise websocket connection on host 0.0.0.0 and port 8090
-asyncio.get_event_loop().run_until_complete(websockets.serve(handler, '0.0.0.0', 8090))
+asyncio.get_event_loop().run_until_complete(websockets.serve(handler, '0.0.0.0', 8090, ssl=ctx))
 asyncio.get_event_loop().run_forever()
 
 

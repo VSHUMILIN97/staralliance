@@ -23,8 +23,14 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'tm3d(#yvvm^dz3*l908)w_#_!1r&f!5!5ep^rq@ghc*+rojo7u'
 
+# SSL connection
+# SESSION_COOKIE_SECURE = True
+# SECURE_SSL_REDIRECT = True
+# SESSION_COOKIE_HTTPONLY = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https')
+
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 COMPRESS_ENABLED = True
 ALLOWED_HOSTS = [
     'localhost',
@@ -35,6 +41,7 @@ ALLOWED_HOSTS = [
     'vadim.sysnursery.org',
     'staralliance.pro',
     'www.staralliance.pro',
+    '0.0.0.0',
 ]
 
 STARALLIANS_HOST = '216.189.157.83'
@@ -119,14 +126,14 @@ DATABASES = {
 }
 ASGI_APPLICATION = 'PiedPiper.routing.application'
 
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [("localhost", 6379)],
-        },
-    },
-}
+# CHANNEL_LAYERS = {
+#     "default": {
+#         "BACKEND": "channels_redis.core.RedisChannelLayer",
+#         "CONFIG": {
+#             "hosts": [("127.0.0.1", 6379)],
+#         },
+#     },
+# } NOT IMPORTNAT FOR NOW, BUT WE'LL FIND IT USEFUL LATER
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
