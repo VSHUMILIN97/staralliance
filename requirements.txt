@@ -13,3 +13,4 @@ aredis
 channels
 asgi_redis
 channels_redis
+django-registration

@@ -1,10 +1,8 @@
 import json
 import redis
-import time
 from django.shortcuts import render
 from django.views.generic import View
 
-from PiedPiper import settings
 from PiedPiper.settings import REDIS_DEFAULT_PORT, LOCAL_SERVICE_HOST, STARALLIANS_HOST
 from mongo_db_connection import MongoDBConnection
 from Exchanges.ExchangeAPI.PairDataNOTAPI import approved_exchanges, approved_pairs, approved_keys
@@ -43,40 +41,30 @@ def state_getter(clear_map):
 
 
 def index_view(request):
-    b = MongoDBConnection().start_local()
-    db = b.PiedPiperStock
-    collect = db.MainPage
-    cursor = collect.find({}, {'_id': False})
-    if cursor.count() == 0:
-        time.sleep(0.333)
-        cursor = collect.find({}, {'_id': False})
-    for item in cursor:
-        try:
-            btc = item['BTC']
-        except KeyError:
-            pass
-        try:
-            eth = item['ETH']
-        except KeyError:
-            pass
-        try:
-            dash = item['DASH']
-        except KeyError:
-            pass
-        try:
-            ltc = item['LTC']
-        except KeyError:
-            pass
-        try:
-            xrp = item['XRP']
-        except KeyError:
-            pass
-        try:
-            xmr = item['XMR']
-        except KeyError:
-            pass
-    cursor.close()
-    MongoDBConnection().stop_connect()
+    try:
+         btc = 1000
+    except KeyError:
+        pass
+    try:
+         eth = 2000
+    except KeyError:
+        pass
+    try:
+         dash = 3000
+    except KeyError:
+        pass
+    try:
+         ltc = 4000
+    except KeyError:
+        pass
+    try:
+         xrp = 5000
+    except KeyError:
+        pass
+    try:
+         xmr = 6000
+    except KeyError:
+        pass
     return render(request, "index.html", {'BTC': btc, 'ETH': eth, 'DASH': dash, 'LTC': ltc, 'XMR': xmr, 'XRP': xrp})
 
 
@@ -120,6 +108,7 @@ class ChartsView(View):  #
 
 # We got two versions of our web-page. User is forced to USE the /old version.
 class Comparison(View):
+
     def get(self, request, mode="", *args, **kwargs):
         if mode == 'new':
             return render(request, 'comparebeta.html', {})  # установить compare для другого отображения арбитража

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load i18n %}
+{% block content %}
+
+<div class="caption">
+  <h2>Registration<h2>
+    <hr />
+</div>
+
+<div class="block">
+  <form method="post" action="">
+  <dl class="register">
+  {% for field in form %}
+      <dt>{{ field.label_tag }}</dt>
+      <dd class="clearfix">{{ field }}
+      {% if field.errors %}
+        <div class="myerrors clearfix">{{ field.errors }}</div>
+      {% endif %}
+      </dd>
+  {% endfor %}
+  </dl>
+  <button type="submit" class="clearfix btn">Registrate</button>
+  </form>
+</div>
+{% endblock %}

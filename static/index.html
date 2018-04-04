@@ -1,8 +1,7 @@
 {% extends 'base.html' %}
+{% load staticfiles %}
 {% block content %}
 {% load i18n %}
-    {% load staticfiles %}
-
 <div class="hero">
   <h1>{% trans "Investment fund" %}</h1>
   <p>{% trans "Your tool in a highly profitable market for investments" %}</p>
@@ -114,14 +113,20 @@
 <div class="platform block text-center">
     <h2> {% trans "Our Platform" %} </h2>
     <hr />
-    <img class="png" src="/static/index/images/ico.png">
-    <p> {% trans "The system is designed to manage any investment assets, including cryptocurrency. One of the possible applications of the system is trading on stock exchanges include cryptocurrencies. We created special architecture of platform which allow to work with any process of stock exchange at the same time:the general state of markets (tiki, DOM, rise and fall in quotes, candles formation), the status of open orders. Such an approach allows us to speak about increasing the stability of work and the possibility of an evolutionary development of the system as a whole." %}</p>
-    <hr />
-    <img class="png" src="/static/index/images/liquidity.png">
-    <p> {% trans "The system allows you to track several levels of recommendations based on our analytic and create on their basis order chains. In addition, it is possible to create chains yourself. In the future, the system allows you to track transactions, set the value of stop-loss and trailing." %}</p>
-    <hr />
-    <img class="png" src="/static/index/images/decentralization.png">
-    <p>{% trans "The system is distributed and decentralized, the main processes are located on the servers. The user needs to determine the strategy. All other steps will be made automatically, the presence of the user on the network is not necessary." %}</p>
+      <div class="row text-center">
+      <div class="col-sm-12 col-md-4">
+        <img class="png" src="/static/index/images/ico.png">
+        <p> {% trans "The system is designed to manage any investment assets, including cryptocurrency. One of the possible applications of the system is trading on stock exchanges include cryptocurrencies. We created special architecture of platform which allow to work with any process of stock exchange at the same time:the general state of markets (tiki, DOM, rise and fall in quotes, candles formation), the status of open orders. Such an approach allows us to speak about increasing the stability of work and the possibility of an evolutionary development of the system as a whole." %}</p>
+      </div>
+      <div class="col-sm-12 col-md-4">
+        <img class="png" src="/static/index/images/liquidity.png">
+        <p> {% trans "The system allows you to track several levels of recommendations based on our analytic and create on their basis order chains. In addition, it is possible to create chains yourself. In the future, the system allows you to track transactions, set the value of stop-loss and trailing." %}</p>
+      </div>
+      <div class="col-sm-12 col-md-4">
+        <img class="png" src="/static/index/images/decentralization.png">
+        <p>{% trans "The system is distributed and decentralized, the main processes are located on the servers. The user needs to determine the strategy. All other steps will be made automatically, the presence of the user on the network is not necessary." %}</p>
+      </div>
+    </div>
 </div>
 
 <div class="downloads block text-center">

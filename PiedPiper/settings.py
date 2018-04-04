@@ -30,7 +30,7 @@ SECRET_KEY = 'tm3d(#yvvm^dz3*l908)w_#_!1r&f!5!5ep^rq@ghc*+rojo7u'
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 COMPRESS_ENABLED = True
 ALLOWED_HOSTS = [
     'localhost',
@@ -41,7 +41,6 @@ ALLOWED_HOSTS = [
     'vadim.sysnursery.org',
     'staralliance.pro',
     'www.staralliance.pro',
-    '0.0.0.0',
 ]
 
 STARALLIANS_HOST = '216.189.157.83'
@@ -67,14 +66,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'PiedPiper',
-    'exchanger',
     'Exchanges',
     'rest_framework',
     'requests',
     'compressor',
     'bootstrap4',
     'jquery',
+    'registration',
+    'django_extensions'
     'channels',
 ]
 
@@ -94,8 +93,7 @@ ROOT_URLCONF = 'PiedPiper.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR + '/Exchanges/Templates/',
-                  BASE_DIR + '/exchanger/templates/'],
+        'DIRS': [ BASE_DIR + '/Exchanges/Templates/' ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

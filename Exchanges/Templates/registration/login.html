@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<form action="{% url 'login' %}" method="post">
+  {% csrf_token %}
+  {% if form.non_field_errors %}
+    <p>
+      {% for error in form.non_field_errors %}
+      {{ error }}
+      {% endfor %}
+    </p>
+  {% endif %}
+  {% for field in form %}
+    <div>
+      {{ field.label_tag }}
+      {{ field }}
+      {% if field.errors %}
+        <p>
+          {% for error in field.errors %}
+          {{ error }}
+          {% endfor %}
+        </p>
+      {% endif %}
+    </div>
+  {% endfor %}
+  <input type="submit" value="Submit" />
+<input type="hidden" name="next" value="{{ next }}" />
+</form>
+{% endblock %}
