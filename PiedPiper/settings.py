@@ -41,6 +41,7 @@ ALLOWED_HOSTS = [
     'vadim.sysnursery.org',
     'staralliance.pro',
     'www.staralliance.pro',
+    '0.0.0.0',
 ]
 
 STARALLIANS_HOST = '216.189.157.83'
@@ -66,6 +67,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'PiedPiper',
+    'exchanger',
     'Exchanges',
     'rest_framework',
     'requests',
@@ -73,7 +76,7 @@ INSTALLED_APPS = [
     'bootstrap4',
     'jquery',
     'registration',
-    'django_extensions'
+    'django_extensions',
     'channels',
 ]
 
@@ -93,7 +96,8 @@ ROOT_URLCONF = 'PiedPiper.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [ BASE_DIR + '/Exchanges/Templates/' ],
+        'DIRS': [BASE_DIR + '/Exchanges/Templates/',
+                  BASE_DIR + '/exchanger/templates/'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -176,7 +180,8 @@ USE_L10N = True
 
 USE_TZ = True
 
-
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+ACCOUNT_ACTIVATION_DAYS = 7
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
