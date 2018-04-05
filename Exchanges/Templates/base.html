@@ -56,12 +56,12 @@
 
 
 
-  <form class="modal fade" method="post" id="modal_reg" tabindex="-1" role="dialog" aria-hidden="true" action="/accounts/register/">{% csrf_token %}
+  <form class="modal fade" method="POST" id="modal_reg" tabindex="-1" aria-hidden="true" action="/accounts/register/">{% csrf_token %}
     <div class="caption">
       <h2>{% trans "Registration" %}</h2>
         <hr />
     </div>
-
+    <div class="modal-body">
       <dl class="register">
         <dt>
           <label for="id_username">{% trans "Username:" %} </label>
@@ -91,11 +91,28 @@
           <input type="password" name="password2" required="" id="id_password2">
         </dd>
       </dl>
-
+    </div>
       <button type="submit" class="clearfix btn">{% trans "Sign up" %}</button>
 
     </form>
 
+      <script type="text/javascript">
+    var frm = $('#modal_reg');
+
+    frm.submit(function (e) {
+
+        e.preventDefault();
+
+        $.ajax({
+            type: frm.attr('method'),
+            url: frm.attr('action'),
+            data: frm.serialize(),
+            success: function (xhr) {
+                frm.html(xhr);
+            },
+        });
+    });
+</script>
 
 <form class="modal fade" method="post" action="/login" id="modal_log" tabindex="-1" role="dialog" aria-hidden="true"> {%csrf_token%}
   <div class="caption">
