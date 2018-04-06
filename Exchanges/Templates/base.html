@@ -16,6 +16,7 @@
     <script src="{% static "rest_framework/js/bootstrap.min.js" %}"></script>
     <script src="{% static "js/charts.js" %}"></script>
     <script src="{% static "js/choose.js" %}"></script>
+    <script src="{% static "js/register.js" %}"></script>
     <link rel="stylesheet" href="/static/index/styles/layout.css" type="text/css">
     <link rel="stylesheet" href="/static/index/styles/compare.css" type="text/css">
     <link rel="stylesheet" href="/static/index/styles/choose.css" type="text/css">
@@ -92,26 +93,30 @@
         </dd>
       </dl>
     </div>
+    {% for field in form %}
+        {% if field.errors %}
+          <div class="myerrors clearfix">{{ field.errors }}</div>
+        {% endif %}
+    {% endfor %}
       <button type="submit" class="clearfix btn">{% trans "Sign up" %}</button>
-
     </form>
 
-      <script type="text/javascript">
-    var frm = $('#modal_reg');
+<script>
+var frm = $('#modal_reg');
 
-    frm.submit(function (e) {
+frm.submit(function (e) {
 
-        e.preventDefault();
+  e.preventDefault();
 
-        $.ajax({
-            type: frm.attr('method'),
-            url: frm.attr('action'),
-            data: frm.serialize(),
-            success: function (xhr) {
-                frm.html(xhr);
-            },
-        });
-    });
+  $.ajax({
+      type: frm.attr('method'),
+      url: frm.attr('action'),
+      data: frm.serialize(),
+      success: function (xhr) {
+          frm.html(xhr);
+      },
+  });
+});
 </script>
 
 <form class="modal fade" method="post" action="/login" id="modal_log" tabindex="-1" role="dialog" aria-hidden="true"> {%csrf_token%}
@@ -133,12 +138,29 @@
               <input type="password" name="password" required="" id="id_password">
             </dd>
         </dl>
+
+
+
           <button type="submit" class="clearfix btn">{% trans "Log in" %}</button>
       </form>
+<script>
 
+    var frm = $('#modal_log');
 
+    frm.submit(function (e) {
 
+        e.preventDefault();
 
+        $.ajax({
+            type: frm.attr('method'),
+            url: frm.attr('action'),
+            data: frm.serialize(),
+            success: function (xhr) {
+                frm.html(xhr);
+            },
+        });
+    });
+</script>
 
 {% block content %}
 {% endblock %}

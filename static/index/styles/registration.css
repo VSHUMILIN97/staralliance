@@ -21,3 +21,7 @@ form input{
 form input:focus {
     border: 2px solid #0f111d;
 }
+
+.login{
+  margin-bottom: 3%;
+}

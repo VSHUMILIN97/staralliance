@@ -200,7 +200,7 @@ div.downloads a:hover{
 .modal{
   background-color: #ffffff;
   text-align: center;
-  height: 430px;
+  height: 560px;
   width: 400px;
 }
 
@@ -231,4 +231,8 @@ div.downloads a:hover{
     width: 50%;
     margin: 5% 25%;
   }
+}
+
+.errorlist{
+  color: #c90202;
 }
