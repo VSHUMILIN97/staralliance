@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+{% block content %}
+    <div>
+    <h1>{{ user.username }}</h1>
+    <h2>{{ user.email }}</h2>
+    </div>
+{% endblock content%}

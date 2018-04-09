@@ -1,6 +1,4 @@
-{% extends "base.html" %}
 {% load i18n %}
-{% block content %}
 
 <div class="caption">
   <h2> {% trans "Account Activation" %}</h2>
@@ -9,7 +7,6 @@
 
 <div class="block">
   {% trans "Hello,"%} {{ Username }}!<br/>
-  {% trans "Your account is activated." %} <a href="{% url 'index' %}">Заходите</a> на сайт.
+  {% trans "Your should activate your account. Check your e-mail for the instructions" %}
   <br/><br/>
 </div>
-{% endblock %}

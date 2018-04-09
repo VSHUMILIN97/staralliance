@@ -1,6 +1,8 @@
 import json
 import redis
 import time
+
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.views.generic import View
 
@@ -77,6 +79,11 @@ def index_view(request):
     cursor.close()
     MongoDBConnection().stop_connect()
     return render(request, "index.html", {'BTC': btc, 'ETH': eth, 'DASH': dash, 'LTC': ltc, 'XMR': xmr, 'XRP': xrp})
+
+
+@login_required
+def profile(request):
+    return render(request, 'registration/profile.html')
 
 
 # DEBUG ONLY WEB-PAGE

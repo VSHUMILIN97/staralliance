@@ -1,21 +1,24 @@
-{% extends 'base.html' %}
 {% load staticfiles %}
 {% load i18n %}
-{% block content %}
 <div class="caption">
   <h2>Log in</h2>
     <hr />
 </div>
 
-<form action="/login" method="post" class="center"> {%csrf_token%}
-
+<div>
+<form action="" method="post" class="center"> {% csrf_token %}
     <div class="login">
       <label for="id_username">{% trans 'Username:' %}</label> <br/>
       <input type="text" name="username" maxlength="254" required="" autofocus="" id="id_username"> <br/>
       <label for="id_password">{% trans 'Password:' %}</label> <br/>
       <input type="password" name="password" id="id_password" required="">
     </div>
+    {% if form.errors %}
+        <div class="myerrors clearfix">{{ form.errors|striptags }}</div>
+        <script>var errors = true; localStorage.setItem('error', errors);</script>
+        {% else %} <script>var errors = false; localStorage.setItem('error', errors)</script>
+    {% endif %}
+  <button type="submit" class="clearfix btn">Log in</button>
 
-  <button type="submit" class="clearfix btn">Log in </button>
 </form>
-{% endblock %}
+</div>

@@ -34,7 +34,7 @@ urlpatterns = [
     # registration by using only unique email
     url(r'^user/register/$', RegistrationView.as_view(form_class=RegistrationFormUniqueEmail),
         name='registration_register'),
-    url(r'^accounts/profile/$', views.index_view, name='index')
+    url(r'^accounts/profile/$', views.profile, name='index')
 
 
 ]
