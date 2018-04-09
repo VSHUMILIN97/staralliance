@@ -20,6 +20,7 @@ logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(a
 
 websockets_all = []
 
+# NOT IN USE 
 # Function, that provides connect between client and server.
 # Works with async to prevent interrupting main thread.
 async def arbitration_socket(websocket, path):
