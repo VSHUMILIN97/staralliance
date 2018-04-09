@@ -38,6 +38,6 @@ urlpatterns = [
 
 
 ]
-
+# Nore
 (r'^static/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': '/static/admin/css/'}),
