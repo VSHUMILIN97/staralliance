@@ -66,9 +66,29 @@ option{
   font-size: 1.2em;
 }
 
+.block.activate {
+  padding: 7% 15% 20%;
+  text-align: center;
+  font-size: 1.5em;
+}
+.block.activate p{
+  background-color: rgba(227,227,227,0.85);
+  padding: 5% 10%;
+}
+.background{
+  background: url('/static/index/images/header.jpg') no-repeat fixed;
+}
+
+.background .caption{
+  margin-top: 0%;
+  padding-top: 3%;
+  color: #e3e3e3;
+}
+
 .footer {
     background-color: #2E2E3E;
     padding-left: 5%;
+    padding-bottom: 10%;
 }
 
 .footer a {

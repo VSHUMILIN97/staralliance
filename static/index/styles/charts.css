@@ -41,23 +41,6 @@
     outline: none !important;
 }
 
-.smallEmptySpace {
-    margin-top: 10px;
-}
-
-.mediumEmptySpace {
-    margin-top: 0px;
-}
-
-.bigEmptySpace {
-    margin-top: 543px;
-}
-
-.nothing {
-  margin-top: 5px;
-  color: transparent;
-}
-
 .textWrapper {
   margin-top: 10px;
 }
