@@ -19,7 +19,7 @@ urlpatterns = [
     url(r'^charts/$', views.ChartsView.as_view(), name='Charts'),
     url(r'^charts/(?P<exchange>.+)/(?P<pair>.+)/$', views.ChartsView.as_view(), name='charts/marketname'),
 
-    url(r'^compare/$', (views.Comparison.as_view()), name='Comparison'),  # ADD login_required
-    url(r'^compare/(?P<mode>.+)/$', (views.Comparison.as_view()), name='Comparison'),  # ADD login_required
+    url(r'^compare/$', views.Comparison.as_view(), name='Comparison'),  # ADD login_required
+    url(r'^compare/(?P<mode>.+)/$', views.Comparison.as_view(), name='Comparison'),  # ADD login_required
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 # STATIC_URL upload all our /static/ files. Full definition in root/static/INFO.txt
