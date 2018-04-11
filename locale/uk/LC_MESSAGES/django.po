@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-20 01:13+0500\n"
+"POT-Creation-Date: 2018-04-11 15:14+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,51 +19,94 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: Exchanges/Templates/base.html:35
+#: Exchanges/Templates/base.html:41 Exchanges/Templates/base.html:47
+#: static/base.html:37
 msgid "See Pairs"
 msgstr "Арбітраж"
 
-#: Exchanges/Templates/base.html:58
+#: Exchanges/Templates/base.html:42
+msgid "Welcome:"
+msgstr "Ласкаво просимо:"
+
+#: Exchanges/Templates/base.html:43
+#, fuzzy
+#| msgid "Profitability"
+msgid "Profile"
+msgstr "Прибутковість"
+
+#: Exchanges/Templates/base.html:44
+msgid "Log out"
+msgstr "Вихід"
+
+#: Exchanges/Templates/base.html:48 Exchanges/Templates/base.html:64
+msgid "Registration"
+msgstr "Реєстрація"
+
+#: Exchanges/Templates/base.html:49 Exchanges/Templates/base.html:122
+#: Exchanges/Templates/base.html:139
+msgid "Log in"
+msgstr "Вхід"
+
+#: Exchanges/Templates/base.html:70 Exchanges/Templates/base.html:127
+msgid "Username:"
+msgstr "Ім'я користувача:"
+
+#: Exchanges/Templates/base.html:84 Exchanges/Templates/base.html:133
+msgid "Password:"
+msgstr "Пароль:"
+
+#: Exchanges/Templates/base.html:91
+msgid "Password confirmation:"
+msgstr "Підтвердження пароля:"
+
+#: Exchanges/Templates/base.html:98
+msgid "Sign up"
+msgstr "Реєстрація"
+
+#: Exchanges/Templates/base.html:171 static/base.html:60
 msgid "Home"
 msgstr "Домашня сторінка"
 
-#: Exchanges/Templates/base.html:60
+#: Exchanges/Templates/base.html:173 static/base.html:62
 msgid "See pairs"
 msgstr "Арбітраж"
 
-#: Exchanges/Templates/compare.html:8
+#: Exchanges/Templates/compare.html:8 static/compare.html:8
 msgid "Arbitration"
 msgstr "Арбітраж"
 
-#: Exchanges/Templates/compare.html:9
+#: Exchanges/Templates/compare.html:9 static/compare.html:9
 msgid "After load you'll see the current state without growth dynamic"
-msgstr "Після завантаження ви побачите поточний стан ринку, без динаміки зростання."
+msgstr ""
+"Після завантаження ви побачите поточний стан ринку, без динаміки зростання."
 
-#: Exchanges/Templates/compare.html:22
+#: Exchanges/Templates/compare.html:22 static/compare.html:22
+#, fuzzy, python-format
+#| msgid "Hide less than 3%% difference"
 msgid "Hide less than 3%% difference"
 msgstr "Прибрати ті пари, де різниця менше 3%"
 
-#: Exchanges/Templates/compare.html:23
+#: Exchanges/Templates/compare.html:23 static/compare.html:23
 msgid "Hide non-selected exchanges"
 msgstr "Прибрати невідмічені біржі"
 
-#: Exchanges/Templates/compare.html:24
+#: Exchanges/Templates/compare.html:24 static/compare.html:24
 msgid "Differ_between_pairs"
 msgstr "Настроіть_разніцу_между_парамі"
 
-#: Exchanges/Templates/index.html:6
+#: Exchanges/Templates/index.html:6 static/index.html:6
 msgid "Investment fund"
 msgstr "Інвестиційний фонд"
 
-#: Exchanges/Templates/index.html:7
+#: Exchanges/Templates/index.html:7 static/index.html:7
 msgid "Your tool in a highly profitable market for investments"
 msgstr "Ваш інструмент на високорентабельному ринку інвестицій"
 
-#: Exchanges/Templates/index.html:41
+#: Exchanges/Templates/index.html:41 static/index.html:41
 msgid "What are we doing?"
 msgstr "Чим ми займаємося?"
 
-#: Exchanges/Templates/index.html:44
+#: Exchanges/Templates/index.html:44 static/index.html:44
 msgid ""
 "Our fund is engaged in investing in highyield blockchain projects. We find "
 "underestimated blockchain 'pearls' (coins) on the market, which will "
@@ -74,11 +117,11 @@ msgstr ""
 "'Недооцінені перлини' (монети) на ринку, які, ймовірно, будуть рости в "
 "найближчі 3-4 місяці. Наші дані засновані на результатах глибокого аналізу."
 
-#: Exchanges/Templates/index.html:53
+#: Exchanges/Templates/index.html:53 static/index.html:53
 msgid "What we are investing in?"
 msgstr "У що ми інвестуємо?"
 
-#: Exchanges/Templates/index.html:55
+#: Exchanges/Templates/index.html:55 static/index.html:55
 msgid ""
 "We are investing only in project, which have already entered the stock "
 "exchange and have had high liquidity of 20-200 million dollars and have had "
@@ -90,11 +133,16 @@ msgstr ""
 "ліквідність порядку 20-200 мільйонів доларів, мають проривні технології і "
 "сильну команду розробників."
 
-#: Exchanges/Templates/index.html:61
+#: Exchanges/Templates/index.html:61 static/index.html:61
 msgid "Full transparency"
 msgstr "Повна прозорість"
 
-#: Exchanges/Templates/index.html:63
+#: Exchanges/Templates/index.html:63 static/index.html:63
+#, fuzzy, python-format
+#| msgid ""
+#| "Our fund conducts and supports policy of full transparency in relations "
+#| "with partners, their means and profitability. In 24/7 mode, you are 100%% "
+#| "aware of your portfolio and current yield of your investments."
 msgid ""
 "Our fund conducts and supports policy of full transparency in relations with "
 "partners, their means and profitability. In 24/7 mode, you are 100%% aware "
@@ -105,11 +153,15 @@ msgstr ""
 "отримуєте 100% інформації про вашому портфоліо і поточної прибутковості "
 "вашого портфеля 24/7."
 
-#: Exchanges/Templates/index.html:69
+#: Exchanges/Templates/index.html:69 static/index.html:69
 msgid "Profitability"
 msgstr "Прибутковість"
 
-#: Exchanges/Templates/index.html:71
+#: Exchanges/Templates/index.html:71 static/index.html:71
+#, fuzzy, python-format
+#| msgid ""
+#| "The current average monthly return is 30-60%% per month. Our best "
+#| "investments show growth of more than 500%% within 3-4 months."
 msgid ""
 "The current average monthly return is 30-60%% per month. Our best "
 "investments show growth of more than 500%% within 3-4 months."
@@ -117,11 +169,16 @@ msgstr ""
 "Поточний місячний середній дохід - від 30 до 60% зростання. Наші кращі "
 "інвестиції за 3-4 місяці показують зростання в 500 і більше відсотків."
 
-#: Exchanges/Templates/index.html:77
+#: Exchanges/Templates/index.html:77 static/index.html:77
 msgid "Partner Support"
 msgstr "Підтримка партнерів"
 
-#: Exchanges/Templates/index.html:79
+#: Exchanges/Templates/index.html:79 static/index.html:79
+#, fuzzy, python-format
+#| msgid ""
+#| "Our partners in the 24/7 mode are 100%% aware of the state of their "
+#| "portfolio and the current profitability of their investments. Support is "
+#| "provided in a special closed telegram-chat."
 msgid ""
 "Our partners in the 24/7 mode are 100%% aware of the state of their "
 "portfolio and the current profitability of their investments. Support is "
@@ -131,11 +188,11 @@ msgstr ""
 "портфоліо і поточної прибутковості інвестиціний портфеля 24/7. Підтримка "
 "здійснюється в закритому Telegram чаті."
 
-#: Exchanges/Templates/index.html:94
+#: Exchanges/Templates/index.html:94 static/index.html:94
 msgid "How are we do it?"
 msgstr "Як ми це робимо?"
 
-#: Exchanges/Templates/index.html:99
+#: Exchanges/Templates/index.html:99 static/index.html:99
 msgid ""
 "The best analysts of our fond carefully select and study more than 50 "
 "projects every week. One of these projects is selected. We are offering it "
@@ -145,7 +202,7 @@ msgstr ""
 "проектів щотижня. Деякі проекти мають пройти відбір і пропонуються нашим "
 "партнерам."
 
-#: Exchanges/Templates/index.html:103
+#: Exchanges/Templates/index.html:103 static/index.html:103
 msgid ""
 "Preference is given to infrastructure projects, which are solve real "
 "problems of any industry or create undeniable competitive advantage in the "
@@ -155,7 +212,7 @@ msgstr ""
 "виробництва або створюють незаперечну перевагу на ринку, змінюючи його "
 "парадигму."
 
-#: Exchanges/Templates/index.html:107
+#: Exchanges/Templates/index.html:107 static/index.html:107
 msgid ""
 "We provide analytical report and conclusion with an assessment of risks and "
 "returns for each project (coin) submitted for investment."
@@ -163,11 +220,11 @@ msgstr ""
 "Ми надаємо аналітичний звіт і висновок з оцінкою ризиків і потенційним "
 "поверненням вкладень за кожен запропонований проект (монету) для інвестиції."
 
-#: Exchanges/Templates/index.html:114
+#: Exchanges/Templates/index.html:114 static/index.html:114
 msgid "Our Platform"
 msgstr "Наша платформа"
 
-#: Exchanges/Templates/index.html:117
+#: Exchanges/Templates/index.html:119 static/index.html:119
 msgid ""
 "The system is designed to manage any investment assets, including "
 "cryptocurrency. One of the possible applications of the system is trading on "
@@ -186,7 +243,7 @@ msgstr ""
 "Такий підхід дозволяє говорити про збільшення стабільності роботи і "
 "можливості еволюції системи в цілому."
 
-#: Exchanges/Templates/index.html:120
+#: Exchanges/Templates/index.html:123 static/index.html:123
 msgid ""
 "The system allows you to track several levels of recommendations based on "
 "our analytic and create on their basis order chains. In addition, it is "
@@ -199,7 +256,7 @@ msgstr ""
 "відстежувати транзакції, встановлювати значення 'stop-loss' і стежити за "
 "проектами самостійно."
 
-#: Exchanges/Templates/index.html:123
+#: Exchanges/Templates/index.html:127 static/index.html:127
 msgid ""
 "The system is distributed and decentralized, the main processes are located "
 "on the servers. The user needs to determine the strategy. All other steps "
@@ -210,58 +267,71 @@ msgstr ""
 "серверах. Користувач повинен визначити стратегію. Всі інші кроки будуть "
 "виконані автоматично, при цьому присутність користувача не буде потрібно."
 
-#: Exchanges/Templates/index.html:127
+#: Exchanges/Templates/index.html:133 static/index.html:133
 msgid "Download"
 msgstr "Завантажити"
 
-#: Exchanges/Templates/index.html:131
+#: Exchanges/Templates/index.html:137 static/index.html:137
 msgid "Distribution"
 msgstr "Дистрибутив"
 
-#: Exchanges/Templates/index.html:133
+#: Exchanges/Templates/index.html:139 static/index.html:139
 msgid "Instruction (en)"
 msgstr "Керівництво користувача (eng)"
 
-#: Exchanges/Templates/index.html:135
+#: Exchanges/Templates/index.html:141 static/index.html:141
 msgid "Instruction (ru)"
 msgstr "Керівництво користувача (rus)"
 
-#: Exchanges/Templates/index.html:140
+#: Exchanges/Templates/index.html:146 static/index.html:146
 msgid "Contacts"
 msgstr "Контакти"
 
-#: Exchanges/Templates/index.html:147
+#: Exchanges/Templates/index.html:153 static/index.html:153
 msgid "Phone number:"
 msgstr "Номер телефону:"
 
-#: Exchanges/Templates/index.html:149
+#: Exchanges/Templates/index.html:155 static/index.html:155
 msgid "Address:"
 msgstr "Адреса:"
 
-#: Exchanges/Templates/index.html:151
+#: Exchanges/Templates/index.html:157 static/index.html:157
 msgid "E-mail:"
 msgstr "E-mail:"
 
-#: PiedPiper/settings.py:158
+#: Exchanges/Templates/registration/registration_complete.html:4
+msgid "Account Activation"
+msgstr "Активація аккаунта"
+
+#: Exchanges/Templates/registration/registration_complete.html:9
+msgid "Hello,"
+msgstr "Вітаю,"
+
+#: Exchanges/Templates/registration/registration_complete.html:10
+msgid ""
+"Your should activate your account. Check your e-mail for the instructions"
+msgstr "Вам потрібно активувати обліковий запис. Інструкції надіслані на електронну пошту"
+
+#: PiedPiper/settings.py:165
 msgid "German"
 msgstr "Німецький"
 
-#: PiedPiper/settings.py:159
+#: PiedPiper/settings.py:166
 msgid "English"
 msgstr "Англійська"
 
-#: PiedPiper/settings.py:160
+#: PiedPiper/settings.py:167
 msgid "Russian"
 msgstr "Русский"
 
-#: PiedPiper/settings.py:161
+#: PiedPiper/settings.py:168
 msgid "Arab"
 msgstr "Арабська"
 
-#: PiedPiper/settings.py:162
+#: PiedPiper/settings.py:169
 msgid "Ukrainian"
 msgstr "Український"
 
-#: PiedPiper/settings.py:163
+#: PiedPiper/settings.py:170
 msgid "French"
 msgstr "Французький"

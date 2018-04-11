@@ -27,6 +27,8 @@ class RegistrationViewUniqueEmail(RegistrationView):
     form_class = RegistrationFormUniqueEmail
 
 urlpatterns = [
+    url(r'^$', views.index_view, name='index'),
+    url(r'i18n/', include('django.conf.urls.i18n')),
     url(r'^admin/', admin.site.urls),
     url(r'', include('Exchanges.urls'), name="home"),
     url(r'^accounts/', include('registration.urls')),
@@ -35,7 +37,7 @@ urlpatterns = [
     # registration by using only unique email
     url(r'^user/register/$', RegistrationView.as_view(form_class=RegistrationFormUniqueEmail),
         name='registration_register'),
-    url(r'^accounts/profile/$', views.profile, name='index')
+    url(r'^accounts/profile/$', views.profile, name='profile')
 
 
 ]

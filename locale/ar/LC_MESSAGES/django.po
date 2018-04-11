@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-19 17:14+0500\n"
+"POT-Creation-Date: 2018-04-11 15:14+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,31 +19,90 @@ msgstr ""
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
-#: Exchanges/Templates/base.html:35
+#: Exchanges/Templates/base.html:41 Exchanges/Templates/base.html:47
+#: static/base.html:37
 msgid "See Pairs"
 msgstr ""
 
-#: Exchanges/Templates/base.html:59
+#: Exchanges/Templates/base.html:42
+msgid "Welcome:"
+msgstr ""
+
+#: Exchanges/Templates/base.html:43
+msgid "Profile"
+msgstr ""
+
+#: Exchanges/Templates/base.html:44
+msgid "Log out"
+msgstr ""
+
+#: Exchanges/Templates/base.html:48 Exchanges/Templates/base.html:64
+msgid "Registration"
+msgstr ""
+
+#: Exchanges/Templates/base.html:49 Exchanges/Templates/base.html:122
+#: Exchanges/Templates/base.html:139
+msgid "Log in"
+msgstr ""
+
+#: Exchanges/Templates/base.html:70 Exchanges/Templates/base.html:127
+msgid "Username:"
+msgstr ""
+
+#: Exchanges/Templates/base.html:84 Exchanges/Templates/base.html:133
+msgid "Password:"
+msgstr ""
+
+#: Exchanges/Templates/base.html:91
+msgid "Password confirmation:"
+msgstr ""
+
+#: Exchanges/Templates/base.html:98
+msgid "Sign up"
+msgstr ""
+
+#: Exchanges/Templates/base.html:171 static/base.html:60
 msgid "Home"
 msgstr ""
 
-#: Exchanges/Templates/base.html:61
+#: Exchanges/Templates/base.html:173 static/base.html:62
 msgid "See pairs"
 msgstr ""
 
-#: Exchanges/Templates/index.html:6
+#: Exchanges/Templates/compare.html:8 static/compare.html:8
+msgid "Arbitration"
+msgstr ""
+
+#: Exchanges/Templates/compare.html:9 static/compare.html:9
+msgid "After load you'll see the current state without growth dynamic"
+msgstr ""
+
+#: Exchanges/Templates/compare.html:22 static/compare.html:22
+#, python-format
+msgid "Hide less than 3%% difference"
+msgstr ""
+
+#: Exchanges/Templates/compare.html:23 static/compare.html:23
+msgid "Hide non-selected exchanges"
+msgstr ""
+
+#: Exchanges/Templates/compare.html:24 static/compare.html:24
+msgid "Differ_between_pairs"
+msgstr ""
+
+#: Exchanges/Templates/index.html:6 static/index.html:6
 msgid "Investment fund"
 msgstr ""
 
-#: Exchanges/Templates/index.html:7
+#: Exchanges/Templates/index.html:7 static/index.html:7
 msgid "Your tool in a highly profitable market for investments"
 msgstr ""
 
-#: Exchanges/Templates/index.html:41
+#: Exchanges/Templates/index.html:41 static/index.html:41
 msgid "What are we doing?"
 msgstr ""
 
-#: Exchanges/Templates/index.html:44
+#: Exchanges/Templates/index.html:44 static/index.html:44
 msgid ""
 "Our fund is engaged in investing in highyield blockchain projects. We find "
 "underestimated blockchain 'pearls' (coins) on the market, which will "
@@ -51,11 +110,11 @@ msgid ""
 "basis of deep analysis."
 msgstr ""
 
-#: Exchanges/Templates/index.html:53
+#: Exchanges/Templates/index.html:53 static/index.html:53
 msgid "What we are investing in?"
 msgstr ""
 
-#: Exchanges/Templates/index.html:55
+#: Exchanges/Templates/index.html:55 static/index.html:55
 msgid ""
 "We are investing only in project, which have already entered the stock "
 "exchange and have had high liquidity of 20-200 million dollars and have had "
@@ -64,11 +123,11 @@ msgid ""
 "supporting of large funds and industry players."
 msgstr ""
 
-#: Exchanges/Templates/index.html:61
+#: Exchanges/Templates/index.html:61 static/index.html:61
 msgid "Full transparency"
 msgstr ""
 
-#: Exchanges/Templates/index.html:63
+#: Exchanges/Templates/index.html:63 static/index.html:63
 #, python-format
 msgid ""
 "Our fund conducts and supports policy of full transparency in relations with "
@@ -76,22 +135,22 @@ msgid ""
 "of your portfolio and current yield of your investments."
 msgstr ""
 
-#: Exchanges/Templates/index.html:69
+#: Exchanges/Templates/index.html:69 static/index.html:69
 msgid "Profitability"
 msgstr ""
 
-#: Exchanges/Templates/index.html:71
+#: Exchanges/Templates/index.html:71 static/index.html:71
 #, python-format
 msgid ""
 "The current average monthly return is 30-60%% per month. Our best "
 "investments show growth of more than 500%% within 3-4 months."
 msgstr ""
 
-#: Exchanges/Templates/index.html:77
+#: Exchanges/Templates/index.html:77 static/index.html:77
 msgid "Partner Support"
 msgstr ""
 
-#: Exchanges/Templates/index.html:79
+#: Exchanges/Templates/index.html:79 static/index.html:79
 #, python-format
 msgid ""
 "Our partners in the 24/7 mode are 100%% aware of the state of their "
@@ -99,35 +158,35 @@ msgid ""
 "provided in a special closed telegram-chat."
 msgstr ""
 
-#: Exchanges/Templates/index.html:94
+#: Exchanges/Templates/index.html:94 static/index.html:94
 msgid "How are we do it?"
 msgstr ""
 
-#: Exchanges/Templates/index.html:99
+#: Exchanges/Templates/index.html:99 static/index.html:99
 msgid ""
 "The best analysts of our fond carefully select and study more than 50 "
 "projects every week. One of these projects is selected. We are offering it "
 "to our investor partners."
 msgstr ""
 
-#: Exchanges/Templates/index.html:103
+#: Exchanges/Templates/index.html:103 static/index.html:103
 msgid ""
 "Preference is given to infrastructure projects, which are solve real "
 "problems of any industry or create undeniable competitive advantage in the "
 "market, changing paradigm of the market."
 msgstr ""
 
-#: Exchanges/Templates/index.html:107
+#: Exchanges/Templates/index.html:107 static/index.html:107
 msgid ""
 "We provide analytical report and conclusion with an assessment of risks and "
 "returns for each project (coin) submitted for investment."
 msgstr ""
 
-#: Exchanges/Templates/index.html:114
+#: Exchanges/Templates/index.html:114 static/index.html:114
 msgid "Our Platform"
 msgstr ""
 
-#: Exchanges/Templates/index.html:117
+#: Exchanges/Templates/index.html:119 static/index.html:119
 msgid ""
 "The system is designed to manage any investment assets, including "
 "cryptocurrency. One of the possible applications of the system is trading on "
@@ -139,7 +198,7 @@ msgid ""
 "evolutionary development of the system as a whole."
 msgstr ""
 
-#: Exchanges/Templates/index.html:120
+#: Exchanges/Templates/index.html:123 static/index.html:123
 msgid ""
 "The system allows you to track several levels of recommendations based on "
 "our analytic and create on their basis order chains. In addition, it is "
@@ -147,7 +206,7 @@ msgid ""
 "track transactions, set the value of stop-loss and trailing."
 msgstr ""
 
-#: Exchanges/Templates/index.html:123
+#: Exchanges/Templates/index.html:127 static/index.html:127
 msgid ""
 "The system is distributed and decentralized, the main processes are located "
 "on the servers. The user needs to determine the strategy. All other steps "
@@ -155,58 +214,71 @@ msgid ""
 "necessary."
 msgstr ""
 
-#: Exchanges/Templates/index.html:127
+#: Exchanges/Templates/index.html:133 static/index.html:133
 msgid "Download"
 msgstr ""
 
-#: Exchanges/Templates/index.html:131
+#: Exchanges/Templates/index.html:137 static/index.html:137
 msgid "Distribution"
 msgstr ""
 
-#: Exchanges/Templates/index.html:133
+#: Exchanges/Templates/index.html:139 static/index.html:139
 msgid "Instruction (en)"
 msgstr ""
 
-#: Exchanges/Templates/index.html:135
+#: Exchanges/Templates/index.html:141 static/index.html:141
 msgid "Instruction (ru)"
 msgstr ""
 
-#: Exchanges/Templates/index.html:140
+#: Exchanges/Templates/index.html:146 static/index.html:146
 msgid "Contacts"
 msgstr ""
 
-#: Exchanges/Templates/index.html:147
+#: Exchanges/Templates/index.html:153 static/index.html:153
 msgid "Phone number:"
 msgstr ""
 
-#: Exchanges/Templates/index.html:149
+#: Exchanges/Templates/index.html:155 static/index.html:155
 msgid "Address:"
 msgstr ""
 
-#: Exchanges/Templates/index.html:151
+#: Exchanges/Templates/index.html:157 static/index.html:157
 msgid "E-mail:"
 msgstr ""
 
-#: PiedPiper/settings.py:156
+#: Exchanges/Templates/registration/registration_complete.html:4
+msgid "Account Activation"
+msgstr ""
+
+#: Exchanges/Templates/registration/registration_complete.html:9
+msgid "Hello,"
+msgstr ""
+
+#: Exchanges/Templates/registration/registration_complete.html:10
+msgid ""
+"Your should activate your account. Check your e-mail for the instructions"
+msgstr ""
+
+#: PiedPiper/settings.py:165
 msgid "German"
 msgstr ""
 
-#: PiedPiper/settings.py:157
+#: PiedPiper/settings.py:166
 msgid "English"
 msgstr ""
 
-#: PiedPiper/settings.py:158
+#: PiedPiper/settings.py:167
 msgid "Russian"
 msgstr ""
 
-#: PiedPiper/settings.py:159
+#: PiedPiper/settings.py:168
 msgid "Arab"
 msgstr ""
 
-#: PiedPiper/settings.py:160
+#: PiedPiper/settings.py:169
 msgid "Ukrainian"
 msgstr ""
 
-#: PiedPiper/settings.py:161
+#: PiedPiper/settings.py:170
 msgid "French"
 msgstr ""
