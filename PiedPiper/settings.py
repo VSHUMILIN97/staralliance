@@ -183,7 +183,7 @@ USE_TZ = True
 
 LOGIN_REDIRECT_URL = '/'
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # change console -> smtp for production
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # change console -> smtp for production
 EMAIL_HOST = 'mail.staralliance.pro'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
