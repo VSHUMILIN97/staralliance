@@ -40,7 +40,7 @@
                 <input id="auth_check" type="hidden">
                 <a class="nav-item nav-link" href="/compare/old">{% trans "See Pairs" %}</a>
                 <p class="nav-item nav-link">{% trans "Welcome:" %} {{ user.username }}</p>
-                <a class="nav-item nav-link" href="#" disabled="disabled">{% trans "Profile" %}</a><!--href=/accounts/profile/ -->
+                <a class="nav-item nav-link" href="#">{% trans "Profile" %}</a><!--href=/accounts/profile/ -->
                 <a class="nav-item nav-link" href="{% url 'logout' %}">{% trans "Log out" %}</a>
 
             {% else %}
