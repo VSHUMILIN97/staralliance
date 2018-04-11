@@ -185,9 +185,9 @@ LOGIN_REDIRECT_URL = '/'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # change console -> smtp for production
 EMAIL_HOST = 'mail.staralliance.pro'
-EMAIL_PORT = 25
+EMAIL_PORT = 465
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'cryptopiper'
+EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''
 
 ACCOUNT_ACTIVATION_DAYS = 7
