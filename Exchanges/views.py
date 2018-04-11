@@ -85,7 +85,7 @@ from django.contrib.auth.views import login
 
 
 def custom_login(request, **kwargs):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         return HttpResponseRedirect('https://google.com')
     else:
         return login(request)
