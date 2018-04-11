@@ -29,10 +29,8 @@ msgid "Welcome:"
 msgstr "Ласкаво просимо:"
 
 #: Exchanges/Templates/base.html:43
-#, fuzzy
-#| msgid "Profitability"
 msgid "Profile"
-msgstr "Прибутковість"
+msgstr "Профіль"
 
 #: Exchanges/Templates/base.html:44
 msgid "Log out"
