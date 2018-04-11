@@ -150,6 +150,7 @@
             success: function (xhr) {
                 form.html(xhr);
                 if ($("#auth_check").length){
+                    form.modal('hide');
                     location.reload(true);
                 }
 
