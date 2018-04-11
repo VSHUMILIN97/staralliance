@@ -1,7 +1,14 @@
-<div class="caption">
-  <h2> Well Done! </h2>
-  <hr />
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+{% block content %}
+<div class="background">
+  <div class="caption">
+    <h2> Well Done! </h2>
+    <hr />
+  </div>
+  <div class="block activate">
+    <p> Check your email and activate your account by following the instructions. </p>
+  </div>
 </div>
-<div class="block">
-  <p> Check your email and activate your account by following the instructions. </p>
-</div>
+{% endblock %}
