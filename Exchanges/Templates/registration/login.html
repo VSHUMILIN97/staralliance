@@ -7,18 +7,16 @@
 
 <div>
 <form action="" method="post" class="center"> {% csrf_token %}
-    <div class="login">
-      <label for="id_username">{% trans 'Username:' %}</label> <br/>
-      <input type="text" name="username" maxlength="254" required="" autofocus="" id="id_username"> <br/>
-      <label for="id_password">{% trans 'Password:' %}</label> <br/>
-      <input type="password" name="password" id="id_password" required="">
-    </div>
-    {% if form.errors %}
-        <div class="myerrors clearfix">{{ form.errors|striptags }}</div>
-        <script>var errors = true; localStorage.setItem('error', errors);</script>
-        {% else %} <script>var errors = false; localStorage.setItem('error', errors)</script>
-    {% endif %}
+  <dl class="login">
+  {% for field in form %}
+      <dt>{{ field.label_tag }}</dt>
+      <dd class="clearfix">{{ field }} {% csrf_token %}
+      </dd>
+  {% endfor %}
+  {% if form.errors %}
+      <div class="myerrors clearfix">{{ form.errors }}</div>
+  {% endif %}
+  </dl>
   <button type="submit" class="clearfix btn">Log in</button>
-
 </form>
 </div>

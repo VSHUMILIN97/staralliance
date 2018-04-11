@@ -3,6 +3,7 @@ import redis
 import time
 
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views.generic import View
 
@@ -79,6 +80,15 @@ def index_view(request):
     cursor.close()
     MongoDBConnection().stop_connect()
     return render(request, "index.html", {'BTC': btc, 'ETH': eth, 'DASH': dash, 'LTC': ltc, 'XMR': xmr, 'XRP': xrp})
+
+from django.contrib.auth.views import login
+
+
+def custom_login(request, **kwargs):
+    if request.user.is_authenticated():
+        return HttpResponseRedirect('https://google.com')
+    else:
+        return login(request)
 
 
 @login_required

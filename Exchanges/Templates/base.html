@@ -29,22 +29,24 @@
       <nav class="navbar navbar-expand-lg navbar-dark">
         <a class="navbar-brand" href="/"> StarAlliance</a>
         <button class="navbar-toggler" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label = "Toggle navigation" data-target="#navbarNavAltMarkup" data-toggle="collapse" type = "button">
-          <span class="navbar-toggler-icon"></span></button>
+            <span class="navbar-toggler-icon"></span>
+        </button>
         <div id="navbarNavAltMarkup" class="collapse navbar-collapse">
           <div class="navbar-nav">
             <!--<a class="nav-item nav-link" href="/bittrex">See Data</a>
             <a class="nav-item nav-link" href="/charts"> See Charts</a> -->
 
             {% if user.is_authenticated %}
+                <input id="auth_check" type="hidden">
                 <a class="nav-item nav-link" href="/compare/old">{% trans "See Pairs" %}</a>
                 <p class="nav-item nav-link">{% trans "Welcome:" %} {{ user.username }}</p>
-            <a class="nav-item nav-link" href="/accounts/profile/">{% trans "Profile" %}</a>
-            <a class="nav-item nav-link" href="{% url 'logout' %}">{% trans "Log out" %}</a>
+                <a class="nav-item nav-link" href="/accounts/profile/">{% trans "Profile" %}</a>
+                <a class="nav-item nav-link" href="{% url 'logout' %}">{% trans "Log out" %}</a>
 
             {% else %}
                 <a class="nav-item nav-link" data-toggle="modal" data-target="#modal_log" href="/compare/old">{% trans "See Pairs" %}</a>
-            <a class="nav-item nav-link" data-toggle="modal" data-target="#modal_reg">{% trans "Registration" %}</a>
-            <a class="nav-item nav-link" data-toggle="modal" data-target="#modal_log">{% trans "Log in" %}</a>
+                <a class="nav-item nav-link" data-toggle="modal" data-target="#modal_reg">{% trans "Registration" %}</a>
+                <a class="nav-item nav-link" data-toggle="modal" data-target="#modal_log">{% trans "Log in" %}</a>
             {%endif%}
           </div>
         </div>
@@ -115,9 +117,9 @@
     });
 </script>
 
-<form class="modal fade" method="post" action="/login" id="modal_log" tabindex="-1" role="dialog" aria-hidden="true"> {%csrf_token%}
+<form class="modal fade" method="POST" id="modal_log" tabindex="-1" role="dialog" aria-hidden="true" action="/login"> {%csrf_token%}
   <div class="caption">
-    <h2>{% trans "Login" %}</h2>
+    <h2>{% trans "Log in" %}</h2>
       <hr />
   </div>
       <dl class="login">
@@ -139,23 +141,21 @@
 
 <script type="text/javascript">
     var form = $('#modal_log');
-
-    form.submit(function (e) {
-
-        e.preventDefault();
-
+    form.submit(function (i) {
+        i.preventDefault();
         $.ajax({
             type: form.attr('method'),
             url: form.attr('action'),
             data: form.serialize(),
             success: function (xhr) {
-                        form.modal('hide');
-                        location.reload();
+                form.html(xhr);
+                if ($("#auth_check").length){
+                    location.reload(true);
+                }
 
             }
         });
     });
-
 </script>
 
 {% block content %}

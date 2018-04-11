@@ -20,6 +20,7 @@ from registration.forms import RegistrationFormUniqueEmail
 from django.contrib.auth import views as auth_views
 
 from Exchanges import views
+from Exchanges.views import custom_login
 
 
 class RegistrationViewUniqueEmail(RegistrationView):
@@ -29,7 +30,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'', include('Exchanges.urls'), name="home"),
     url(r'^accounts/', include('registration.urls')),
-    url(r'^login', auth_views.login, name='login'),
+    url(r'^login', custom_login, name='login'),
     url(r'^logout/$', auth_views.logout, {'next_page': '/'}, name='logout'),
     # registration by using only unique email
     url(r'^user/register/$', RegistrationView.as_view(form_class=RegistrationFormUniqueEmail),
