@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-04-11 15:14+0000\n"
+"POT-Creation-Date: 2018-04-11 19:15+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -38,7 +38,6 @@ msgid "Log out"
 msgstr "Выход"
 
 #: Exchanges/Templates/base.html:48 Exchanges/Templates/base.html:64
-
 msgid "Registration"
 msgstr "Регистрация"
 
@@ -301,6 +300,14 @@ msgstr "Адрес:"
 msgid "E-mail:"
 msgstr "E-mail:"
 
+#: Exchanges/Templates/registration/activation_complete.html:7
+msgid "Well Done!"
+msgstr "Отлично!"
+
+#: Exchanges/Templates/registration/activation_complete.html:11
+msgid "Your account was activated. Log in to continue."
+msgstr "Ваш аккаунт был активирован. Войдите чтобы продолжить."
+
 #: Exchanges/Templates/registration/registration_complete.html:4
 msgid "Account Activation"
 msgstr "Активация аккаунта"
@@ -312,28 +319,29 @@ msgstr "Здравствуйте,"
 #: Exchanges/Templates/registration/registration_complete.html:10
 msgid ""
 "Your should activate your account. Check your e-mail for the instructions"
-msgstr "Вам нужно активировать аккаунт. Инструкции высланы на электронную почту"
+msgstr ""
+"Вам нужно активировать аккаунт. Инструкции высланы на электронную почту"
 
-#: PiedPiper/settings.py:165
+#: PiedPiper/settings.py:166
 msgid "German"
 msgstr "Немецкий"
 
-#: PiedPiper/settings.py:166
+#: PiedPiper/settings.py:167
 msgid "English"
 msgstr "Английский"
 
-#: PiedPiper/settings.py:167
+#: PiedPiper/settings.py:168
 msgid "Russian"
 msgstr "Русский"
 
-#: PiedPiper/settings.py:168
+#: PiedPiper/settings.py:169
 msgid "Arab"
 msgstr "Арабский"
 
-#: PiedPiper/settings.py:169
+#: PiedPiper/settings.py:170
 msgid "Ukrainian"
 msgstr "Украинский"
 
-#: PiedPiper/settings.py:170
+#: PiedPiper/settings.py:171
 msgid "French"
 msgstr "Французский"
