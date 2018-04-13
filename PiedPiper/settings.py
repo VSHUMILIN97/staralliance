@@ -30,7 +30,7 @@ SECRET_KEY = 'tm3d(#yvvm^dz3*l908)w_#_!1r&f!5!5ep^rq@ghc*+rojo7u'
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 COMPRESS_ENABLED = True
 ALLOWED_HOSTS = [
     'localhost',
