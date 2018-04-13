@@ -184,13 +184,14 @@ USE_TZ = True
 LOGIN_REDIRECT_URL = '/'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # change console -> smtp for production
-EMAIL_HOST = 'mail.staralliance.pro'
+EMAIL_HOST = 'localhost'
 EMAIL_PORT = 25
-EMAIL_USE_SSL = True
+EMAIL_USE_TLS = False
 EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''
+DEFAULT_FROM_EMAIL = 'Server <server@staralliance.pro>'
 
-ACCOUNT_ACTIVATION_DAYS = 7
+ACCOUNT_ACTIVATION_DAYS = 1
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
