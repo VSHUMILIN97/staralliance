@@ -189,7 +189,7 @@ EMAIL_PORT = 25
 EMAIL_USE_TLS = False
 EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''
-DEFAULT_FROM_EMAIL = 'mail.staralliance.pro'
+DEFAULT_FROM_EMAIL = 'support'
 
 ACCOUNT_ACTIVATION_DAYS = 1
 # Static files (CSS, JavaScript, Images)
